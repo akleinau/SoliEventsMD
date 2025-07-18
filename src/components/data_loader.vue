@@ -20,7 +20,7 @@ function uploaded(files: any) {
 
 <template>
   <v-file-input label="Input the csv here" v-model="files"
-                accept=".csv"
+                accept=".csv" v-if="files == null"
                 @update:modelValue="uploaded"></v-file-input>
 </template>
 
