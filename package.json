@@ -1,0 +1,26 @@
+{
+  "name": "solieventsmd",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "vue": "^3.5.17",
+    "pinia": "^2.0.32",
+    "d3": "^7.9.0",
+    "vuetify": "^3.7.9"
+  },
+  "devDependencies": {
+    "@mdi/font": "^7.4.47",
+    "@vitejs/plugin-vue": "^6.0.0",
+    "@vue/tsconfig": "^0.7.0",
+    "typescript": "~5.8.3",
+    "vite": "^7.0.4",
+    "vue-tsc": "^2.2.12",
+    "vite-plugin-vue-devtools": "^7.7.0"
+  }
+}
