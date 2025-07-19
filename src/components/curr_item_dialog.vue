@@ -22,15 +22,14 @@ let item = dataStore.current_item
 </script>
 
 <template>
-  <v-dialog v-model="active">
-    <v-card>
+  <v-dialog v-model="active" style="max-width: 1000px">
+    <v-card >
       <v-card-title>{{ item.Was }}</v-card-title>
       <v-card-subtitle>{{ item.Wer }}</v-card-subtitle>
       <v-card-text>
-        <p>{{ item.Wo }}</p>
-        <p>{{ item.Uhrzeit }}</p>
-        <p>{{ item.Wochentag }} </p>
-        <p>{{ item.Rhythmus }}</p>
+        <p class="mb-1"> <v-icon>mdi-map-marker</v-icon> {{ item.Wo }}</p>
+        <p class="mb-1"> <v-icon>mdi-calendar</v-icon> {{ dataStore.format_weekday(item.Wochentag) }}, {{ item.Rhythmus }} </p>
+        <p> <v-icon>mdi-clock</v-icon>{{ item.Uhrzeit }}</p>
         <p class="mt-5"> <a :href="item.Link">{{item.Link}}</a> </p>
 
         <p class="mt-5 text-grey-darken-1">Letzte Überprüfung: {{item.Letzte_Ueberpruefung}}</p>

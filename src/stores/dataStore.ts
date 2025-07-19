@@ -47,11 +47,16 @@ export const useDataStore = defineStore('dataStore', {
             });
         },
         add_filter(column, values) {
+            if (values.length === 0) {
+                this.clear_filter(column);
+                return;
+            }
+
             const existingFilter = this.filter.find(f => f.column === column);
             if (existingFilter) {
                 existingFilter.values = values
             } else {
-                this.filter.push({ column, values: values });
+                this.filter.push({column, values: values});
             }
         },
         clear_filter(column) {
@@ -62,6 +67,27 @@ export const useDataStore = defineStore('dataStore', {
         },
         clear_current_item() {
             this.current_item = null;
+        },
+        format_weekday(day: string) {
+            let parts = day.split(" ");
+            let title = parts.length > 1 ? parts[1] : parts[0];
+
+            if (title == 'AlleTage') {
+                title = 'Alle Tage';
+            }
+
+            return title
+        },
+        getCardColor(eventtyp: string): string {
+            const colors: Record<string, string> = {
+                'Essen': '#ffebd9',
+                'Bücher': '#dbebff',
+                'Reparieren': '#e1ffe1',
+                'Begegnen': '#fcd8d8',
+                'Ressourcen': '#FFFACD',
+                'Digital': '#eae2fd',
+            };
+            return colors[eventtyp] || '#d5d5d5'; // Default color if not found
         }
     }
 });

@@ -19,13 +19,15 @@ const clicked = (item: any) => {
 
 <template>
 
-  <div class="d-flex flex-wrap" style="background: #ff9371">
-    <v-card v-for="item in dataStore.get_filtered_data()" class="ma-2" width="250" link @click="clicked(item)">
+  <div class="d-flex flex-wrap pa-2 justify-center" style="background: white">
+    <v-card v-for="item in dataStore.get_filtered_data()" class="ma-2" width="350"
+            :color="dataStore.getCardColor(item.Eventtyp)"
+            link @click="clicked(item)">
       <v-card-title>{{ item.Was }}</v-card-title>
       <v-card-subtitle>{{ item.Wer }}</v-card-subtitle>
       <v-card-text>
-        <p>{{ item.Wo }}</p>
-        <p>{{ item.Wochentag }} {{ item.Uhrzeit }}</p>
+        <p class="mb-1"> <v-icon>mdi-map-marker</v-icon>  {{ item.Wo }}</p>
+        <p> <v-icon>mdi-calendar</v-icon> {{dataStore.format_weekday(item.Wochentag) }} {{ item.Uhrzeit }}</p>
       </v-card-text>
     </v-card>
   </div>
@@ -33,5 +35,9 @@ const clicked = (item: any) => {
 </template>
 
 <style scoped>
+
+.v-icon {
+  color: #727272;
+}
 
 </style>
