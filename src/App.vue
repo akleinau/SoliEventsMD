@@ -16,7 +16,7 @@ const dataStore = useDataStore()
 
 <template>
   <div class="ma-auto text-center mt-3" style="color: #ec4d0b">
-      <h1> Soli Events Magdeburg</h1>
+      <h1> Magdeburg teilt</h1>
   </div>
 
 
