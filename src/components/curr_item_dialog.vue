@@ -30,7 +30,7 @@ let item = dataStore.current_item
         <p class="mb-1"> <v-icon>mdi-map-marker</v-icon> {{ item.Wo }}</p>
         <p class="mb-1"> <v-icon>mdi-calendar</v-icon> {{ dataStore.format_weekday(item.Wochentag) }}, {{ item.Rhythmus }} </p>
         <p> <v-icon>mdi-clock</v-icon>{{ item.Uhrzeit }}</p>
-        <p class="mt-5"> <a :href="item.Link">{{item.Link}}</a> </p>
+        <p class="mt-5"> <a :href="item.Link" target="_blank" >{{item.Link}}</a> </p>
 
         <p class="mt-5 text-grey-darken-1">Letzte Überprüfung: {{item.Letzte_Ueberpruefung}}</p>
 
