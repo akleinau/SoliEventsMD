@@ -28,6 +28,10 @@ export const useDataStore = defineStore('dataStore', {
     actions: {
         // Add actions here as needed
         set_data(newData) {
+
+             //entries who are inactive should be hidden by default: d["inaktiv?"] != "inaktiv")
+            newData = newData.filter(d => d["inaktiv?"] != "inaktiv");
+
             this.data = newData;
         },
         get_columns(column_subset) {
