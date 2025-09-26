@@ -33,11 +33,7 @@ let item = dataStore.current_item
         <p class="mt-5"> <a :href="item.Link" target="_blank" >{{item.Link}}</a> </p>
 
         <p class="mt-5 text-grey-darken-1">Letzte Überprüfung: {{item.Letzte_Ueberpruefung}}</p>
-
-        <div v-if="item.Kommentar !== ''" class="mt-5">
-        Kommentar: <br>
-        <div class="rounded bg-light pa-2" style="border: 1px solid #ccc;"><i>{{item.Kommentar}}</i></div>
-        </div>
+        
       </v-card-text>
     </v-card>
   </v-dialog>
