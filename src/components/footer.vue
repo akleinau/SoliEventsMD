@@ -3,6 +3,7 @@
 //import { ref } from 'vue';
 
 const links = [
+  { text: 'Home', url: '/', icon: 'mdi-information' },
   { text: 'Kontaktformular', url: '/kontakt', icon: 'mdi-email' },
   { text: 'Impressum', url: '/impressum', icon: 'mdi-information' },
   { text: 'Datenschutzerklärung', url: '/datenschutz', icon: 'mdi-shield-lock' },

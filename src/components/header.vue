@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import { ref } from 'vue';
+/*import { ref } from 'vue';
 
 const visible = ref(true)
 
@@ -9,12 +9,15 @@ const links = [
   { text: 'Impressum', url: '/impressum', icon: 'mdi-information' },
   { text: 'Datenschutzerklärung', url: '/datenschutz', icon: 'mdi-shield-lock' },
   { text: 'Link SiC', url: 'https://t.me/sharinginmagdeburg', icon: 'mdi-open-in-new' }
-];
+];*/
 
 </script>
 
 <template>
-    <CHeader>
+    <div class="ma-auto text-center mt-3" style="color: #ec4d0b">
+      <h1> Magdeburg teilt</h1>
+  </div>
+    <!--CHeader>
         <CContainer fluid>
             <CHeaderBrand href="#">Header</CHeaderBrand>
             <CHeaderToggler @click="visible = !visible" />
@@ -57,7 +60,7 @@ const links = [
             <v-icon left class="mr-2">{{ link.icon }}</v-icon> {{ link.text }}
         </v-btn>
 
-        <v-divider class="my-2" thickness="2" width="50"></v-divider>
+        <v-divider class="my-2" thickness="2" width="50"></v-divider-->
 
 </template>
 

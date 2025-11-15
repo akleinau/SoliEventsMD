@@ -13,18 +13,16 @@ import Scroll_up_button from "../components/scroll_up_button.vue";
 
 const dataStore = useDataStore()
 
-
-
 </script>
 
 <template>
-
-  <data_loader />
-  <initial_selection class="mt-5" />
-  <filter_menu/>
-  <curr_item_dialog class="mt-5" v-if="dataStore.current_item !== null" />
-  <datatable :headers="reduced_columns"/>
-  <scroll_up_button />
+    <div>HOME</div>
+    <data_loader />
+    <initial_selection class="mt-5" />
+    <filter_menu/>
+    <curr_item_dialog class="mt-5" v-if="dataStore.current_item !== null" />
+    <datatable :headers="reduced_columns"/>
+    <scroll_up_button />
 
 </template>
 

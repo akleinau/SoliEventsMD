@@ -7,7 +7,8 @@ import Impressum from '../views/Impressum.vue'
 
 const routes = [
   // ... bestehende Routen
-  { path: '/', name: 'Home', component: Home },
+  { path: '', name: 'Main', component: Home },
+  { path: '/', name: 'Start', component: Home },
   { path: '/home', name: 'Home', component: Home },
   { path: '/kontakt', name: 'Kontakt', component: Kontakt },
   { path: '/datenschutz', name: 'Datenschutz', component: Datenschutz },

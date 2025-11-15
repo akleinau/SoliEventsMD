@@ -19,11 +19,11 @@ import Footer from "./components/footer.vue";
 
 <template>
   <v-app>
-    <Header />
+    <Header></Header>
     <v-main>
       <router-view /> <!-- Hier wird die aktuelle Route eingebunden -->
     </v-main>
-    <Footer />
+    <Footer></Footer>
   </v-app>
 </template>
 
