@@ -1,4 +1,5 @@
 import {defineStore} from "pinia";
+import {CATEGORY_CONFIG, getCategoryDefinition} from "../constants/categoryConfig";
 
 const DEFAULT_VERIFICATION_THRESHOLD_MONTHS = 3;
 
@@ -132,15 +133,10 @@ export const useDataStore = defineStore('dataStore', {
             return title
         },
         getCardColor(eventtyp: string): string {
-            const colors: Record<string, string> = {
-                'Essen': '#ffebd9',
-                'Bücher': '#dbebff',
-                'Reparieren': '#e1ffe1',
-                'Begegnen': '#fcd8d8',
-                'Ressourcen': '#FFFACD',
-                'Digital': '#eae2fd',
-            };
-            return colors[eventtyp] || '#d5d5d5'; // Default color if not found
+            return CATEGORY_CONFIG[eventtyp]?.color ?? '#d5d5d5';
+        },
+        getCategoryIcon(eventtyp?: string | null): string | undefined {
+            return getCategoryDefinition(eventtyp)?.icon;
         },
         setVerificationThresholdMonths(months: number) {
             this.verificationThresholdMonths = months;
