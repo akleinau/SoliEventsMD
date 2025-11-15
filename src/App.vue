@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import Data_loader from "./components/data_loader.vue";
+/*import Data_loader from "./components/data_loader.vue";
 import Datatable from "./components/datatable.vue";
 import Initial_selection from "./components/initial_selection.vue";
 import Curr_item_dialog from "./components/curr_item_dialog.vue";
@@ -9,12 +9,26 @@ const reduced_columns = ['Was', 'Wer', 'Wo', 'Uhrzeit', 'Wochentag']
 
 import { useDataStore } from "./stores/dataStore.ts";
 import Filter_menu from "./components/filter_menu.vue";
-import Scroll_up_button from "./components/scroll_up_button.vue";
-const dataStore = useDataStore()
+import Scroll_up_button from "./components/scroll_up_button.vue";*/
+
+import Header from "./components/header.vue";
+import Footer from "./components/footer.vue";
+//const dataStore = useDataStore()
 
 </script>
 
 <template>
+  <v-app>
+    <Header />
+    <v-main>
+      <router-view /> <!-- Hier wird die aktuelle Route eingebunden -->
+    </v-main>
+    <Footer />
+  </v-app>
+</template>
+
+
+<!--template>
   <div class="ma-auto text-center mt-3" style="color: #ec4d0b">
       <h1> Magdeburg teilt</h1>
   </div>
@@ -27,11 +41,12 @@ const dataStore = useDataStore()
   <datatable :headers="reduced_columns"/>
   <scroll_up_button />
 
+  <Footer />
   <div class="ma-4" style="color: #a6a6a6; text-align: end;">
     ein SiC Projekt
   </div>
 
-</template>
+</template-->
 
 <style scoped>
 
