@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 import {useDataStore} from "../stores/dataStore.ts";
-import {onMounted, ref, watch} from "vue";
+import {computed, onMounted, ref, watch} from "vue";
 
 const dataStore = useDataStore()
 
@@ -17,23 +17,60 @@ watch(() => active.value, (newValue) => {
   }
 })
 
-let item = dataStore.current_item
+const item = computed(() => dataStore.current_item)
+
+const isVerificationStale = computed(() => {
+  if (!item.value) {
+    return false;
+  }
+  return dataStore.shouldShowVerificationWarning(item.value);
+});
+
+const verificationLabel = computed(() => {
+  if (!item.value) {
+    return null;
+  }
+  return dataStore.getVerificationLabel(item.value.Letzte_Ueberpruefung);
+});
+
+const verificationWarning = computed(() => {
+  if (!item.value) {
+    return null;
+  }
+  return dataStore.getVerificationWarning(item.value.Letzte_Ueberpruefung);
+});
 
 </script>
 
 <template>
   <v-dialog v-model="active" style="max-width: 1000px">
-    <v-card >
+    <v-card v-if="item">
       <v-card-title>{{ item.Was }}</v-card-title>
       <v-card-subtitle>{{ item.Wer }}</v-card-subtitle>
       <v-card-text>
         <p class="mb-1"> <v-icon>mdi-map-marker</v-icon> {{ item.Wo }}</p>
-        <p class="mb-1"> <v-icon>mdi-calendar</v-icon> {{ dataStore.format_weekday(item.Wochentag) }}, {{ item.Rhythmus }} </p>
+        <p class="mb-1"> <v-icon>mdi-calendar</v-icon> {{ dataStore.format_weekday(item.Wochentag ?? '') }}, {{ item.Rhythmus }}</p>
         <p> <v-icon>mdi-clock</v-icon>{{ item.Uhrzeit }}</p>
-        <p class="mt-5"> <a :href="item.Link" target="_blank" >{{item.Link}}</a> </p>
+        <p class="mt-5">
+          <a :href="item.Link" target="_blank">{{ item.Link }}</a>
+        </p>
 
-        <p class="mt-5 text-grey-darken-1">Letzte Überprüfung: {{item.Letzte_Ueberpruefung}}</p>
-        
+        <p
+            v-if="!isVerificationStale"
+            class="mt-5 text-grey-darken-1"
+        >
+          Letzte Überprüfung: {{ verificationLabel ?? 'keine Angabe' }}
+        </p>
+        <v-alert
+            v-else
+            type="warning"
+            variant="tonal"
+            density="comfortable"
+            class="mt-5"
+        >
+          {{ verificationWarning ?? 'Achtung!' }}
+        </v-alert>
+
       </v-card-text>
     </v-card>
   </v-dialog>
