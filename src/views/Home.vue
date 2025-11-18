@@ -8,7 +8,7 @@ import Curr_item_dialog from "../components/curr_item_dialog.vue";
 const reduced_columns = ['Was', 'Wer', 'Wo', 'Uhrzeit', 'Wochentag']
 
 import { useDataStore } from "../stores/dataStore.ts";
-import Filter_menu from "../components/curr_item_dialog.vue";
+import Filter_menu from "../components/filter_menu.vue";
 import Scroll_up_button from "../components/scroll_up_button.vue";
 
 const dataStore = useDataStore()
@@ -16,7 +16,6 @@ const dataStore = useDataStore()
 </script>
 
 <template>
-    <div>HOME</div>
     <data_loader />
     <initial_selection class="mt-5" />
     <filter_menu/>
