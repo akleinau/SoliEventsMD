@@ -45,7 +45,15 @@ const verificationWarning = computed(() => {
 <template>
   <v-dialog v-model="active" style="max-width: 1000px">
     <v-card v-if="item">
-      <v-card-title>{{ item.Was }}</v-card-title>
+      <v-card-title class="dialog-title">
+        <span>{{ item.Was }}</span>
+        <img
+            v-if="dataStore.getCategoryIcon(item.Eventtyp)"
+            class="dialog-title__icon"
+            :src="dataStore.getCategoryIcon(item.Eventtyp)"
+            :alt="`Icon für ${item.Eventtyp}`"
+        />
+      </v-card-title>
       <v-card-subtitle>{{ item.Wer }}</v-card-subtitle>
       <v-card-text>
         <p class="mb-1"> <v-icon>mdi-map-marker</v-icon> {{ item.Wo }}</p>
@@ -77,5 +85,19 @@ const verificationWarning = computed(() => {
 </template>
 
 <style scoped>
+
+.dialog-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  column-gap: 16px;
+}
+
+.dialog-title__icon {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  opacity: 0.85;
+}
 
 </style>

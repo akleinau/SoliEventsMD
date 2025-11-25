@@ -2,19 +2,15 @@
 
 import { ref, watch } from 'vue'
 import { useDataStore } from '../stores/dataStore.ts'
+import { MAIN_CATEGORIES, type CategoryDefinition } from '../constants/categoryConfig'
 
 const dataStore = useDataStore()
 
-const looking_for_options = [
-    // Essen, Bücher, Reparieren, Begegnen, Ressourcen, Digital
-  { label: 'Essen', value: 'Essen' },
-  { label: 'Bücher', value: 'Bücher'},
-  { label: 'Reparieren', value: 'Reparieren' },
-  { label: 'Begegnen', value: 'Begegnen' },
-  { label: 'Ressourcen', value: 'Ressourcen' },
-  { label: 'Digital', value: 'Digital' },
-  { label: 'Alles', value: 'Alles' } // Default option to show all
+type SelectionOption = CategoryDefinition & { value: string }
 
+const looking_for_options: SelectionOption[] = [
+  ...MAIN_CATEGORIES,
+  { label: 'Alles', value: 'Alles', color: '#ffffff', icon: '' },
 ]
 
 const looking_for = ref('Alles') // Default value
@@ -40,6 +36,13 @@ const apply_filter = () => {
   dataStore.add_filter('Eventtyp', [looking_for.value])
 }
 
+const getOptionColor = (value: string) => {
+  if (value === 'Alles') {
+    return '#ffffff'
+  }
+  return dataStore.getCardColor(value)
+}
+
 </script>
 
 <template>
@@ -52,10 +55,16 @@ const apply_filter = () => {
       <v-item v-slot="{ isSelected, toggle }" v-for="option in looking_for_options"
               :key="option.value"
               :value="option.value">
-        <v-btn :color="isSelected? dataStore.getCardColor(looking_for) : 'white'"
+        <v-btn class="category-button"
                variant="flat"
+               :class="{ 'category-button--selected': isSelected }"
+               :style="{
+                 backgroundColor: isSelected ? getOptionColor(option.value) : '#ffffff',
+                 '--category-border-color': isSelected ? getOptionColor(option.value) : 'transparent'
+               } as Record<string, string>"
                @click="toggle">
-          {{ option.label }}
+          <span class="category-button__label">{{ option.label }}</span>
+          <img v-if="option.icon" class="category-button__icon" :src="option.icon" :alt="`${option.label} Icon`" />
         </v-btn>
       </v-item>
     </v-item-group>
@@ -72,6 +81,28 @@ const apply_filter = () => {
 
 .v-btn {
   padding-bottom: 5px
+}
+
+.category-button {
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  column-gap: 12px;
+  padding: 6px 16px;
+}
+
+
+.category-button__label {
+  display: inline-flex;
+  align-items: center;
+}
+
+.category-button__icon {
+  width: 28px;
+  height: 28px;
+  opacity: 0.6;
+  pointer-events: none;
 }
 
 :deep(.v-btn__overlay) {
