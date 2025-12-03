@@ -3,6 +3,7 @@
 import { ref, watch } from 'vue'
 import { useDataStore } from '../stores/dataStore.ts'
 import { MAIN_CATEGORIES, type CategoryDefinition } from '../constants/categoryConfig'
+import { useRoute } from 'vue-router';
 
 const dataStore = useDataStore()
 
@@ -13,17 +14,36 @@ const looking_for_options: SelectionOption[] = [
   { label: 'Alles', value: 'Alles', color: '#ffffff', icon: '' },
 ]
 
+
+const route = useRoute();
 const looking_for = ref('Alles') // Default value
 
+// can be removed, if only the URL changes and not the looking_for itself direclty
 watch(looking_for, () => {
   // Whenever the looking_for value changes, apply the filter
   apply_filter()
 })
 
+// if URL path changes, also change the category class
+watch(
+  () => route.params.category,
+  (newCategory) => {
+    console.log("path changed", newCategory);
+    if (newCategory === 'home') {
+      looking_for.value = 'Alles';
+    }
+    else {
+      looking_for.value = ''+newCategory;
+    }
+    // Whenever the looking_for value changes, apply the filter
+    apply_filter()
+  }
+);
+
 const apply_filter = () => {
   // This function will apply the filter based on the selected looking_for value
   // You can implement the logic to filter your data here
-  console.log("Applying filter for:", looking_for.value)
+  console.log("Applying filter for:", looking_for.value);
 
   if (looking_for.value === undefined) {
     looking_for.value = 'Alles'
@@ -49,6 +69,8 @@ const getOptionColor = (value: string) => {
   <div class="d-flex flex-column align-center justify-center">
     <h2><i>Ich suche nach... </i></h2>
 
+    <!-- Hier bei den v-btn's müsste die route als '''<router-link to="/kategorie42">Kategorie 42</router-link>''' auftauchen...
+      @Jonas/@Anna mal draufschauen, wie wir das am besten lösen können -->
     <v-item-group
         v-model="looking_for"
         class="d-flex flex-wrap mb-3 mt-3 justify-center align-center">

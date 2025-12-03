@@ -15,7 +15,9 @@ const links = [
 
 <template>
     <div class="ma-auto text-center mt-3" style="color: #ec4d0b">
-      <h1> Magdeburg teilt</h1>
+      <h1><router-link to="/home">Magdeburg teilt</router-link></h1>
+        <router-link to="/Essen">Essen</router-link> 
+        <router-link to="/Digital">Digital</router-link>
   </div>
     <!--CHeader>
         <CContainer fluid>
