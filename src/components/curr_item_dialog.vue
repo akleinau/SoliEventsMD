@@ -48,10 +48,10 @@ const verificationWarning = computed(() => {
       <v-card-title class="dialog-title">
         <span>{{ item.Was }}</span>
         <img
-            v-if="dataStore.getCategoryIcon(item.Eventtyp)"
+            v-if="dataStore.getCategoryIcon(item.Kategorie)"
             class="dialog-title__icon"
-            :src="dataStore.getCategoryIcon(item.Eventtyp)"
-            :alt="`Icon für ${item.Eventtyp}`"
+            :src="dataStore.getCategoryIcon(item.Kategorie)"
+            :alt="`Icon für ${item.Kategorie}`"
         />
       </v-card-title>
       <v-card-subtitle>{{ item.Wer }}</v-card-subtitle>

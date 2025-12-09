@@ -18,19 +18,13 @@ const looking_for_options: SelectionOption[] = [
 const route = useRoute();
 const looking_for = ref('Alles') // Default value
 
-// can be removed, if only the URL changes and not the looking_for itself direclty
-/**watch(looking_for, () => {
-  // Whenever the looking_for value changes, apply the filter
-  apply_filter()
-})**/
-
 // if URL path changes, also change the category class
 watch(
   () => route.params.category,
   (newCategory) => {
     console.log("path changed", newCategory);
     if (newCategory === 'home') {
-      looking_for.value = 'Alles';
+      looking_for.value = 'alles';
     }
     else {
       looking_for.value = ''+newCategory;
@@ -46,18 +40,18 @@ const apply_filter = () => {
   console.log("Applying filter for:", looking_for.value);
 
   if (looking_for.value === undefined) {
-    looking_for.value = 'Alles'
+    looking_for.value = 'alles'
   }
 
-  if (looking_for.value === 'Alles') {
-    dataStore.clear_filter('Eventtyp') // Clear all filters if 'Alles' is selected
+  if (looking_for.value === 'alles') {
+    dataStore.clear_filter('Kategorie') // Clear all filters if 'Alles' is selected
     return
   }
-  dataStore.add_filter('Eventtyp', [looking_for.value])
+  dataStore.add_filter('Kategorie', [looking_for.value])
 }
 
 const getOptionColor = (value: string) => {
-  if (value === 'Alles') {
+  if (value === 'alles') {
     return '#ffffff'
   }
   return dataStore.getCardColor(value)

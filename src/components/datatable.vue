@@ -21,10 +21,10 @@ const clicked = (item: any) => {
 
   <div class="d-flex flex-wrap pa-2 justify-center" style="background: white">
   <v-card v-for="item in dataStore.get_filtered_data()" class="ma-2 category-card" width="350"
-      :color="dataStore.getCardColor(item.Eventtyp ?? '')"
+      :color="dataStore.getCardColor(item.Kategorie ?? '')"
             link @click="clicked(item)">
-      <div class="category-card__icon" v-if="dataStore.getCategoryIcon(item.Eventtyp)">
-        <img :src="dataStore.getCategoryIcon(item.Eventtyp)" :alt="`Icon für ${item.Eventtyp}`" />
+      <div class="category-card__icon" v-if="dataStore.getCategoryIcon(item.Kategorie)">
+        <img :src="dataStore.getCategoryIcon(item.Kategorie)" :alt="`Icon für ${item.Kategorie}`" />
       </div>
   <v-card-title class="category-card__title">{{ item.Was }}</v-card-title>
       <v-card-subtitle>{{ item.Wer }}</v-card-subtitle>
