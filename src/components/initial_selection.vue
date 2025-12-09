@@ -78,7 +78,7 @@ const getOptionColor = (value: string) => {
         <v-btn class="category-button"
                variant="flat"
                :class="{ 'category-button--selected': isSelected }"
-               :to="'/' + option.label"                
+               :to="'/' + option.path"                
                :style="{
                  backgroundColor: isSelected ? getOptionColor(option.color) : '#ffffff',
                  '--category-border-color': isSelected ? getOptionColor(option.color) : 'transparent'
