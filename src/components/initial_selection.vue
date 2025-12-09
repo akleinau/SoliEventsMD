@@ -26,6 +26,9 @@ watch(
     if (newCategory === 'home') {
       looking_for.value = 'alles';
     }
+    else if (newCategory === '') {
+      looking_for.value = 'alles';
+    }
     else {
       looking_for.value = ''+newCategory;
     }
