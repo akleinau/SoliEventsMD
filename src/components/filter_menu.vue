@@ -28,7 +28,7 @@ const wer = computed(() => {
 </script>
 
 <template>
-  <div class="d-flex px-3 justify-center flex-wrap " style="background: #f3f3f3; max-width:100%">
+  <div class="d-flex px-3 justify-center align-center flex-wrap " style="background: #f3f3f3; max-width:100%">
     <div class="mx-3">
       <h3>Filter nach... </h3>
     </div>

@@ -18,7 +18,7 @@ function uploaded(files: any) {
 }
 
 const load_dataset = async () => {
-  const csvFile = "https://raw.githubusercontent.com/akleinau/SoliEventsMD/refs/heads/main/dataset/SoliEventsMD.csv"
+  const csvFile = "https://raw.githubusercontent.com/akleinau/SoliEventsMD/refs/heads/main/dataset/SoliAngeboteMD-2025-12-09.csv"
   const data = await d3.csv(csvFile, {crossOrigin: "anonymous"})
   if (!data || data.columns.length <= 3) {
     console.error("No data found online. Switch to manual upload.")

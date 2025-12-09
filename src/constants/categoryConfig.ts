@@ -7,7 +7,7 @@ import digitalIcon from '../assets/category-icons/digital.svg'
 
 export interface CategoryDefinition {
   label: string
-  value: string
+  path: string
   color: string
   icon: string
 }
@@ -15,37 +15,37 @@ export interface CategoryDefinition {
 export const CATEGORY_CONFIG: Record<string, CategoryDefinition> = {
   Essen: {
     label: 'Essen',
-    value: 'Essen',
+    path: 'essen',
     color: '#ffebd9',
     icon: essenIcon,
   },
   Bücher: {
     label: 'Bücher',
-    value: 'Bücher',
+    path: 'buecher',
     color: '#dbebff',
     icon: buecherIcon,
   },
   Reparieren: {
     label: 'Reparieren',
-    value: 'Reparieren',
+    path: 'reparieren',
     color: '#e1ffe1',
     icon: reparierenIcon,
   },
   Begegnen: {
     label: 'Begegnen',
-    value: 'Begegnen',
+    path: 'begegnen',
     color: '#fcd8d8',
     icon: begegnenIcon,
   },
   Ressourcen: {
     label: 'Ressourcen',
-    value: 'Ressourcen',
+    path: 'ressourcen',
     color: '#FFFACD',
     icon: ressourcenIcon,
   },
   Digital: {
     label: 'Digital',
-    value: 'Digital',
+    path: 'digital',
     color: '#eae2fd',
     icon: digitalIcon,
   },

@@ -3,27 +3,47 @@
 import { ref, watch } from 'vue'
 import { useDataStore } from '../stores/dataStore.ts'
 import { MAIN_CATEGORIES, type CategoryDefinition } from '../constants/categoryConfig'
+import { useRoute } from 'vue-router';
 
 const dataStore = useDataStore()
 
-type SelectionOption = CategoryDefinition & { value: string }
+type SelectionOption = CategoryDefinition & { path: string }
 
 const looking_for_options: SelectionOption[] = [
   ...MAIN_CATEGORIES,
-  { label: 'Alles', value: 'Alles', color: '#ffffff', icon: '' },
+  { label: 'Alles', path: 'alles', color: '#ffffff', icon: '' },
 ]
 
+
+const route = useRoute();
 const looking_for = ref('Alles') // Default value
 
-watch(looking_for, () => {
+// can be removed, if only the URL changes and not the looking_for itself direclty
+/**watch(looking_for, () => {
   // Whenever the looking_for value changes, apply the filter
   apply_filter()
-})
+})**/
+
+// if URL path changes, also change the category class
+watch(
+  () => route.params.category,
+  (newCategory) => {
+    console.log("path changed", newCategory);
+    if (newCategory === 'home') {
+      looking_for.value = 'Alles';
+    }
+    else {
+      looking_for.value = ''+newCategory;
+    }
+    // Whenever the looking_for value changes, apply the filter
+    apply_filter()
+  }
+);
 
 const apply_filter = () => {
   // This function will apply the filter based on the selected looking_for value
   // You can implement the logic to filter your data here
-  console.log("Applying filter for:", looking_for.value)
+  console.log("Applying filter for:", looking_for.value);
 
   if (looking_for.value === undefined) {
     looking_for.value = 'Alles'
@@ -46,24 +66,26 @@ const getOptionColor = (value: string) => {
 </script>
 
 <template>
-  <div class="d-flex flex-column align-center justify-center">
-    <h2><i>Ich suche nach... </i></h2>
-
+  <div><!-- class="d-flex flex-column align-center justify-center"-->
     <v-item-group
         v-model="looking_for"
         class="d-flex flex-wrap mb-3 mt-3 justify-center align-center">
+      <h3 class="px-10"><i>Ich suche nach... </i></h3>
       <v-item v-slot="{ isSelected, toggle }" v-for="option in looking_for_options"
-              :key="option.value"
-              :value="option.value">
+              :key="option.label"
+              :value="option.path">
+        <!-- ToDo: bei ":to" auf 'option.path' umstellen, wenn die CSV mit "buecher" statt "Bücher" etc., d.h. alles kleingeschrieben ist -->
         <v-btn class="category-button"
                variant="flat"
                :class="{ 'category-button--selected': isSelected }"
+               :to="'/' + option.path"                
                :style="{
-                 backgroundColor: isSelected ? getOptionColor(option.value) : '#ffffff',
-                 '--category-border-color': isSelected ? getOptionColor(option.value) : 'transparent'
+                 backgroundColor: isSelected ? getOptionColor(option.color) : '#ffffff',
+                 '--category-border-color': isSelected ? getOptionColor(option.color) : 'transparent'
                } as Record<string, string>"
                @click="toggle">
           <span class="category-button__label">{{ option.label }}</span>
+          <span style="width: 5px;"></span>
           <img v-if="option.icon" class="category-button__icon" :src="option.icon" :alt="`${option.label} Icon`" />
         </v-btn>
       </v-item>

@@ -9,11 +9,11 @@ const routes = [
   // ... bestehende Routen
   { path: '', name: 'Main', component: Home },
   { path: '/', name: 'Start', component: Home },
-  { path: '/home', name: 'Home', component: Home },
+  { path: '/:category', component: Home },
   { path: '/kontakt', name: 'Kontakt', component: Kontakt },
   { path: '/datenschutz', name: 'Datenschutz', component: Datenschutz },
   { path: '/impressum', name: 'Impressum', component: Impressum },
-]
+];
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
