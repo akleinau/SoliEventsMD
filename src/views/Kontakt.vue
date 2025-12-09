@@ -6,7 +6,9 @@
 
 <template>
 
-    KONTAKT
+    <div class="my-10 mx-10">
+        KONTAKT
+    </div>
 
 </template>
 

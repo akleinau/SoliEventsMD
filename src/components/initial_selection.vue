@@ -7,11 +7,11 @@ import { useRoute } from 'vue-router';
 
 const dataStore = useDataStore()
 
-type SelectionOption = CategoryDefinition & { value: string }
+type SelectionOption = CategoryDefinition & { path: string }
 
 const looking_for_options: SelectionOption[] = [
   ...MAIN_CATEGORIES,
-  { label: 'Alles', value: 'Alles', color: '#ffffff', icon: '' },
+  { label: 'Alles', path: 'alles', color: '#ffffff', icon: '' },
 ]
 
 
@@ -19,10 +19,10 @@ const route = useRoute();
 const looking_for = ref('Alles') // Default value
 
 // can be removed, if only the URL changes and not the looking_for itself direclty
-watch(looking_for, () => {
+/**watch(looking_for, () => {
   // Whenever the looking_for value changes, apply the filter
   apply_filter()
-})
+})**/
 
 // if URL path changes, also change the category class
 watch(
@@ -66,26 +66,26 @@ const getOptionColor = (value: string) => {
 </script>
 
 <template>
-  <div class="d-flex flex-column align-center justify-center">
-    <h2><i>Ich suche nach... </i></h2>
-
-    <!-- Hier bei den v-btn's müsste die route als '''<router-link to="/kategorie42">Kategorie 42</router-link>''' auftauchen...
-      @Jonas/@Anna mal draufschauen, wie wir das am besten lösen können -->
+  <div><!-- class="d-flex flex-column align-center justify-center"-->
     <v-item-group
         v-model="looking_for"
         class="d-flex flex-wrap mb-3 mt-3 justify-center align-center">
+      <h3 class="px-10"><i>Ich suche nach... </i></h3>
       <v-item v-slot="{ isSelected, toggle }" v-for="option in looking_for_options"
-              :key="option.value"
-              :value="option.value">
+              :key="option.label"
+              :value="option.path">
+        <!-- ToDo: bei ":to" auf 'option.path' umstellen, wenn die CSV mit "buecher" statt "Bücher" etc., d.h. alles kleingeschrieben ist -->
         <v-btn class="category-button"
                variant="flat"
                :class="{ 'category-button--selected': isSelected }"
+               :to="'/' + option.label"                
                :style="{
-                 backgroundColor: isSelected ? getOptionColor(option.value) : '#ffffff',
-                 '--category-border-color': isSelected ? getOptionColor(option.value) : 'transparent'
+                 backgroundColor: isSelected ? getOptionColor(option.color) : '#ffffff',
+                 '--category-border-color': isSelected ? getOptionColor(option.color) : 'transparent'
                } as Record<string, string>"
                @click="toggle">
           <span class="category-button__label">{{ option.label }}</span>
+          <span style="width: 5px;"></span>
           <img v-if="option.icon" class="category-button__icon" :src="option.icon" :alt="`${option.label} Icon`" />
         </v-btn>
       </v-item>
