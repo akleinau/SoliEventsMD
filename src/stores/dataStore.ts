@@ -57,18 +57,18 @@ export const useDataStore = defineStore('dataStore', {
   state: () => ({
       data: [] as DataRow[],
       columns: [
-          { title: 'Eventtyp', key: 'Eventtyp' },
-            { title: 'Kommentar', key: 'Kommentar' },
-            { title: 'Letzte Überprüfung', key: 'Letzte_Ueberpruefung' },
-            { title: 'Link', key: 'Link' },
+            { title: 'Was', key: 'Was' },
+            { title: 'Kategorie', key: 'Kategorie' },
+            { title: 'Wochentag', key: 'Wochentag' },
             { title: 'Rhythmus', key: 'Rhythmus' },
             { title: 'Uhrzeit Start', key: 'Uhrzeit_Start' },
             { title: 'Uhrzeit Ende', key: 'Uhrzeit_Ende' },
             { title: 'Uhrzeit', key: 'Uhrzeit', value: (item: DataRow) => `${item.Uhrzeit_Start ?? ''} - ${item.Uhrzeit_Ende ?? ''}` },
-            { title: 'Was', key: 'Was' },
-            { title: 'Wer', key: 'Wer' },
             { title: 'Wo', key: 'Wo' },
-            { title: 'Wochentag', key: 'Wochentag' },
+            { title: 'Wer', key: 'Wer' },
+            { title: 'Link', key: 'Link' },
+            { title: 'Letzte Überprüfung', key: 'Letzte_Ueberpruefung' },
+            { title: 'Kommentar', key: 'Kommentar' },
           ],
       filter: [] as Filter[],
       current_item: null as DataRow | null,
@@ -82,6 +82,18 @@ export const useDataStore = defineStore('dataStore', {
             newData = newData.filter((d: DataRow) => d["inaktiv?"] != "inaktiv");
 
             this.data = newData;
+        },
+        sort_data() {
+            // sort loaded dataset by category, day of the week and title of the event/offer
+            this.data.sort((a: DataRow, b: DataRow) => {
+                if (a.Kategorie < b.Kategorie) return -1;
+                if (a.Kategorie > b.Kategorie) return 1;
+                if (a.Wochentag < b.Wochentag) return -1;
+                if (a.Wochentag > b.Wochentag) return 1;
+                if (a.Was < b.Was) return -1;
+                if (a.Was > b.Was) return 1;
+                return 0;
+            });
         },
         get_columns(column_subset?: string[]) {
             if (column_subset) {
@@ -132,11 +144,11 @@ export const useDataStore = defineStore('dataStore', {
 
             return title
         },
-        getCardColor(eventtyp: string): string {
-            return CATEGORY_CONFIG[eventtyp]?.color ?? '#d5d5d5';
+        getCardColor(category: string): string {
+            return CATEGORY_CONFIG[category]?.color ?? '#d5d5d5';
         },
-        getCategoryIcon(eventtyp?: string | null): string | undefined {
-            return getCategoryDefinition(eventtyp)?.icon;
+        getCategoryIcon(category?: string | null): string | undefined {
+            return getCategoryDefinition(category)?.icon;
         },
         setVerificationThresholdMonths(months: number) {
             this.verificationThresholdMonths = months;

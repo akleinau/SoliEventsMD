@@ -13,11 +13,11 @@ export interface CategoryDefinition {
 }
 
 export const CATEGORY_CONFIG: Record<string, CategoryDefinition> = {
-  essen: {
-    label: 'Essen',
-    path: 'essen',
-    color: '#ffebd9',
-    icon: essenIcon,
+  begegnen: {
+    label: 'Begegnen',
+    path: 'begegnen',
+    color: '#fcd8d8',
+    icon: begegnenIcon,
   },
   buecher: {
     label: 'Bücher',
@@ -25,29 +25,29 @@ export const CATEGORY_CONFIG: Record<string, CategoryDefinition> = {
     color: '#dbebff',
     icon: buecherIcon,
   },
+  digital: {
+    label: 'Digital',
+    path: 'digital',
+    color: '#eae2fd',
+    icon: digitalIcon,
+  },
+  essen: {
+    label: 'Essen',
+    path: 'essen',
+    color: '#ffebd9',
+    icon: essenIcon,
+  },
   reparatur: {
     label: 'Reparatur',
     path: 'reparatur',
     color: '#e1ffe1',
     icon: reparierenIcon,
   },
-  begegnen: {
-    label: 'Begegnen',
-    path: 'begegnen',
-    color: '#fcd8d8',
-    icon: begegnenIcon,
-  },
   ressourcen: {
     label: 'Ressourcen',
     path: 'ressourcen',
     color: '#FFFACD',
     icon: ressourcenIcon,
-  },
-  digital: {
-    label: 'Digital',
-    path: 'digital',
-    color: '#eae2fd',
-    icon: digitalIcon,
   },
 }
 

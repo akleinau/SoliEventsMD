@@ -8,6 +8,10 @@
 
     <div class="my-10 mx-10">
         KONTAKT
+        <br></br>
+        -- work in progress --
+        <br></br>
+        kontakt@magdeburg-teilt.de
     </div>
 
 </template>

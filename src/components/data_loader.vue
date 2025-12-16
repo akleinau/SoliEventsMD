@@ -27,8 +27,13 @@ const load_dataset = async () => {
   dataStore.set_data(data)
 }
 
+const sort_dataset = async () => {
+  dataStore.sort_data();
+}
+
 onMounted(async () => {
-  await load_dataset()
+  await load_dataset();
+  await sort_dataset();
 })
 
 

@@ -2,6 +2,7 @@
 
 import Data_loader from "../components/data_loader.vue";
 import Datatable from "../components/datatable.vue";
+import datamap from "../components/datamap.vue";
 import Initial_selection from "../components/initial_selection.vue";
 import Curr_item_dialog from "../components/curr_item_dialog.vue";
 
@@ -21,6 +22,7 @@ const dataStore = useDataStore()
     <filter_menu/>
     <curr_item_dialog class="mt-5" v-if="dataStore.current_item !== null" />
     <datatable :headers="reduced_columns"/>
+    <datamap />
     <scroll_up_button />
 
 </template>
