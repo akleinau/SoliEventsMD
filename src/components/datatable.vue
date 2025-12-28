@@ -24,6 +24,7 @@ const clicked = (item: any) => {
         v-for="item in dataStore.get_filtered_data()" 
         class="ma-2 category-card" 
         width="350"
+        max-height="350"
         :color="dataStore.getCardColor(item.Kategorie ?? '')"
         link @click="clicked(item)">
         <div class="category-card__icon" v-if="dataStore.getCategoryIcon(item.Kategorie)">

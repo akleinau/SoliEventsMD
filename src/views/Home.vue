@@ -3,8 +3,7 @@
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 import Data_loader from "../components/data_loader.vue";
 import Datatable from "../components/datatable.vue";
-//import Datamap from "../components/datamap.vue";
-import DatamapSetup from "../components/datamap_setup.vue"; // alternative implementation -- ToDo remove later
+import Datamap from "../components/datamap.vue";
 import Initial_selection from "../components/initial_selection.vue";
 import Curr_item_dialog from "../components/curr_item_dialog.vue";
 
@@ -30,7 +29,7 @@ const toggleMap = () => {
 
 // Event-Handler für Klicks auf Items
 const handleItemClick = (item: any) => {
-  DatamapSetup.value?.focusOnItem(item); // ToDo activate later
+  Datamap.value?.focusOnItem(item); // ToDo activate later
 };
 
 onMounted(() => {
@@ -78,7 +77,7 @@ onBeforeUnmount(() => {
         </button>
 
         <!--Datamap /-->
-        <DatamapSetup 
+        <Datamap 
             v-show="isMapOpen"
             ref="datamap"
             :isMobile="isMobile"
