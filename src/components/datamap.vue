@@ -90,7 +90,10 @@ export default {
 
 <style scoped>
 .map-container {
-  position: relative;
+  /**position: relative; */
+  height: 100%;
+  border: 1px solid #ddd;
+  padding: 1rem;
 }
 
 /* Karte (Desktop & Mobile) */

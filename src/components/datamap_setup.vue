@@ -8,20 +8,16 @@ import { ref, onMounted, watch, nextTick } from 'vue';
 // Props
 const props = defineProps<{
   isMobile: boolean;
+  isMapOpen: boolean;
 }>();
 
 const dataStore = useDataStore();
 
 // Reaktive Variablen
-const isMapOpen = ref(true);
 const mapElement = ref<HTMLElement | null>(null);
 const map = ref(null);
 const markers = ref([]);
 
-// Karte ein-/ausklappen
-const toggleMap = () => {
-  isMapOpen.value = !isMapOpen.value;
-};
 
 // Adresse in Koordinaten umwandeln
 const getCoordinates = async (address: string): Promise<{ lat: number; lng: number } | null> => {
@@ -104,7 +100,7 @@ const focusOnItem = (item: any) => {
   });
 };
 
-/** Items beobachten und Marker aktualisieren
+/** Items beobachten und Marker aktualisieren -- ToDo implement when wanting the filter also to impact the map markers
 watch(() => props.items, (newItems) => {
   markers.value.forEach(marker => marker.remove());
   markers.value = [];
@@ -132,103 +128,31 @@ defineExpose({
 
 <template>
   <div class="map-container">
-    <!-- Button zum Ein-/Ausklappen der Karte (Desktop & Mobile) -->
-    <button
-      @click="toggleMap"
-      class="toggle-map-button"
-      :class="{ 'toggle-map-button--mobile': isMobile }"
-    >
-      {{ isMapOpen ? (isMobile ? '▼' : '▶') : (isMobile ? '▲' : '◀') }}
-    </button>
-
     <!-- Karte -->
     <div
       ref="mapElement"
       class="map"
       :class="{
-        'map--collapsed': !isMapOpen,
         'map--mobile': isMobile,
       }"      
     ></div>
   </div>
-
 </template>
 
 <style scoped>
+
 .map-container {
-  position: relative;
-  height: 100%;
-  width: 100%;
+  padding: 1rem; /* gleiche Größe wie im Container in databable.vue*/
+  border-left: 1px lightgrey solid;
   overflow: hidden; /* Verhindert Überlappung */
 }
 
 /* Karte (Desktop & Mobile) */
 .map {
-  position: relative;
   height: 100%;
   width: 100%;
   z-index: 100;
   transition: transform 0.3s ease;
-}
-
-/* Desktop: Karte rechts, 40% Breite (min. 200px) */
-.map:not(.map--mobile) {
-  top: 0;
-  right: 0;
-  width: 40%;
-  min-width: 200px;
-  height: 100%;
-}
-
-/* Mobile: Karte unten, volle Breite, 40% Höhe */
-.map--mobile {
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 40%;
-  min-width: unset;
-}
-
-/* Eingeklappte Karte (Desktop & Mobile) */
-.map--collapsed:not(.map--mobile) {
-  transform: translateX(calc(100% + 40px));
-}
-
-.map--mobile.map--collapsed {
-  transform: translateY(calc(100% - 40px));
-}
-
-/* Button zum Ein-/Ausklappen */
-.toggle-map-button {
-  position: fixed;
-  width: 40px;
-  height: 60px;
-  background: #fff;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  cursor: pointer;
-  z-index: 101;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-}
-
-/* Button-Position für Desktop */
-.toggle-map-button:not(.toggle-map-button--mobile) {
-  top: 50%;
-  right: 100%;
-  transform: translateY(-50%);
-  border-radius: 4px 0 0 4px;
-}
-
-/* Button-Position für Mobile */
-.toggle-map-button--mobile {
-  bottom: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  border-radius: 0 0 4px 4px;
 }
 
 </style>

@@ -19,9 +19,7 @@ const clicked = (item: any) => {
 </script>
 
 <template>
-
-  <div class="item-list">
-    <div class="d-flex flex-wrap pa-2 justify-center" style="background: white">
+    <div class="table-container d-flex flex-wrap pa-2 justify-center" style="background: white">
       <v-card
         v-for="item in dataStore.get_filtered_data()" 
         class="ma-2 category-card" 
@@ -41,25 +39,14 @@ const clicked = (item: any) => {
       
       <Scroll_up_button />
     </div>
-  </div>
-
 </template>
 
 <style scoped>
 
-.item-list {
-  width: 100%;
-  height: 100%;
-  overflow-y: auto;
-  padding: 16px;
-  box-sizing: border-box;
-}
-
-/* Desktop: Item-Liste nimmt 60% der Breite ein, wenn Karte geöffnet ist */
-@media (min-width: 769px) {
-  .item-list {
-    width: 60%;
-  }
+.table-container {  
+  position: relative;
+  height: 100vh;
+  overflow-y: auto; /* Scrollbar bei Bedarf */
 }
 
 .v-icon {

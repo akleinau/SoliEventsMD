@@ -16,10 +16,16 @@ import Filter_menu from "../components/filter_menu.vue";
 const dataStore = useDataStore();
 
 const isMobile = ref(false);
+const isMapOpen = ref(true);
 
 // Prüfen, ob mobiles Gerät
 const checkIfMobile = () => {
   isMobile.value = window.innerWidth <= 768;
+};
+
+// Karte ein-/ausklappen
+const toggleMap = () => {
+  isMapOpen.value = !isMapOpen.value;
 };
 
 // Event-Handler für Klicks auf Items
@@ -39,33 +45,65 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
+
+  <div class="home-container">
+    <!--Prepare data /-->
     <Data_loader />
-    <Initial_selection class="mt-5" />
-    <Filter_menu/>
+
+    <!--Filter the data in table [and map -- ToDo later] /-->
+    <div class="filter-container">
+      <Initial_selection class="mt-5" />
+      <Filter_menu/>
+    </div>
+
+    <!--View when item selected /-->
     <Curr_item_dialog class="mt-5" v-if="dataStore.current_item !== null" />
-    <div class="home-container">
+
+    <div class="content-container">
+        <!--List of Cards /-->
         <Datatable 
             :headers="reduced_columns"
             :items="dataStore.get_filtered_data()"
             @item-clicked="handleItemClick"
         />
+
+        <!-- Button zum Ein-/Ausklappen der Karte (Desktop & Mobile) -->
+        <button
+          v-show="!isMapOpen"
+          @click="toggleMap"
+          class="toggle-map-button"
+          :class="{ 'toggle-map-button--mobile': isMobile }"
+        >
+          {{ isMapOpen ? (isMobile ? '▼' : '▶') : (isMobile ? '▲' : '◀') }}
+        </button>
+
         <!--Datamap /-->
         <DatamapSetup 
+            v-show="isMapOpen"
             ref="datamap"
             :isMobile="isMobile"
+            :isMapOpen="isMapOpen"
         />
     </div>
-    
+  </div>
 
 </template>
 
 <style scoped>
 
 .home-container {
-    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.content-container {
+    display: grid;
+    grid-template-columns: 6fr 4fr;
+    gap: 1rem; /* Abstand zwischen den Spalten */
+    flex: 1;
     height: 100vh;
-    width: 100%;
-    overflow: hidden; /* Verhindert Überlappung */
+    overflow: hidden;
 }
 
 </style>
