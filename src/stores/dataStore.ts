@@ -63,7 +63,8 @@ export const useDataStore = defineStore('dataStore', {
             { title: 'Rhythmus', key: 'Rhythmus' },
             { title: 'Uhrzeit Start', key: 'Uhrzeit_Start' },
             { title: 'Uhrzeit Ende', key: 'Uhrzeit_Ende' },
-            { title: 'Uhrzeit', key: 'Uhrzeit', value: (item: DataRow) => `${item.Uhrzeit_Start ?? ''} - ${item.Uhrzeit_Ende ?? ''}` },
+            // the following row is somehow not computed and you cannot access the item.Uhrzeit parameter elswehere
+            { title: 'Uhrzeit', key: 'Uhrzeit', value: (item: DataRow) => `${item.Uhrzeit_Start ?? 'test starttime'} - ${item.Uhrzeit_Ende ?? 'test endtime'}` },
             { title: 'Wo', key: 'Wo' },
             { title: 'Wer', key: 'Wer' },
             { title: 'Link', key: 'Link' },
@@ -134,6 +135,7 @@ export const useDataStore = defineStore('dataStore', {
         clear_current_item() {
             this.current_item = null;
         },
+        // ToDo probably remove in the future
         format_weekday(day: string) {
             let parts = day.split(" ");
             let title = parts.length > 1 ? parts[1] : parts[0];

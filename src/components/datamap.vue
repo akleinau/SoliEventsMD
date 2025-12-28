@@ -1,5 +1,8 @@
 <script setup lang="ts">
 
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+
 import {useDataStore} from "../stores/dataStore.ts";
 import { ref, onMounted, watch, nextTick } from 'vue';
 
@@ -87,15 +90,15 @@ const initMap = () => {
 
 // Fokus auf ein Item setzen (z. B. nach Klick in der Tabelle)
 const focusOnItem = (item: any) => {
-  if (!map.value) return;
+  //if (!map.value) return;
   getCoordinates(item.Wo).then((coords) => {
     if (coords) {
       //map.value?.setView([coords.lat, coords.lng], 15);
       console.log("map view changed")
       map.value = L.map(mapElement.value).setView([coords.lat, coords.lng], 15);
     }
-      console.log("map view END changed")
   });
+  console.log("map view END changed")
 };
 
 /** Items beobachten und Marker aktualisieren -- ToDo implement when wanting the filter also to impact the map markers
@@ -130,9 +133,6 @@ defineExpose({
     <div
       ref="mapElement"
       class="map"
-      :class="{
-        'map--mobile': isMobile,
-      }"      
     ></div>
   </div>
 </template>
