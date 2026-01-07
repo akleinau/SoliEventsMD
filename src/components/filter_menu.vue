@@ -12,7 +12,7 @@ const weekdays = computed(() => {
   const uniqueWeekdays = new Set(dataStore.data.map(item => item.Wochentag));
   let weekdays = Array.from(uniqueWeekdays).sort();
   weekdays = weekdays.map(day => {
-    return { title: dataStore.format_weekday(day), value: day };
+    return { title: dataStore.getFormattedDay(day), value: day };
   });
   return weekdays
 });

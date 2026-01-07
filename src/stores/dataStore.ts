@@ -64,8 +64,9 @@ export const useDataStore = defineStore('dataStore', {
             { title: 'Uhrzeit Start', key: 'Uhrzeit_Start' },
             { title: 'Uhrzeit Ende', key: 'Uhrzeit_Ende' },
             // the following row is somehow not computed and you cannot access the item.Uhrzeit parameter elswehere
-            { title: 'Uhrzeit', key: 'Uhrzeit', value: (item: DataRow) => `${item.Uhrzeit_Start ?? 'test starttime'} - ${item.Uhrzeit_Ende ?? 'test endtime'}` },
+            { title: 'Uhrzeit', key: 'Uhrzeit', value: (item: DataRow) => `${item.Uhrzeit_Start ?? 'unbekannter Start'} - ${item.Uhrzeit_Ende ?? 'unbekanntes Ende'}` },
             { title: 'Wo', key: 'Wo' },
+            { title: 'Koordinaten', key: 'Koordinaten' },
             { title: 'Wer', key: 'Wer' },
             { title: 'Link', key: 'Link' },
             { title: 'Letzte Überprüfung', key: 'Letzte_Ueberpruefung' },
@@ -136,14 +137,9 @@ export const useDataStore = defineStore('dataStore', {
             this.current_item = null;
         },
         // ToDo probably remove in the future
-        format_weekday(day: string) {
-            let parts = day.split(" ");
-            let title = parts.length > 1 ? parts[1] : parts[0];
-
-            if (title == 'AlleTage') {
-                title = 'Alle Tage';
-            }
-
+        getFormattedDay(day: string) {
+            const firstSpaceIndex = day.indexOf(' ');
+            const title = firstSpaceIndex === -1 ? day : day.substring(firstSpaceIndex + 1);
             return title
         },
         getCardColor(category: string): string {

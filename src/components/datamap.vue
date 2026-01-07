@@ -18,6 +18,8 @@ const dataStore = useDataStore();
 // Reaktive Variablen
 const mapElement = ref<HTMLElement | null>(null);
 const map = ref(null);
+// MarkerCluster Gruppe erstellen, damit bei weiterm Zoom mehrere Marker gebündelt werden
+//const markers = L.markerClusterGroup();
 const markers = ref([]);
 
 
