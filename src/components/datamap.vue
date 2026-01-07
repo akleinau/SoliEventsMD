@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
-import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
+//import L from 'leaflet';
+//import 'leaflet/dist/leaflet.css';
 
 import {useDataStore} from "../stores/dataStore.ts";
 import { ref, onMounted, watch, nextTick } from 'vue';
@@ -10,6 +10,7 @@ import { ref, onMounted, watch, nextTick } from 'vue';
 const props = defineProps<{
   isMobile: boolean;
   isMapOpen: boolean;
+  //items: [];
 }>();
 
 const dataStore = useDataStore();
@@ -21,10 +22,11 @@ const markers = ref([]);
 
 
 // Adresse in Koordinaten umwandeln
-const getCoordinates = async (address: string): Promise<{ lat: number; lng: number } | null> => {
-  try {
+const getCoordinates = async (location: string): Promise<{ lat: number; lng: number } | null> => {
+ // OPTION 1: load from openstreetmap coordinates via nominatim
+  /*try {
     const city = "Magdeburg"; // Ersetze durch deine Stadt
-    const fullAddress = address.includes(city) ? address : `${address}, ${city}`;
+    const fullAddress = location.includes(city) ? location : `${location}, ${city}`;
     const response = await fetch(
       `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(fullAddress)}`
     );
@@ -40,6 +42,15 @@ const getCoordinates = async (address: string): Promise<{ lat: number; lng: numb
   } catch (error) {
     console.error("Fehler beim Geocoding:", error);
     return null;
+  }*/
+
+ // OPTION 2: load from csv coordiates
+  try {
+    const [lat, lng] = location.split('/').map(Number);
+    return { lat: lat, lng: lng};
+  } catch (error) {
+    console.error("Fehler in den Koordinaten: ", error);
+    return null;
   }
 };
 
@@ -47,7 +58,8 @@ const getCoordinates = async (address: string): Promise<{ lat: number; lng: numb
 const addMarker = async (item: any) => {
   if (!map.value) return;
 
-  const coords = await getCoordinates(item.Wo);
+  //const coords = await getCoordinates(item.Wo);
+  const coords = await getCoordinates(item.Koordinaten);
   if (coords) {
     // Icon für die Kategorie laden
     const iconUrl = dataStore.getCategoryIcon(item.Kategorie);
