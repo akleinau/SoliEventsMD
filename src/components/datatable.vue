@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import {useDataStore} from "../stores/dataStore.ts";
+import { useDataStore } from "../stores/dataStore.ts";
 import Scroll_up_button from "../components/scroll_up_button.vue";
 
 const dataStore = useDataStore()

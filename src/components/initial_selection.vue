@@ -22,7 +22,6 @@ const looking_for = ref('Alles') // Default value
 watch(
   () => route.params.category,
   (newCategory) => {
-    console.log("path changed", newCategory);
     if (newCategory === 'home') {
       looking_for.value = 'alles';
     }
@@ -40,7 +39,6 @@ watch(
 const apply_filter = () => {
   // This function will apply the filter based on the selected looking_for value
   // You can implement the logic to filter your data here
-  console.log("Applying filter for:", looking_for.value);
 
   if (looking_for.value === undefined) {
     looking_for.value = 'alles'

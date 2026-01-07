@@ -1,9 +1,10 @@
 <script setup lang="ts">
 
 //import L from 'leaflet';
+import 'leaflet.markercluster';
 //import 'leaflet/dist/leaflet.css';
 
-import {useDataStore} from "../stores/dataStore.ts";
+import { useDataStore } from "../stores/dataStore.ts";
 import { ref, onMounted, watch, nextTick } from 'vue';
 
 // Props
@@ -18,9 +19,8 @@ const dataStore = useDataStore();
 // Reaktive Variablen
 const mapElement = ref<HTMLElement | null>(null);
 const map = ref(null);
-// MarkerCluster Gruppe erstellen, damit bei weiterm Zoom mehrere Marker gebündelt werden
-//const markers = L.markerClusterGroup();
 const markers = ref([]);
+const markersClusterGroup = ref(null);
 
 
 // Adresse in Koordinaten umwandeln
@@ -48,8 +48,13 @@ const getCoordinates = async (location: string): Promise<{ lat: number; lng: num
 
  // OPTION 2: load from csv coordiates
   try {
-    const [lat, lng] = location.split('/').map(Number);
-    return { lat: lat, lng: lng};
+    if (location.includes('/')) {
+      const [lat, lng] = location.split('/').map(Number);
+      return { lat: lat, lng: lng};
+    }
+    else {
+      return null;
+    }
   } catch (error) {
     console.error("Fehler in den Koordinaten: ", error);
     return null;
@@ -69,7 +74,7 @@ const addMarker = async (item: any) => {
       iconUrl: iconUrl,
       iconSize: [32, 32], // Größe des Icons
       iconAnchor: [16, 32], // Position des Icons
-    });
+    });;
 
     // Marker mit Icon hinzufügen
     const marker = L.marker([coords.lat, coords.lng], { icon: icon })
@@ -79,6 +84,10 @@ const addMarker = async (item: any) => {
         ${item.Wer}<br>
         ${item.Wo}
       `);
+    // Marker zur MarkerClusterGroup hinzufügen
+    markersClusterGroup.value.addLayer(marker);
+
+    // Optional: Marker im Array speichern (falls benötigt)
     markers.value.push(marker);
   }
 };
@@ -87,7 +96,7 @@ const addMarker = async (item: any) => {
 const initMap = () => {  
   //mapElement = this.$refs.map;
   if (!mapElement.value) return;
-
+  
   // Karte initialisieren
   map.value = L.map(mapElement.value).setView([52.1250, 11.6390], 12); // Zentrum: Magdeburg
 
@@ -96,15 +105,20 @@ const initMap = () => {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
   }).addTo(map.value);
 
+  markersClusterGroup.value = L.markerClusterGroup();
+
   // Marker für alle Items hinzufügen
   dataStore.get_filtered_data().forEach(async (item) => {
     addMarker(item);
   });
+
+  // MarkerClusterGroup zur Karte hinzufügen (nur einmalig, z. B. nach allen Markern)
+  map.value.addLayer(markersClusterGroup.value);
 };
 
 // Fokus auf ein Item setzen (z. B. nach Klick in der Tabelle)
 const focusOnItem = (item: any) => {
-  //if (!map.value) return;
+  if (!map.value) return;
   getCoordinates(item.Wo).then((coords) => {
     if (coords) {
       //map.value?.setView([coords.lat, coords.lng], 15);
