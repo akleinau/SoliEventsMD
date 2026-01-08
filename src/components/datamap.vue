@@ -2,7 +2,10 @@
 
 //import L from 'leaflet';
 import 'leaflet.markercluster';
-//import 'leaflet/dist/leaflet.css';
+import 'leaflet/dist/leaflet.css';
+import 'leaflet.markercluster/dist/MarkerCluster.css';
+import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
+
 
 import { useDataStore } from "../stores/dataStore.ts";
 import { ref, onMounted, watch, nextTick } from 'vue';
@@ -78,7 +81,8 @@ const addMarker = async (item: any) => {
 
     // Marker mit Icon hinzufügen
     const marker = L.marker([coords.lat, coords.lng], { icon: icon })
-      .addTo(map.value)
+    // auskommentiert, weil die Marker über das MarkersCluster bereits zur Karte hinzugefügt und je nach Zoomstufe angezeigt werden  
+    //.addTo(map.value) 
       .bindPopup(`
         <b>${item.Was}</b><br>
         ${item.Wer}<br>

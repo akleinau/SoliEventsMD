@@ -19,12 +19,12 @@ const clicked = (item: any) => {
 </script>
 
 <template>
-    <div class="table-container d-flex flex-wrap pa-2 justify-center" style="background: white">
+    <div class="table-container d-flex flex-wrap pa-2" style="background: white">
       <v-card
         v-for="item in dataStore.get_filtered_data()" 
         class="ma-2 category-card" 
         width="350"
-        max-height="350"
+        max-height="180"
         :color="dataStore.getCardColor(item.Kategorie ?? '')"
         link @click="clicked(item)">
         <div class="category-card__icon" v-if="dataStore.getCategoryIcon(item.Kategorie)">
@@ -48,6 +48,8 @@ const clicked = (item: any) => {
   position: relative;
   height: 100vh;
   overflow-y: auto; /* Scrollbar bei Bedarf */
+  align-content: flex-start;
+  justify-content: center;
 }
 
 .v-icon {
