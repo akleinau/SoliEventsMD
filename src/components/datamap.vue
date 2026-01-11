@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-//import L from 'leaflet';
+import L from 'leaflet';
 import 'leaflet.markercluster';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
@@ -14,10 +14,10 @@ import { ref, onMounted, watch, nextTick } from 'vue';
 const props = defineProps<{
   isMobile: boolean;
   isMapOpen: boolean;
-  //items: [];
+  items: any;
 }>();
 
-const dataStore = useDataStore();
+const dataStore = useDataStore();;
 
 // Reaktive Variablen
 const mapElement = ref<HTMLElement | null>(null);
@@ -66,39 +66,51 @@ const getCoordinates = async (location: string): Promise<{ lat: number; lng: num
 
 // Marker für ein Item erstellen
 const addMarker = async (item: any) => {
+  // Sicherstellen, dass Karte vorhanden ist
   if (!map.value) return;
 
-  //const coords = await getCoordinates(item.Wo);
+  // Prüfen, dass Koordinaten vorhanden sind
   const coords = await getCoordinates(item.Koordinaten);
-  if (coords) {
-    // Icon für die Kategorie laden
-    const iconUrl = dataStore.getCategoryIcon(item.Kategorie);
-    const icon = L.icon({
-      iconUrl: iconUrl,
-      iconSize: [32, 32], // Größe des Icons
-      iconAnchor: [16, 32], // Position des Icons
-    });;
+  if (!coords) return;
 
-    // Marker mit Icon hinzufügen
-    const marker = L.marker([coords.lat, coords.lng], { icon: icon })
-    // auskommentiert, weil die Marker über das MarkersCluster bereits zur Karte hinzugefügt und je nach Zoomstufe angezeigt werden  
-    //.addTo(map.value) 
-      .bindPopup(`
-        <b>${item.Was}</b><br>
-        ${item.Wer}<br>
-        ${item.Wo}
-      `);
-    // Marker zur MarkerClusterGroup hinzufügen
-    markersClusterGroup.value.addLayer(marker);
+  // Icon für die Kategorie laden
+  const iconUrl = dataStore.getCategoryIcon(item.Kategorie);
+  const icon = L.icon({
+    iconUrl: iconUrl,
+    iconSize: [32, 32], // Größe des Icons
+    iconAnchor: [16, 32], // Position des Icons
+  });;
 
-    // Optional: Marker im Array speichern (falls benötigt)
-    markers.value.push(marker);
-  }
+  // Marker mit Icon hinzufügen
+  const marker = L.marker([coords.lat, coords.lng], { icon: icon })
+    // Inhalt vom Popup, wenn auf Marker geklickt wird
+    .bindPopup(`
+      <b>${item.Was}</b><br>
+      ${item.Wer}<br>
+      ${item.Wo}
+    `)
+    // Marker über das MarkersCluster zur Karte hinzufügen (und je nach Zoomstufe automatisch anzeigen oder clustern)
+    .addTo(markersClusterGroup.value);
+
+  // Optional: Marker im Array speichern (falls benötigt)
+  markers.value.push(marker);
 };
+
+const updateMarkers = () => {
+  // alle bisherigen Marker aus der Cluster-Gruppe entfernen, falls vorhanden
+  if (markersClusterGroup.value == null) return;
+  markersClusterGroup.value.clearLayers();
+
+  // Marker für alle derzeit gefilterten Items hinzufügen
+  props.items.map((item : any) => {
+    addMarker(item);
+  });
+}
 
 // Karte initialisieren
 const initMap = () => {  
   //mapElement = this.$refs.map;
+  // Sicherstellen, dass Karten-Element (DOM) vorhanden ist
   if (!mapElement.value) return;
   
   // Karte initialisieren
@@ -108,19 +120,18 @@ const initMap = () => {
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
   }).addTo(map.value);
+console.log("#1");
 
+  // MarkerClusterGroup zur Karte hinzufügen (nur einmalig)
+  if (!map.value) return;
   markersClusterGroup.value = L.markerClusterGroup();
-
-  // Marker für alle Items hinzufügen
-  dataStore.get_filtered_data().forEach(async (item) => {
-    addMarker(item);
-  });
-
-  // MarkerClusterGroup zur Karte hinzufügen (nur einmalig, z. B. nach allen Markern)
   map.value.addLayer(markersClusterGroup.value);
+
+  // Marker basierend auf der aktuellen Filterung hinzufügen
+  updateMarkers();
 };
 
-// Fokus auf ein Item setzen (z. B. nach Klick in der Tabelle)
+// TODO ##### Fokus auf ein Item setzen (z. B. nach Klick in der Tabelle)
 const focusOnItem = (item: any) => {
   if (!map.value) return;
   getCoordinates(item.Wo).then((coords) => {
@@ -133,17 +144,10 @@ const focusOnItem = (item: any) => {
   console.log("map view END changed")
 };
 
-/** Items beobachten und Marker aktualisieren -- ToDo implement when wanting the filter also to impact the map markers
-watch(() => props.items, (newItems) => {
-  markers.value.forEach(marker => marker.remove());
-  markers.value = [];
-  newItems.forEach(async (item) => {
-    const coords = await getCoordinates(item.Wo);
-    if (coords) {
-      addMarker(item, coords);
-    }
-  });
-});*/
+// Reagiert auf Filter-Änderungen an den Items (props)
+watch(() => props.items, () => {
+  updateMarkers();
+});
 
 // Lebenszyklus-Hooks
 onMounted(() => {

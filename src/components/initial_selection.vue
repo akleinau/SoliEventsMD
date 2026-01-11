@@ -69,7 +69,6 @@ const getOptionColor = (value: string) => {
       <v-item v-slot="{ isSelected, toggle }" v-for="option in looking_for_options"
               :key="option.label"
               :value="option.path">
-        <!-- ToDo: bei ":to" auf 'option.path' umstellen, wenn die CSV mit "buecher" statt "Bücher" etc., d.h. alles kleingeschrieben ist -->
         <v-btn class="category-button"
                variant="flat"
                :class="{ 'category-button--selected': isSelected }"

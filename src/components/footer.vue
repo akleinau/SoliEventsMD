@@ -1,7 +1,5 @@
 <script setup lang="ts">
 
-//import { ref } from 'vue';
-
 const links = [
   { text: 'Home', url: '/home', icon: 'mdi-information' },
   { text: 'Kontaktformular', url: '/kontakt', icon: 'mdi-email' },

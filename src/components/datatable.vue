@@ -5,12 +5,9 @@ import Scroll_up_button from "../components/scroll_up_button.vue";
 
 const dataStore = useDataStore()
 
-const props = defineProps({
-  headers: {
-    type: Array,
-    default: () => []
-  }
-})
+const props = defineProps<{
+  isTableFormat: boolean;
+}>()
 
 const clicked = (item: any) => {
   dataStore.set_current_item(item)
@@ -34,7 +31,7 @@ const clicked = (item: any) => {
         <v-card-subtitle>{{ item.Wer }}</v-card-subtitle>
         <v-card-text>
           <p class="mb-1"> <v-icon>mdi-map-marker</v-icon>  {{ item.Wo }}</p>
-          <p class="mb-1"> <v-icon>mdi-calendar</v-icon> {{ dataStore.getFormattedDay(item.Wochentag) }}, {{ item.Uhrzeit_Start }} - {{ item.Uhrzeit_Ende }}</p>
+          <p class="mb-1"> <v-icon>mdi-calendar</v-icon> {{ dataStore.getFormattedDay(item.Wochentag ?? '')}}, {{ item.Uhrzeit_Start }} - {{ item.Uhrzeit_Ende }}</p>
         </v-card-text>
       </v-card>
       

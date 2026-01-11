@@ -1,20 +1,36 @@
 <script setup lang="ts">
 
 import { useDataStore } from "../stores/dataStore.ts";
+import { getCategoryDefinition } from "../constants/categoryConfig.ts"
 import { ref, computed } from "vue";
 
 const dataStore = useDataStore();
 
-// Wochentage
-const wochentagFilter = ref<string[]>([]);
-const weekdays = computed(() => {
+// Kategorie
+const kategorieFilter = ref<string[]>([]);
+const kategorie = computed(() => {
   if (!dataStore.data) return [];
-  const uniqueWeekdays = new Set(dataStore.data.map(item => item.Wochentag));
-  let weekdays = Array.from(uniqueWeekdays).sort();
-  weekdays = weekdays.map(day => {
-    return { title: dataStore.getFormattedDay(day), value: day };
-  });
-  return weekdays
+  const uniqueKategorie = new Set(dataStore.data.map(item => item.Kategorie));
+  return Array.from(uniqueKategorie).sort()
+    .map(kategorie => ({      
+      value: kategorie, // Rohwert für die Logik
+      title: getCategoryDefinition(kategorie)?.label ?? kategorie, // Label aus der Konfiguration, oder der Rohwert als Fallback      
+      icon: getCategoryDefinition(kategorie)?.icon, // Icon aus der Konfiguration
+    }));
+});
+
+// Wochentage bzw. alternative Beschreibung (alle Tage, werktags, jeden Tag, ...) - aber keine Aufzählung von Tagen.
+const wochentagFilter = ref<string[]>([]);
+const wochentage = computed(() => {
+  if (!dataStore.data) return [];
+  const uniqueWochentage = new Set(dataStore.data.map(item => item.Wochentag));
+  // erst mit "0 alle Tage", "1 Montag", ... sortieren
+  return Array.from(uniqueWochentage).sort()
+    // und danach nur noch den 'kurzen' Titel anzeigen (via ".map(...)")
+    .map(tag => ({ 
+      value: tag, 
+      title: dataStore.getFormattedDay(tag ?? '')
+    }));
 });
 
 // Wer
@@ -32,10 +48,29 @@ const wer = computed(() => {
     <div class="mx-3">
       <h3>Filter nach: </h3>
     </div>
+
+    <div class="FilterDiv">
+      <v-select label="Kategorie"
+        variant="outlined" multiple density="compact" hide-details bg-color="white"
+        :items="kategorie" v-model="kategorieFilter"
+        @update:modelValue="dataStore.add_filter('Kategorie', kategorieFilter)">
+        <template v-slot:selection="{ item, index }">
+          <v-chip v-if="index < 2">
+            <span>{{ item.title }}</span>
+            <span style="width: 5px;"></span>
+            <img v-if="getCategoryDefinition(item.value)?.icon" class="category-button__icon" :src="getCategoryDefinition(item.value)?.icon" />
+          </v-chip>
+          <span v-if="index === 2" class="text-grey text-caption align-self-center">
+                  (+{{ kategorieFilter.length - 2 }} weitere)
+          </span>
+        </template>        
+      </v-select>
+    </div>
+
     <div class="FilterDiv">
       <v-select label="Wochentag"
         variant="outlined" multiple density="compact" hide-details bg-color="white"
-        :items="weekdays" v-model="wochentagFilter"
+        :items="wochentage" v-model="wochentagFilter"
         @update:modelValue="dataStore.add_filter('Wochentag', wochentagFilter)">
         <template v-slot:selection="{ item, index }">
           <v-chip v-if="index < 2">
@@ -45,7 +80,6 @@ const wer = computed(() => {
                   (+{{ wochentagFilter.length - 2 }} weitere)
           </span>
         </template>
-
       </v-select>
     </div>
 
@@ -75,6 +109,12 @@ const wer = computed(() => {
   min-width: 300px;
   margin-bottom: 5px;
   margin-top: 5px;
+}
+
+.category-button__icon {
+  width: clamp(12px, 2vw, 16px); /* Mindestgröße: 12px, Ideal: 2vw, Maximum: 16px */
+  height: clamp(12px, 2vw, 16px);
+  object-fit: contain;
 }
 
 </style>

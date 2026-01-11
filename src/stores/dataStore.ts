@@ -74,7 +74,8 @@ export const useDataStore = defineStore('dataStore', {
           ],
       filter: [] as Filter[],
       current_item: null as DataRow | null,
-            verificationThresholdMonths: DEFAULT_VERIFICATION_THRESHOLD_MONTHS,
+      verificationThresholdMonths: DEFAULT_VERIFICATION_THRESHOLD_MONTHS,
+      isTableFormat: false,
   }),
     actions: {
         // Add actions here as needed
@@ -85,7 +86,8 @@ export const useDataStore = defineStore('dataStore', {
 
             this.data = newData;
         },
-        sort_data() {
+        // not needed at the moment since the raw data should already be sorted before (using a spreadsheet app with filters)
+        /*sort_data() {
             // sort loaded dataset by category, day of the week and title of the event/offer
             this.data.sort((a: DataRow, b: DataRow) => {
                 if (a.Kategorie < b.Kategorie) return -1;
@@ -96,7 +98,7 @@ export const useDataStore = defineStore('dataStore', {
                 if (a.Was > b.Was) return 1;
                 return 0;
             });
-        },
+        },*/
         get_columns(column_subset?: string[]) {
             if (column_subset) {
                 return this.columns.filter(column => column_subset.includes(column.key));
@@ -136,11 +138,16 @@ export const useDataStore = defineStore('dataStore', {
         clear_current_item() {
             this.current_item = null;
         },
-        // ToDo probably remove in the future
-        getFormattedDay(day: string) {
+        switchTableFormat() {
+            this.isTableFormat = !this.isTableFormat;
+        },
+        getTableFormat() {
+            return this.isTableFormat;
+        },
+        getFormattedDay(day: string) : string {
             const firstSpaceIndex = day.indexOf(' ');
             const title = firstSpaceIndex === -1 ? day : day.substring(firstSpaceIndex + 1);
-            return title
+            return title;
         },
         getCardColor(category: string): string {
             return CATEGORY_CONFIG[category]?.color ?? '#d5d5d5';
