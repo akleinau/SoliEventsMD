@@ -75,7 +75,7 @@ export const useDataStore = defineStore('dataStore', {
       filter: [] as Filter[],
       current_item: null as DataRow | null,
       verificationThresholdMonths: DEFAULT_VERIFICATION_THRESHOLD_MONTHS,
-      isTableFormat: false,
+      viewMode: 'cards' as string,
   }),
     actions: {
         // Add actions here as needed
@@ -138,19 +138,23 @@ export const useDataStore = defineStore('dataStore', {
         clear_current_item() {
             this.current_item = null;
         },
-        switchTableFormat() {
-            this.isTableFormat = !this.isTableFormat;
+        switchViewMode() {
+            this.viewMode = this.viewMode === 'cards' ? 'list' : 'cards';
+            localStorage.setItem('viewMode', this.viewMode.toString());
         },
-        getTableFormat() {
-            return this.isTableFormat;
+        loadViewMode() {
+            const cachedViewMode = localStorage.getItem('viewMode')?.toString();
+            this.viewMode = cachedViewMode ? cachedViewMode : 'cards';  
+        },        
+        getViewMode() : string {
+            return this.viewMode;
         },
         getFormattedDay(day: string) : string {
             const firstSpaceIndex = day.indexOf(' ');
             const title = firstSpaceIndex === -1 ? day : day.substring(firstSpaceIndex + 1);
             return title;
         },
-        getCardColor(category: string): string {    
-            console.log('def :', getCategoryDefinition(category)?.color);                   
+        getCardColor(category: string): string {                  
             return getCategoryDefinition(category)?.color ?? '#d5d5d5';
         },
         getCategoryIcon(category?: string | null): string | undefined {

@@ -2,15 +2,14 @@
 
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 import Data_loader from "../components/data_loader.vue";
+import Filter_menu from "../components/filter_menu.vue";
 import Datatable from "../components/datatable.vue";
 import Datamap from "../components/datamap.vue";
-//import Initial_selection from "../components/initial_selection.vue";
 import Curr_item_dialog from "../components/curr_item_dialog.vue";
 
 //const reduced_columns = ['Was', 'Wer', 'Wo', 'Uhrzeit', 'Wochentag']
 
 import { useDataStore } from "../stores/dataStore.ts";
-import Filter_menu from "../components/filter_menu.vue";
 
 const dataStore = useDataStore();
 const isMobile = ref(false);
@@ -62,7 +61,7 @@ onBeforeUnmount(() => {
         <Datatable 
             class="datatable"
             :class="{ 'datatable--collapsed': isMapOpen }"
-            :isTableFormat="dataStore.getTableFormat()"
+            :viewMode="dataStore.getViewMode()"
             :items="dataStore.get_filtered_data()"
             @item-clicked="handleItemClick"
         />

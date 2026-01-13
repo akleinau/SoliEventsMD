@@ -6,16 +6,16 @@ import { ref, computed } from "vue";
 
 const dataStore = useDataStore();
 
-// Kategorie
-const kategorieFilter = ref<string[]>([]);
-const kategorie = computed(() => {
+// Unterkategorie
+const unterkategorieFilter = ref<string[]>([]);
+const unterkategorie = computed(() => {
   if (!dataStore.data) return [];
-  const uniqueKategorie = new Set(dataStore.data.map(item => item.Kategorie));
+  const uniqueKategorie = new Set(dataStore.data.map(item => item.Unterkategorie));
   return Array.from(uniqueKategorie).sort()
-    .map(kategorie => ({      
-      value: kategorie, // Rohwert für die Logik
-      title: getCategoryDefinition(kategorie)?.label ?? kategorie, // Label aus der Konfiguration, oder der Rohwert als Fallback      
-      icon: getCategoryDefinition(kategorie)?.icon, // Icon aus der Konfiguration
+    .map(unterkategorie => ({      
+      value: unterkategorie, // Rohwert für die Logik
+      title: getCategoryDefinition(unterkategorie)?.label ?? unterkategorie, // Label aus der Konfiguration, oder der Rohwert als Fallback      
+      icon: getCategoryDefinition(unterkategorie)?.icon, // Icon aus der Konfiguration
     }));
 });
 
@@ -44,67 +44,100 @@ const wer = computed(() => {
 </script>
 
 <template>
-  <div class="d-flex px-3 justify-center align-center flex-wrap " style="background: #f3f3f3; max-width:100%">
+  <div class="filter-container d-flex py-1 px-3 align-center flex-wrap " style="background: #f3f3f3; max-width:100%">
+
     <div class="mx-3">
       <h3>Filter nach: </h3>
     </div>
 
-    <!-- Das folgende Element soll zu **Unterkategorien** umgebaut werden. Die Hauptkategorien sollen dann nur noch über den Header anwählbar sein. >
-    <div class="FilterDiv">
-      <v-select label="Kategorie"
-        variant="outlined" multiple density="compact" hide-details bg-color="white"
-        :items="kategorie" v-model="kategorieFilter"
-        @update:modelValue="dataStore.add_filter('Kategorie', kategorieFilter)">
-        <template v-slot:selection="{ item, index }">
-          <v-chip v-if="index < 2">
-            <span class="pr-2">{{ item.title }}</span>
-            <v-icon size="x-large" color="ec4d0b" class="pl-2 pr-2">
-                {{ getCategoryDefinition(item.value)?.icon }}
-            </v-icon>
-          </v-chip>
-          <span v-if="index === 2" class="text-grey text-caption align-self-center">
-                  (+{{ kategorieFilter.length - 2 }} weitere)
-          </span>
-        </template>        
-      </v-select>
-    </div-->
+    <div class="filter-items">
 
-    <div class="FilterDiv">
-      <v-select label="Wochentag"
-        variant="outlined" multiple density="compact" hide-details bg-color="white"
-        :items="wochentage" v-model="wochentagFilter"
-        @update:modelValue="dataStore.add_filter('Wochentag', wochentagFilter)">
-        <template v-slot:selection="{ item, index }">
-          <v-chip v-if="index < 2">
-            <span>{{ item.title }}</span>
-          </v-chip>
-          <span v-if="index === 2" class="text-grey text-caption align-self-center">
-                  (+{{ wochentagFilter.length - 2 }} weitere)
-          </span>
-        </template>
-      </v-select>
+      <!-- Das folgende Element soll zu **Unterkategorien** umgebaut werden. Die Hauptkategorien sollen dann nur noch über den Header anwählbar sein. >
+      <div class="FilterDiv">
+        <v-select label="Unterkategorie"
+          variant="outlined" multiple density="compact" hide-details bg-color="white"
+          :items="unterkategorie" v-model="unterkategorieFilter"
+          @update:modelValue="dataStore.add_filter('Unterkategorie', unterkategorieFilter)">
+          <template v-slot:selection="{ item, index }">
+            <v-chip v-if="index < 2">
+              <span class="pr-2">{{ item.title }}</span>
+              <v-icon size="x-large" color="ec4d0b" class="pl-2 pr-2">
+                  {{ getCategoryDefinition(item.value)?.icon }}
+              </v-icon>
+            </v-chip>
+            <span v-if="index === 2" class="text-grey text-caption align-self-center">
+                    (+{{ unterkategorieFilter.length - 2 }} weitere)
+            </span>
+          </template>        
+        </v-select>
+      </div-->
+
+      <div class="FilterDiv">
+        <v-select label="Wochentag"
+          variant="outlined" multiple density="compact" hide-details bg-color="white"
+          :items="wochentage" v-model="wochentagFilter"
+          @update:modelValue="dataStore.add_filter('Wochentag', wochentagFilter)">
+          <template v-slot:selection="{ item, index }">
+            <v-chip v-if="index < 2">
+              <span>{{ item.title }}</span>
+            </v-chip>
+            <span v-if="index === 2" class="text-grey text-caption align-self-center">
+                    (+{{ wochentagFilter.length - 2 }} weitere)
+            </span>
+          </template>
+        </v-select>
+      </div>
+
+      <div class="FilterDiv">
+        <v-select label="Veranstalter"
+          variant="outlined" multiple density="compact" hide-details bg-color="white"
+          :items="wer" v-model="werFilter"
+          @update:modelValue="dataStore.add_filter('Wer', werFilter)">
+          <template v-slot:selection="{ item, index }">
+            <v-chip v-if="index < 2">
+              <span>{{ item.title }}</span>
+            </v-chip>
+            <span v-if="index === 2" class="text-grey text-caption align-self-center">
+                    (+{{ werFilter.length - 2 }} weitere)
+            </span>
+          </template>
+        </v-select>
+      </div>
+      
     </div>
 
-    <div class="FilterDiv">
-      <v-select label="Veranstalter"
-        variant="outlined" multiple density="compact" hide-details bg-color="white"
-        :items="wer" v-model="werFilter"
-        @update:modelValue="dataStore.add_filter('Wer', werFilter)">
-        <template v-slot:selection="{ item, index }">
-          <v-chip v-if="index < 2">
-            <span>{{ item.title }}</span>
-          </v-chip>
-          <span v-if="index === 2" class="text-grey text-caption align-self-center">
-                  (+{{ werFilter.length - 2 }} weitere)
-          </span>
-        </template>
-      </v-select>
+    <!-- Button zum Umschalten des viewMode (Kacheln / Liste) -->
+    <div>
+      <v-btn @click="dataStore.switchViewMode()">
+        {{ dataStore.getViewMode() === 'cards' ? 'Zur Listenansicht' : 'Zur Kachelansicht' }}
+      </v-btn>
     </div>
 
   </div>
 </template>
 
 <style scoped>
+
+.filter-container, .filter-items {
+  display: flex;  
+  flex-direction: row;
+  justify-content: left;
+}
+
+/* Mobile-Ansicht */
+@media (max-width: 1000px) {
+  .filter-container {
+    flex-direction: column;
+    justify-content: center;
+  }
+}
+
+/* Mobile-Ansicht */
+@media (max-width: 650px) {
+  .filter-items {
+    flex-direction: column;
+  }
+}
 
 .FilterDiv {
   margin-inline: 10px;
