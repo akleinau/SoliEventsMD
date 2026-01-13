@@ -1,5 +1,5 @@
-import {defineStore} from "pinia";
-import {CATEGORY_CONFIG, getCategoryDefinition} from "../constants/categoryConfig";
+import { defineStore } from "pinia";
+import { getCategoryDefinition } from "../constants/categoryConfig";
 
 const DEFAULT_VERIFICATION_THRESHOLD_MONTHS = 3;
 
@@ -57,22 +57,25 @@ export const useDataStore = defineStore('dataStore', {
   state: () => ({
       data: [] as DataRow[],
       columns: [
-          { title: 'Eventtyp', key: 'Eventtyp' },
-            { title: 'Kommentar', key: 'Kommentar' },
-            { title: 'Letzte Überprüfung', key: 'Letzte_Ueberpruefung' },
-            { title: 'Link', key: 'Link' },
+            { title: 'Was', key: 'Was' },
+            { title: 'Kategorie', key: 'Kategorie' },
+            { title: 'Wochentag', key: 'Wochentag' },
             { title: 'Rhythmus', key: 'Rhythmus' },
             { title: 'Uhrzeit Start', key: 'Uhrzeit_Start' },
             { title: 'Uhrzeit Ende', key: 'Uhrzeit_Ende' },
-            { title: 'Uhrzeit', key: 'Uhrzeit', value: (item: DataRow) => `${item.Uhrzeit_Start ?? ''} - ${item.Uhrzeit_Ende ?? ''}` },
-            { title: 'Was', key: 'Was' },
-            { title: 'Wer', key: 'Wer' },
+            // the following row is somehow not computed and you cannot access the item.Uhrzeit parameter elswehere
+            { title: 'Uhrzeit', key: 'Uhrzeit', value: (item: DataRow) => `${item.Uhrzeit_Start ?? 'unbekannter Start'} - ${item.Uhrzeit_Ende ?? 'unbekanntes Ende'}` },
             { title: 'Wo', key: 'Wo' },
-            { title: 'Wochentag', key: 'Wochentag' },
+            { title: 'Koordinaten', key: 'Koordinaten' },
+            { title: 'Wer', key: 'Wer' },
+            { title: 'Link', key: 'Link' },
+            { title: 'Letzte Überprüfung', key: 'Letzte_Ueberpruefung' },
+            { title: 'Kommentar', key: 'Kommentar' },
           ],
       filter: [] as Filter[],
       current_item: null as DataRow | null,
-            verificationThresholdMonths: DEFAULT_VERIFICATION_THRESHOLD_MONTHS,
+      verificationThresholdMonths: DEFAULT_VERIFICATION_THRESHOLD_MONTHS,
+      isTableFormat: false,
   }),
     actions: {
         // Add actions here as needed
@@ -83,6 +86,19 @@ export const useDataStore = defineStore('dataStore', {
 
             this.data = newData;
         },
+        // not needed at the moment since the raw data should already be sorted before (using a spreadsheet app with filters)
+        /*sort_data() {
+            // sort loaded dataset by category, day of the week and title of the event/offer
+            this.data.sort((a: DataRow, b: DataRow) => {
+                if (a.Kategorie < b.Kategorie) return -1;
+                if (a.Kategorie > b.Kategorie) return 1;
+                if (a.Wochentag < b.Wochentag) return -1;
+                if (a.Wochentag > b.Wochentag) return 1;
+                if (a.Was < b.Was) return -1;
+                if (a.Was > b.Was) return 1;
+                return 0;
+            });
+        },*/
         get_columns(column_subset?: string[]) {
             if (column_subset) {
                 return this.columns.filter(column => column_subset.includes(column.key));
@@ -122,21 +138,23 @@ export const useDataStore = defineStore('dataStore', {
         clear_current_item() {
             this.current_item = null;
         },
-        format_weekday(day: string) {
-            let parts = day.split(" ");
-            let title = parts.length > 1 ? parts[1] : parts[0];
-
-            if (title == 'AlleTage') {
-                title = 'Alle Tage';
-            }
-
-            return title
+        switchTableFormat() {
+            this.isTableFormat = !this.isTableFormat;
         },
-        getCardColor(eventtyp: string): string {
-            return CATEGORY_CONFIG[eventtyp]?.color ?? '#d5d5d5';
+        getTableFormat() {
+            return this.isTableFormat;
         },
-        getCategoryIcon(eventtyp?: string | null): string | undefined {
-            return getCategoryDefinition(eventtyp)?.icon;
+        getFormattedDay(day: string) : string {
+            const firstSpaceIndex = day.indexOf(' ');
+            const title = firstSpaceIndex === -1 ? day : day.substring(firstSpaceIndex + 1);
+            return title;
+        },
+        getCardColor(category: string): string {    
+            console.log('def :', getCategoryDefinition(category)?.color);                   
+            return getCategoryDefinition(category)?.color ?? '#d5d5d5';
+        },
+        getCategoryIcon(category?: string | null): string | undefined {
+            return getCategoryDefinition(category)?.icon;
         },
         setVerificationThresholdMonths(months: number) {
             this.verificationThresholdMonths = months;

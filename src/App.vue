@@ -6,9 +6,9 @@ import Footer from "./components/footer.vue";
 </script>
 
 <template>
-  <v-app>
+  <v-app class="app-container">
     <Header></Header>
-    <v-main>
+    <v-main class="main-container">
       <router-view /> <!-- Hier wird die aktuelle Route eingebunden -->
     </v-main>
     <Footer></Footer>
@@ -16,5 +16,16 @@ import Footer from "./components/footer.vue";
 </template>
 
 <style scoped>
+
+/* Basis-Styles für das Layout */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-container {
+  flex: 1 1 0;
+}
 
 </style>

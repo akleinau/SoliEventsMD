@@ -1,15 +1,13 @@
 <script setup lang="ts">
 
-import {useDataStore} from "../stores/dataStore.ts";
+import { useDataStore } from "../stores/dataStore.ts";
+import Scroll_up_button from "../components/scroll_up_button.vue";
 
 const dataStore = useDataStore()
 
-const props = defineProps({
-  headers: {
-    type: Array,
-    default: () => []
-  }
-})
+const props = defineProps<{
+  isTableFormat: boolean;
+}>()
 
 const clicked = (item: any) => {
   dataStore.set_current_item(item)
@@ -18,26 +16,38 @@ const clicked = (item: any) => {
 </script>
 
 <template>
-
-  <div class="d-flex flex-wrap pa-2 justify-center" style="background: white">
-  <v-card v-for="item in dataStore.get_filtered_data()" class="ma-2 category-card" width="350"
-      :color="dataStore.getCardColor(item.Kategorie ?? '')"
-            link @click="clicked(item)">
-      <div class="category-card__icon" v-if="dataStore.getCategoryIcon(item.Kategorie)">
-        <img :src="dataStore.getCategoryIcon(item.Kategorie)" :alt="`Icon für ${item.Kategorie}`" />
-      </div>
-  <v-card-title class="category-card__title">{{ item.Was }}</v-card-title>
-      <v-card-subtitle>{{ item.Wer }}</v-card-subtitle>
-      <v-card-text>
-    <p class="mb-1"> <v-icon>mdi-map-marker</v-icon>  {{ item.Wo }}</p>
-    <p> <v-icon>mdi-calendar</v-icon> {{dataStore.format_weekday(item.Wochentag ?? '') }} {{ item.Uhrzeit }}</p>
-      </v-card-text>
-    </v-card>
-  </div>
-
+    <div class="table-container d-flex flex-wrap pa-2" style="background: white">
+      <v-card
+        v-for="item in dataStore.get_filtered_data()" 
+        class="ma-2 category-card" 
+        width="350"
+        max-height="180"
+        :color="dataStore.getCardColor(item.Kategorie ?? '')"
+        link @click="clicked(item)">
+        <div class="category-card__icon" v-if="dataStore.getCategoryIcon(item.Kategorie)">
+          <v-icon size="large" color="black">{{ dataStore.getCategoryIcon(item.Kategorie) }}</v-icon>          
+        </div>
+        <v-card-title class="category-card__title">{{ item.Was }}</v-card-title>
+        <v-card-subtitle>{{ item.Wer }}</v-card-subtitle>
+        <v-card-text>
+          <p class="mb-1"> <v-icon>mdi-map-marker</v-icon>  {{ item.Wo }}</p>
+          <p class="mb-1"> <v-icon>mdi-calendar</v-icon> {{ dataStore.getFormattedDay(item.Wochentag ?? '')}}, {{ item.Uhrzeit_Start }} - {{ item.Uhrzeit_Ende }}</p>
+        </v-card-text>
+      </v-card>
+      
+      <Scroll_up_button />
+    </div>
 </template>
 
 <style scoped>
+
+.table-container {  
+  position: relative;
+  height: 100vh;
+  overflow-y: auto; /* Scrollbar bei Bedarf */
+  align-content: flex-start;
+  justify-content: center;
+}
 
 .v-icon {
   color: #727272;

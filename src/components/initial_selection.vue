@@ -5,13 +5,15 @@ import { useDataStore } from '../stores/dataStore.ts'
 import { MAIN_CATEGORIES, type CategoryDefinition } from '../constants/categoryConfig'
 import { useRoute } from 'vue-router';
 
+import ressourcenIcon from './assets/category-icons/ressourcen.svg'
+
 const dataStore = useDataStore()
 
 type SelectionOption = CategoryDefinition & { path: string }
 
 const looking_for_options: SelectionOption[] = [
   ...MAIN_CATEGORIES,
-  { label: 'Alles', path: 'alles', color: '#ffffff', icon: '' },
+  { label: 'Alles', path: 'alles', color: '#ffffff', icon: ressourcenIcon },
 ]
 
 
@@ -22,8 +24,10 @@ const looking_for = ref('Alles') // Default value
 watch(
   () => route.params.category,
   (newCategory) => {
-    console.log("path changed", newCategory);
     if (newCategory === 'home') {
+      looking_for.value = 'alles';
+    }
+    else if (newCategory === '') {
       looking_for.value = 'alles';
     }
     else {
@@ -37,7 +41,6 @@ watch(
 const apply_filter = () => {
   // This function will apply the filter based on the selected looking_for value
   // You can implement the logic to filter your data here
-  console.log("Applying filter for:", looking_for.value);
 
   if (looking_for.value === undefined) {
     looking_for.value = 'alles'
@@ -54,6 +57,7 @@ const getOptionColor = (value: string) => {
   if (value === 'alles') {
     return '#ffffff'
   }
+  console.log("color: ", dataStore.getCardColor(value));  
   return dataStore.getCardColor(value)
 }
 
@@ -68,7 +72,6 @@ const getOptionColor = (value: string) => {
       <v-item v-slot="{ isSelected, toggle }" v-for="option in looking_for_options"
               :key="option.label"
               :value="option.path">
-        <!-- ToDo: bei ":to" auf 'option.path' umstellen, wenn die CSV mit "buecher" statt "Bücher" etc., d.h. alles kleingeschrieben ist -->
         <v-btn class="category-button"
                variant="flat"
                :class="{ 'category-button--selected': isSelected }"

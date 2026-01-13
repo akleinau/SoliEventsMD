@@ -47,18 +47,13 @@ const verificationWarning = computed(() => {
     <v-card v-if="item">
       <v-card-title class="dialog-title">
         <span>{{ item.Was }}</span>
-        <img
-            v-if="dataStore.getCategoryIcon(item.Kategorie)"
-            class="dialog-title__icon"
-            :src="dataStore.getCategoryIcon(item.Kategorie)"
-            :alt="`Icon für ${item.Kategorie}`"
-        />
+        <v-icon size="x-large" color="black" class="dialog-title__icon">{{ dataStore.getCategoryIcon(item.Kategorie) }}</v-icon>
       </v-card-title>
       <v-card-subtitle>{{ item.Wer }}</v-card-subtitle>
       <v-card-text>
         <p class="mb-1"> <v-icon>mdi-map-marker</v-icon> {{ item.Wo }}</p>
-        <p class="mb-1"> <v-icon>mdi-calendar</v-icon> {{ dataStore.format_weekday(item.Wochentag ?? '') }}, {{ item.Rhythmus }}</p>
-        <p> <v-icon>mdi-clock</v-icon>{{ item.Uhrzeit }}</p>
+        <p class="mb-1"> <v-icon>mdi-calendar</v-icon> {{ dataStore.getFormattedDay(item.Wochentag ?? '') }}, {{ item.Rhythmus }}</p>
+        <p class="mb-1"> <v-icon>mdi-clock</v-icon> {{ item.Uhrzeit_Start }} - {{ item.Uhrzeit_Ende }}</p>
         <p class="mt-5">
           <a :href="item.Link" target="_blank">{{ item.Link }}</a>
         </p>

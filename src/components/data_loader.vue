@@ -18,7 +18,13 @@ function uploaded(files: any) {
 }
 
 const load_dataset = async () => {
-  const csvFile = "https://raw.githubusercontent.com/akleinau/SoliEventsMD/refs/heads/main/dataset/SoliAngeboteMD-2025-12-09.csv"
+  // Load CSV URL from .env so the local CSV can be a different one. 
+  // # Attention! Be aware that this could be the reason for "outdated" content!
+  const csvFile = import.meta.env.VITE_CSV_URL;
+  
+  // Check which env mode and URL is used for the CSV import
+  //console.log('Mode ', import.meta.env)
+
   const data = await d3.csv(csvFile, {crossOrigin: "anonymous"})
   if (!data || data.columns.length <= 3) {
     console.error("No data found online. Switch to manual upload.")
@@ -27,8 +33,13 @@ const load_dataset = async () => {
   dataStore.set_data(data)
 }
 
+/*const sort_dataset = async () => {
+  dataStore.sort_data();
+}*/
+
 onMounted(async () => {
-  await load_dataset()
+  await load_dataset();
+  //await sort_dataset();
 })
 
 
