@@ -1,5 +1,5 @@
-import {defineStore} from "pinia";
-import {CATEGORY_CONFIG, getCategoryDefinition} from "../constants/categoryConfig";
+import { defineStore } from "pinia";
+import { getCategoryDefinition } from "../constants/categoryConfig";
 
 const DEFAULT_VERIFICATION_THRESHOLD_MONTHS = 3;
 
@@ -149,8 +149,9 @@ export const useDataStore = defineStore('dataStore', {
             const title = firstSpaceIndex === -1 ? day : day.substring(firstSpaceIndex + 1);
             return title;
         },
-        getCardColor(category: string): string {
-            return CATEGORY_CONFIG[category]?.color ?? '#d5d5d5';
+        getCardColor(category: string): string {    
+            console.log('def :', getCategoryDefinition(category)?.color);                   
+            return getCategoryDefinition(category)?.color ?? '#d5d5d5';
         },
         getCategoryIcon(category?: string | null): string | undefined {
             return getCategoryDefinition(category)?.icon;

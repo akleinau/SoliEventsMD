@@ -5,13 +5,15 @@ import { useDataStore } from '../stores/dataStore.ts'
 import { MAIN_CATEGORIES, type CategoryDefinition } from '../constants/categoryConfig'
 import { useRoute } from 'vue-router';
 
+import ressourcenIcon from './assets/category-icons/ressourcen.svg'
+
 const dataStore = useDataStore()
 
 type SelectionOption = CategoryDefinition & { path: string }
 
 const looking_for_options: SelectionOption[] = [
   ...MAIN_CATEGORIES,
-  { label: 'Alles', path: 'alles', color: '#ffffff', icon: '' },
+  { label: 'Alles', path: 'alles', color: '#ffffff', icon: ressourcenIcon },
 ]
 
 
@@ -55,6 +57,7 @@ const getOptionColor = (value: string) => {
   if (value === 'alles') {
     return '#ffffff'
   }
+  console.log("color: ", dataStore.getCardColor(value));  
   return dataStore.getCardColor(value)
 }
 

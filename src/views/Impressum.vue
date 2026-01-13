@@ -18,6 +18,10 @@
 
 <style scoped>
 
+.impressum-container {
+  height: 100%;
+}
+
 </style>
 
 

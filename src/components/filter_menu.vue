@@ -49,6 +49,7 @@ const wer = computed(() => {
       <h3>Filter nach: </h3>
     </div>
 
+    <!-- Das folgende Element soll zu **Unterkategorien** umgebaut werden. Die Hauptkategorien sollen dann nur noch über den Header anwählbar sein. -->
     <div class="FilterDiv">
       <v-select label="Kategorie"
         variant="outlined" multiple density="compact" hide-details bg-color="white"
@@ -56,9 +57,10 @@ const wer = computed(() => {
         @update:modelValue="dataStore.add_filter('Kategorie', kategorieFilter)">
         <template v-slot:selection="{ item, index }">
           <v-chip v-if="index < 2">
-            <span>{{ item.title }}</span>
-            <span style="width: 5px;"></span>
-            <img v-if="getCategoryDefinition(item.value)?.icon" class="category-button__icon" :src="getCategoryDefinition(item.value)?.icon" />
+            <span class="pr-2">{{ item.title }}</span>
+            <v-icon size="x-large" color="ec4d0b" class="pl-2 pr-2">
+                {{ getCategoryDefinition(item.value)?.icon }}
+            </v-icon>
           </v-chip>
           <span v-if="index === 2" class="text-grey text-caption align-self-center">
                   (+{{ kategorieFilter.length - 2 }} weitere)

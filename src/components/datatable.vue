@@ -25,7 +25,7 @@ const clicked = (item: any) => {
         :color="dataStore.getCardColor(item.Kategorie ?? '')"
         link @click="clicked(item)">
         <div class="category-card__icon" v-if="dataStore.getCategoryIcon(item.Kategorie)">
-          <img :src="dataStore.getCategoryIcon(item.Kategorie)" :alt="`Icon für ${item.Kategorie}`" />
+          <v-icon size="large" color="black">{{ dataStore.getCategoryIcon(item.Kategorie) }}</v-icon>          
         </div>
         <v-card-title class="category-card__title">{{ item.Was }}</v-card-title>
         <v-card-subtitle>{{ item.Wer }}</v-card-subtitle>

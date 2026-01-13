@@ -74,7 +74,8 @@ const addMarker = async (item: any) => {
   if (!coords) return;
 
   // Icon für die Kategorie laden
-  const iconUrl = dataStore.getCategoryIcon(item.Kategorie);
+  const iconName = dataStore.getCategoryIcon(item.Kategorie);
+  const iconUrl = 'src/assets/category-icons/' +  iconName + '.svg';
   const icon = L.icon({
     iconUrl: iconUrl,
     iconSize: [32, 32], // Größe des Icons
@@ -98,7 +99,7 @@ const addMarker = async (item: any) => {
 
 const updateMarkers = () => {
   // alle bisherigen Marker aus der Cluster-Gruppe entfernen, falls vorhanden
-  if (markersClusterGroup.value == null) return;
+  if (!markersClusterGroup.value) return;
   markersClusterGroup.value.clearLayers();
 
   // Marker für alle derzeit gefilterten Items hinzufügen
@@ -120,7 +121,6 @@ const initMap = () => {
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
   }).addTo(map.value);
-console.log("#1");
 
   // MarkerClusterGroup zur Karte hinzufügen (nur einmalig)
   if (!map.value) return;
@@ -146,6 +146,9 @@ const focusOnItem = (item: any) => {
 
 // Reagiert auf Filter-Änderungen an den Items (props)
 watch(() => props.items, () => {
+  // alle bisherigen Marker aus der Cluster-Gruppe entfernen, falls vorhanden
+  if (!markersClusterGroup.value) return;
+  markersClusterGroup.value.clearLayers();
   updateMarkers();
 });
 
