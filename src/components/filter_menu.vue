@@ -49,7 +49,7 @@ const wer = computed(() => {
       <h3>Filter nach: </h3>
     </div>
 
-    <!-- Das folgende Element soll zu **Unterkategorien** umgebaut werden. Die Hauptkategorien sollen dann nur noch über den Header anwählbar sein. -->
+    <!-- Das folgende Element soll zu **Unterkategorien** umgebaut werden. Die Hauptkategorien sollen dann nur noch über den Header anwählbar sein. >
     <div class="FilterDiv">
       <v-select label="Kategorie"
         variant="outlined" multiple density="compact" hide-details bg-color="white"
@@ -67,7 +67,7 @@ const wer = computed(() => {
           </span>
         </template>        
       </v-select>
-    </div>
+    </div-->
 
     <div class="FilterDiv">
       <v-select label="Wochentag"
