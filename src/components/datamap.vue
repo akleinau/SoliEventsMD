@@ -75,7 +75,7 @@ const addMarker = async (item: any) => {
 
   // Icon für die Kategorie laden
   const iconName = dataStore.getCategoryIcon(item.Kategorie);
-  const iconUrl = 'src/assets/category-icons/' +  iconName + '.svg';
+  const iconUrl = import.meta.env.VITE_ICONS_URL + 'src/assets/category-icons/' +  iconName + '.svg';
   const icon = L.icon({
     iconUrl: iconUrl,
     iconSize: [32, 32], // Größe des Icons
