@@ -38,6 +38,7 @@ const load_dataset = async () => {
 }*/
 
 onMounted(async () => {
+  dataStore.loadViewMode();
   await load_dataset();
   //await sort_dataset();
 })
