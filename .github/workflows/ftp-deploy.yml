@@ -14,8 +14,10 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftps  # FTPS aktivieren
+          port: 21        # Standard-FTP-Port (für FTPS oft 990)
           local-dir: ./   # Lokales Verzeichnis
-          server-dir: /web/test.magdeburg-teilt.de/
+          server-dir: /
+          passive: true  # Passiven Modus erzwingen
           exclude: |
             **/.git*
             **/.git*/**
