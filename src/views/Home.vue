@@ -112,7 +112,7 @@ onBeforeUnmount(() => {
 
 .datatable {
   width: 100%;
-  height: 100vh;
+  height: 80vh;
   transition: all 0.3s ease;
 }
 
