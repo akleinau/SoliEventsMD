@@ -3,5 +3,17 @@
   "references": [
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" }
-  ]
+  ],
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "target": "ESNext",
+    "baseUrl": ".",
+    "paths": {
+      "vue": ["node_modules/vue"],
+      "pinia": ["node_modules/pinia"],
+      "vuetify/*": ["node_modules/vuetify/*"]
+    }
+  }
+
 }

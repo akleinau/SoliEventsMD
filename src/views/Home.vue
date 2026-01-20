@@ -99,7 +99,7 @@ onBeforeUnmount(() => {
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: 100%;
+  height: 80vh;
 }
 
 .content-container {
@@ -112,7 +112,7 @@ onBeforeUnmount(() => {
 
 .datatable {
   width: 100%;
-  height: 80vh;
+  height: 100%;
   transition: all 0.3s ease;
 }
 
@@ -167,7 +167,7 @@ onBeforeUnmount(() => {
   }
 }
 
-/* Mobile-Ansicht ToDo: fix code or this section -> use "@media ..."" OR use "".XYZ--mobile" ! */
+/* Mobile-Ansicht ToDo: fix css-code (in html above) or this css-section -> use "@media ..."" OR use "".XYZ--mobile" ! */
 @media (max-width: 767px) {
   .content-container {
     flex-direction: column;
@@ -194,11 +194,11 @@ onBeforeUnmount(() => {
   }
 
   .content-container.map-open.mobile .datatable {
-    height: 60vh;
+    height: 100vh;
   }
 
   .content-container.map-open.mobile .datamap {
-    height: 40vh;
+    height: 100vh;
   }
 
   .toggle-map-button--open {

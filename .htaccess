@@ -1,0 +1,14 @@
+# MIME-Typ für TypeScript-Dateien
+AddType application/javascript .ts
+
+# MIME-Typ für Vue-Single-File-Components
+AddType text/x-vue .vue
+
+# MIME-Typ für JavaScript-Dateien (wichtig für Vite-Builds!)
+AddType application/javascript .js
+
+# MIME-Typ für CSS-Dateien (falls benötigt)
+AddType text/css .css
+
+# Verhindere MIME-Sniffing
+Header set X-Content-Type-Options "nosniff"
