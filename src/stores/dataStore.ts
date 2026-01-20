@@ -76,6 +76,7 @@ export const useDataStore = defineStore('dataStore', {
       current_item: null as DataRow | null,
       verificationThresholdMonths: DEFAULT_VERIFICATION_THRESHOLD_MONTHS,
       isTableFormat: false,
+      heuteFilterActive: false,
   }),
     actions: {
         // Add actions here as needed
@@ -106,10 +107,39 @@ export const useDataStore = defineStore('dataStore', {
             return this.columns;
         },
         get_filtered_data() {
-            if (this.filter.length === 0) {
-                return this.data;
+            let filteredData = this.data;
+            
+            // Apply heute filter first (excludes always-open events)
+            if (this.heuteFilterActive) {
+                const today = new Date();
+                const dayOfWeek = today.getDay(); // 0 = Sunday, 1 = Monday, ...
+                // Map JavaScript day (0=Sun, 1=Mon, ...) to dataset format (1=Mon, 2=Tue, ..., 7=Sun)
+                const datasetDayNumber = dayOfWeek === 0 ? 7 : dayOfWeek;
+                
+                filteredData = filteredData.filter(item => {
+                    const wochentag = item.Wochentag ?? '';
+                    const rhythmus = item.Rhythmus ?? '';
+                    
+                    // Exclude always-open events: "0 alle Tage", "8 wenn geöffnet", or rhythmus contains "immer"
+                    if (wochentag.startsWith('0 ') || wochentag.startsWith('8 ')) {
+                        return false;
+                    }
+                    if (rhythmus.toLowerCase().includes('immer')) {
+                        return false;
+                    }
+                    
+                    // Check if the event happens on today's weekday
+                    // Wochentag format: "1 Montag", "2 Dienstag", etc.
+                    const dayNumber = parseInt(wochentag.charAt(0), 10);
+                    return dayNumber === datasetDayNumber;
+                });
             }
-            return this.data.filter(item => {
+            
+            // Apply regular column filters
+            if (this.filter.length === 0) {
+                return filteredData;
+            }
+            return filteredData.filter(item => {
                 return this.filter.every(f => {
                     const value = item[f.column] ?? '';
                     return value !== '' && f.values.includes(value);
@@ -131,6 +161,9 @@ export const useDataStore = defineStore('dataStore', {
         },
         clear_filter(column: string) {
             this.filter = this.filter.filter(f => f.column !== column);
+        },
+        setHeuteFilter(active: boolean) {
+            this.heuteFilterActive = active;
         },
         set_current_item(item: DataRow) {
             this.current_item = item;

@@ -6,6 +6,18 @@ import { ref, computed } from "vue";
 
 const dataStore = useDataStore();
 
+// Heute-Filter
+const heuteFilterActive = ref(false);
+
+const toggleHeuteFilter = () => {
+  heuteFilterActive.value = !heuteFilterActive.value;
+  if (heuteFilterActive.value) {
+    dataStore.setHeuteFilter(true);
+  } else {
+    dataStore.setHeuteFilter(false);
+  }
+};
+
 // Kategorie
 const kategorieFilter = ref<string[]>([]);
 const kategorie = computed(() => {
@@ -101,6 +113,20 @@ const wer = computed(() => {
       </v-select>
     </div>
 
+    <div class="FilterDiv HeuteButton">
+      <v-btn
+        :color="heuteFilterActive ? '#ec4d0b' : undefined"
+        :variant="heuteFilterActive ? 'flat' : 'outlined'"
+        :class="{ 'heute-inactive': !heuteFilterActive }"
+        @click="toggleHeuteFilter"
+        density="default"
+        prepend-icon="mdi-calendar-today"
+        height="40"
+      >
+        Heute
+      </v-btn>
+    </div>
+
   </div>
 </template>
 
@@ -111,6 +137,20 @@ const wer = computed(() => {
   min-width: 300px;
   margin-bottom: 5px;
   margin-top: 5px;
+}
+
+.FilterDiv.HeuteButton {
+  min-width: auto;
+}
+
+.heute-inactive {
+  background-color: white !important;
+  border-color: rgba(0, 0, 0, 0.38) !important;
+  opacity: 0.8;
+}
+
+.heute-inactive:hover {
+  opacity: 1;
 }
 
 .category-button__icon {
