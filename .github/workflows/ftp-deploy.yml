@@ -15,7 +15,7 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftps  # FTPS aktivieren
           local-dir: ./   # Lokales Verzeichnis
-          server-dir: /
+          server-dir: /web/test.magdeburg-teilt.de/
           exclude: |
             **/.git*
             **/.git*/**
