@@ -17,7 +17,6 @@ jobs:
           port: 21        # Standard-FTP-Port (für FTPS oft 990)
           local-dir: ./   # Lokales Verzeichnis
           server-dir: /
-          passive: true  # Passiven Modus erzwingen
           exclude: |
             **/.git*
             **/.git*/**
