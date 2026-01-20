@@ -40,6 +40,26 @@ const verificationWarning = computed(() => {
   return dataStore.getVerificationWarning(item.value.Letzte_Ueberpruefung);
 });
 
+// Werbegrafik image handling
+const werbegrafikPath = computed(() => {
+  return dataStore.getWerbegrafikPath(item.value);
+});
+
+const werbegrafikError = ref(false);
+
+// Reset error state when item changes
+watch(() => item.value, () => {
+  werbegrafikError.value = false;
+});
+
+const handleWerbegrafikError = () => {
+  werbegrafikError.value = true;
+};
+
+const showWerbegrafik = computed(() => {
+  return werbegrafikPath.value && !werbegrafikError.value;
+});
+
 </script>
 
 <template>
@@ -51,6 +71,22 @@ const verificationWarning = computed(() => {
       </v-card-title>
       <v-card-subtitle>{{ item.Wer }}</v-card-subtitle>
       <v-card-text>
+        <!-- Werbegrafik image -->
+        <v-img
+            v-if="showWerbegrafik"
+            :src="werbegrafikPath!"
+            class="werbegrafik-image mb-4"
+            max-height="400"
+            contain
+            @error="handleWerbegrafikError"
+        >
+          <template v-slot:placeholder>
+            <v-row class="fill-height ma-0" align="center" justify="center">
+              <v-progress-circular indeterminate color="grey-lighten-5"></v-progress-circular>
+            </v-row>
+          </template>
+        </v-img>
+
         <p class="mb-1"> <v-icon>mdi-map-marker</v-icon> {{ item.Wo }}</p>
         <p class="mb-1"> <v-icon>mdi-calendar</v-icon> {{ dataStore.getFormattedDay(item.Wochentag ?? '') }}, {{ item.Rhythmus }}</p>
         <p class="mb-1"> <v-icon>mdi-clock</v-icon> {{ item.Uhrzeit_Start }} - {{ item.Uhrzeit_Ende }}</p>
@@ -93,6 +129,11 @@ const verificationWarning = computed(() => {
   height: 56px;
   flex-shrink: 0;
   opacity: 0.85;
+}
+
+.werbegrafik-image {
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 </style>
