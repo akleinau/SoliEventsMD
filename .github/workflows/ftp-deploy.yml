@@ -13,8 +13,8 @@ jobs:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          protocol: ftps  # FTPS aktivieren
-          port: 21        # Standard-FTP-Port (für FTPS oft 990)
+          protocol: sftp  # FTPS aktivieren
+          port: 23        # Standard-FTP-Port (für FTPS oft 990)
           local-dir: ./   # Lokales Verzeichnis
           server-dir: /
           exclude: |
@@ -22,4 +22,5 @@ jobs:
             **/.git*/**
             **/node_modules/**
             **/.github/**
+            **/.vscode/**
 
