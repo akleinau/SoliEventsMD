@@ -74,6 +74,8 @@ export const useDataStore = defineStore('dataStore', {
           ],
       filter: [] as Filter[],
       current_item: null as DataRow | null,
+      focused_item: null as DataRow | null,
+      isMapVisible: true,
       verificationThresholdMonths: DEFAULT_VERIFICATION_THRESHOLD_MONTHS,
       isTableFormat: false,
   }),
@@ -137,6 +139,18 @@ export const useDataStore = defineStore('dataStore', {
         },
         clear_current_item() {
             this.current_item = null;
+        },
+        set_focused_item(item: DataRow | null) {
+            this.focused_item = item;
+        },
+        clear_focused_item() {
+            this.focused_item = null;
+        },
+        setMapVisible(visible: boolean) {
+            this.isMapVisible = visible;
+        },
+        toggleMapVisible() {
+            this.isMapVisible = !this.isMapVisible;
         },
         switchTableFormat() {
             this.isTableFormat = !this.isTableFormat;
