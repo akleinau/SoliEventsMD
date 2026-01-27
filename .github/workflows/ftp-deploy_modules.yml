@@ -53,6 +53,5 @@ jobs:
           protocol: ftps  # FTPS aktivieren
           port: 21        # Standard-FTP-Port (für FTPS oft 990)
           local-dir: ./dist/   # Lokales Verzeichnis
-          server-dir: /
-          passive: true
+          server-dir: /web/
         
