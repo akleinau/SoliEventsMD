@@ -55,8 +55,4 @@ jobs:
           local-dir: ./dist/   # Lokales Verzeichnis
           server-dir: /
           passive: true
-          
-            **/.package*
-            **/.tsconfig*
-            **/.vite*
-
+        
