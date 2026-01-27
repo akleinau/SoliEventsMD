@@ -54,4 +54,5 @@ jobs:
           port: 21        # Standard-FTP-Port (für FTPS oft 990)
           local-dir: ./dist/   # Lokales Verzeichnis
           server-dir: /
+          security: strict  # Erzwingt sichere Verbindungen (inkl. passivem Modus)
         
