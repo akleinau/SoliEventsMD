@@ -54,17 +54,8 @@ jobs:
           port: 21        # Standard-FTP-Port (für FTPS oft 990)
           local-dir: ./dist/   # Lokales Verzeichnis
           server-dir: /
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/.github/**
-            **/.vscode/**
-            **/.env*/**
-            **/node_modules/**
-            **/public/**
-            **/src/**
-            **/.README*
-            **/.index*
+          passive: true
+          
             **/.package*
             **/.tsconfig*
             **/.vite*
