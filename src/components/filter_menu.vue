@@ -9,15 +9,6 @@ const dataStore = useDataStore();
 // Heute-Filter
 const heuteFilterActive = ref(false);
 
-const toggleHeuteFilter = () => {
-  heuteFilterActive.value = !heuteFilterActive.value;
-  if (heuteFilterActive.value) {
-    dataStore.setHeuteFilter(true);
-  } else {
-    dataStore.setHeuteFilter(false);
-  }
-};
-
 // Kategorie
 const kategorieFilter = ref<string[]>([]);
 const kategorie = computed(() => {
@@ -33,17 +24,35 @@ const kategorie = computed(() => {
 
 // Wochentage bzw. alternative Beschreibung (alle Tage, werktags, jeden Tag, ...) - aber keine Aufzählung von Tagen.
 const wochentagFilter = ref<string[]>([]);
+const HEUTE_FILTER_VALUE = '__heute__';
 const wochentage = computed(() => {
   if (!dataStore.data) return [];
   const uniqueWochentage = new Set(dataStore.data.map(item => item.Wochentag));
   // erst mit "0 alle Tage", "1 Montag", ... sortieren
-  return Array.from(uniqueWochentage).sort()
+  const sortedWochentage = Array.from(uniqueWochentage).sort()
     // und danach nur noch den 'kurzen' Titel anzeigen (via ".map(...)")
     .map(tag => ({ 
       value: tag, 
       title: dataStore.getFormattedDay(tag ?? '')
     }));
+  // "Heute" als erste Option hinzufügen
+  return [{ value: HEUTE_FILTER_VALUE, title: 'Heute' }, ...sortedWochentage];
 });
+
+const onWochentagFilterChange = (newFilter: string[]) => {
+  const hasHeute = newFilter.includes(HEUTE_FILTER_VALUE);
+  const wasHeuteActive = heuteFilterActive.value;
+  
+  // Handle "Heute" filter state
+  if (hasHeute !== wasHeuteActive) {
+    heuteFilterActive.value = hasHeute;
+    dataStore.setHeuteFilter(hasHeute);
+  }
+  
+  // Filter out "Heute" from the regular Wochentag filter
+  const regularFilter = newFilter.filter(v => v !== HEUTE_FILTER_VALUE);
+  dataStore.add_filter('Wochentag', regularFilter);
+};
 
 // Wer
 const werFilter = ref<string[]>([]);
@@ -85,7 +94,7 @@ const wer = computed(() => {
       <v-select label="Wochentag"
         variant="outlined" multiple density="compact" hide-details bg-color="white"
         :items="wochentage" v-model="wochentagFilter"
-        @update:modelValue="dataStore.add_filter('Wochentag', wochentagFilter)">
+        @update:modelValue="onWochentagFilterChange">
         <template v-slot:selection="{ item, index }">
           <v-chip v-if="index < 2">
             <span>{{ item.title }}</span>
@@ -94,6 +103,7 @@ const wer = computed(() => {
                   (+{{ wochentagFilter.length - 2 }} weitere)
           </span>
         </template>
+
       </v-select>
     </div>
 
@@ -113,20 +123,6 @@ const wer = computed(() => {
       </v-select>
     </div>
 
-    <div class="FilterDiv HeuteButton">
-      <v-btn
-        :color="heuteFilterActive ? '#ec4d0b' : undefined"
-        :variant="heuteFilterActive ? 'flat' : 'outlined'"
-        :class="{ 'heute-inactive': !heuteFilterActive }"
-        @click="toggleHeuteFilter"
-        density="default"
-        prepend-icon="mdi-calendar-today"
-        height="40"
-      >
-        Heute
-      </v-btn>
-    </div>
-
   </div>
 </template>
 
@@ -137,20 +133,6 @@ const wer = computed(() => {
   min-width: 300px;
   margin-bottom: 5px;
   margin-top: 5px;
-}
-
-.FilterDiv.HeuteButton {
-  min-width: auto;
-}
-
-.heute-inactive {
-  background-color: white !important;
-  border-color: rgba(0, 0, 0, 0.38) !important;
-  opacity: 0.8;
-}
-
-.heute-inactive:hover {
-  opacity: 1;
 }
 
 .category-button__icon {
