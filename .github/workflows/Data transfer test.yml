@@ -1,4 +1,4 @@
-name: FTP Deploy
+name: Transfer Test Deploy
 on:
   push:
     branches: [ main ]
@@ -17,5 +17,5 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftps  # FTPS aktivieren
           port: 21        # Standard-FTP-Port (für FTPS oft 990)
-          local-dir: ./dataset/   # Lokales Verzeichnis
+          local-dir: /dataset/   # Lokales Verzeichnis
           server-dir: /data/
