@@ -39,7 +39,7 @@
 
         <div>
             Wenn du ein Kontaktformular auf unserer Webseite benutzt, verarbeiten wir deinen Namen, Email-Adresse, Nachricht, und alle weiteren Formularfelder, sofern du diese ausgefüllt hast.
-            Wenn du uns eine Nachricht direkt per Email schickst, speichern wir deine Nachricht mit den damit übermittelten Absenderdaten (Name, E-Mail-Adresse weitere von deinem Email-Programm und den übermittelnden Servern hinzugefügte Informationen).
+            Wenn du uns eine Nachricht direkt per Email schickst, speichern wir deine Nachricht mit den damit übermittelten Absenderdaten (Name, E-Mail-Adresse, weitere von deinem Email-Programm und den übermittelnden Servern hinzugefügte Informationen).
         </div>
 
         <br></br>

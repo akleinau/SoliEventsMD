@@ -20,7 +20,7 @@ function uploaded(files: any) {
 const load_dataset = async () => {
   // Load CSV URL from .env so the local CSV can be a different one. 
   // # Attention! Be aware that this could be the reason for "outdated" content!
-  const csvFile = import.meta.env.VITE_CSV_URL;
+  const csvFile = import.meta.env.VITE_CSV_URL + 'dataset/SoliAngeboteMD-2025-12-09_COORDS.csv';
   
   // Check which env mode and URL is used for the CSV import
   //console.log('Mode ', import.meta.env)
@@ -38,6 +38,7 @@ const load_dataset = async () => {
 }*/
 
 onMounted(async () => {
+  dataStore.loadViewMode();
   await load_dataset();
   //await sort_dataset();
 })

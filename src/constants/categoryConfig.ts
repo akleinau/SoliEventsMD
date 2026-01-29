@@ -9,45 +9,52 @@ export interface CategoryDefinition {
   label: string
   path: string
   color: string
-  icon: string
+  icon: string // mdi-icons (automatisch über Vuetify)
+  icon2: string // Icon aus Assets (siehe Imports oben)
 }
 
 export const CATEGORY_CONFIG: Record<string, CategoryDefinition> = {
   begegnen: {
-    label: 'Begegnen',
+    label: 'Begegnung',
     path: 'begegnen',
     color: '#fcd8d8',
-    icon: begegnenIcon,
+    icon: 'mdi-account-multiple-outline',
+    icon2: begegnenIcon,
   },
   buecher: {
     label: 'Bücher',
     path: 'buecher',
     color: '#dbebff',
-    icon: buecherIcon,
+    icon: 'mdi-book-open-variant-outline',
+    icon2: buecherIcon,
   },
   digital: {
-    label: 'Digital',
+    label: 'Digitales',
     path: 'digital',
     color: '#eae2fd',
-    icon: digitalIcon,
+    icon: 'mdi-laptop',
+    icon2: digitalIcon,
   },
   essen: {
     label: 'Essen',
     path: 'essen',
     color: '#ffebd9',
-    icon: essenIcon,
+    icon: 'mdi-silverware-fork-knife',
+    icon2: essenIcon,
   },
   reparatur: {
     label: 'Reparatur',
     path: 'reparatur',
     color: '#e1ffe1',
-    icon: reparierenIcon,
+    icon: 'mdi-tools',
+    icon2: reparierenIcon,
   },
   ressourcen: {
     label: 'Ressourcen',
     path: 'ressourcen',
     color: '#FFFACD',
-    icon: ressourcenIcon,
+    icon: 'mdi-recycle',
+    icon2: ressourcenIcon,
   },
 }
 

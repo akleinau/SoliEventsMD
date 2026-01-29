@@ -8,5 +8,10 @@ export default defineConfig({
       vue(),
       vueDevTools()
   ],
-    base: '/SoliEventsMD/',
+    base: '/',
+    resolve: {
+      alias: {
+        vue: 'vue/dist/vue.esm-bundler.js',
+      },
+    },
 })

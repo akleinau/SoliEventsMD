@@ -1,0 +1,58 @@
+name: FTP Deploy
+on:
+  push:
+    branches: [ main ]
+jobs:
+  web-deploy:
+    runs-on: ubuntu-latest
+    steps:      
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm install
+        
+      - name: Build
+        run: npm run build
+
+      - name: Copy .htaccess to dist
+        run: |
+          # Kopiere die .htaccess-Datei in den dist/-Ordner, falls sie existiert
+          if [ -f .htaccess ]; then
+            cp .htaccess dist/
+          fi
+
+      - name: Copy assets to dist
+        run: |
+          # Kopiere den /src/assets-Ordner nach /dist/assets
+          if [ -d "src/assets" ]; then
+            mkdir -p dist/assets
+            cp -r src/assets/. dist/assets/
+          fi
+
+      - name: Copy dataset to dist
+        run: |
+          # Kopiere den /dataset-Ordner nach /dist/dataset
+          if [ -d "dataset" ]; then
+            mkdir -p dist/dataset
+            cp -r dataset/. dist/dataset/
+          fi
+        
+      - name: Upload via FTPS
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.6
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftps  # FTPS aktivieren
+          port: 21        # Standard-FTP-Port (für FTPS oft 990)
+          local-dir: ./dist/   # Lokales Verzeichnis
+          server-dir: /
+          security: strict  # Erzwingt sichere Verbindungen (inkl. passivem Modus)
+        
