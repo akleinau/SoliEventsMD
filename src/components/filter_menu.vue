@@ -109,21 +109,22 @@ const wer = computed(() => {
         </v-select>
       </div-->
       
-    <div class="FilterDiv">
-      <v-select label="Wochentag"
-        variant="outlined" multiple density="compact" hide-details bg-color="white"
-        :items="wochentage" v-model="wochentagFilter"
-        @update:modelValue="onWochentagFilterChange">
-        <template v-slot:selection="{ item, index }">
-          <v-chip v-if="index < 2">
-            <span>{{ item.title }}</span>
-          </v-chip>
-          <span v-if="index === 2" class="text-grey text-caption align-self-center">
-                  (+{{ wochentagFilter.length - 2 }} weitere)
-          </span>
-        </template>
+      <div class="FilterDiv">
+        <v-select label="Wochentag"
+          variant="outlined" multiple density="compact" hide-details bg-color="white"
+          :items="wochentage" v-model="wochentagFilter"
+          @update:modelValue="onWochentagFilterChange">
+          <template v-slot:selection="{ item, index }">
+            <v-chip v-if="index < 2">
+              <span>{{ item.title }}</span>
+            </v-chip>
+            <span v-if="index === 2" class="text-grey text-caption align-self-center">
+                    (+{{ wochentagFilter.length - 2 }} weitere)
+            </span>
+          </template>
 
-      </v-select>
+        </v-select>
+      </div>
     </div>
 
     <!-- Button zum Umschalten des viewMode (Kacheln / Liste) -->
