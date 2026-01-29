@@ -201,6 +201,51 @@ export const useDataStore = defineStore('dataStore', {
                 return false;
             }
             return this.isVerificationStale(item.Letzte_Ueberpruefung);
+        },
+        /**
+         * Checks if the Werbegrafik value is a valid filename (not "yes", "no", or empty).
+         * Returns the filename if valid, or null otherwise.
+         */
+        getWerbegrafikFilename(item: DataRow | null): string | null {
+            if (!item) {
+                return null;
+            }
+            
+            const value = item['Werbegrafik?'];
+            if (!value) {
+                return null;
+            }
+            
+            const trimmed = value.trim();
+            if (!trimmed) {
+                return null;
+            }
+            
+            // Filter out common non-filename values (case-insensitive)
+            const invalidValues = ['yes', 'no', 'ja', 'nein', 'true', 'false', '1', '0'];
+            if (invalidValues.includes(trimmed.toLowerCase())) {
+                return null;
+            }
+            
+            // Check if the value looks like a filename (contains a file extension)
+            // Common image extensions: jpg, jpeg, png, gif, webp, svg
+            const imageExtensions = /\.(jpe?g|png|gif|webp|svg|bmp|ico)$/i;
+            if (!imageExtensions.test(trimmed)) {
+                return null;
+            }
+            
+            return trimmed;
+        },
+        /**
+         * Returns the full path to the Werbegrafik image if it exists, or null otherwise.
+         */
+        getWerbegrafikPath(item: DataRow | null): string | null {
+            const filename = this.getWerbegrafikFilename(item);
+            if (!filename) {
+                return null;
+            }
+            
+            return `/werbegrafik/${filename}`;
         }
     }
 });
