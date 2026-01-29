@@ -14,6 +14,7 @@ onMounted(() => {
 watch(() => active.value, (newValue) => {
   if (!newValue) {
     dataStore.current_item = null
+    dataStore.clear_focused_item()
   }
 })
 
@@ -63,7 +64,16 @@ const showWerbegrafik = computed(() => {
 </script>
 
 <template>
-  <v-dialog v-model="active" style="max-width: 1000px">
+  <v-dialog 
+    v-model="active" 
+    style="max-width: 1000px" 
+    :attach="'.datatable-wrapper'" 
+    :contained="true" 
+    :scrim="false"
+    :persistent="true"
+    :no-click-animation="true"
+    content-class="dialog-content-shifted"
+  >
     <v-card v-if="item">
       <v-card-title class="dialog-title">
         <span>{{ item.Was }}</span>
@@ -139,4 +149,11 @@ const showWerbegrafik = computed(() => {
   overflow: hidden;
 }
 
+</style>
+
+<style>
+/* Global style to shift dialog up */
+.dialog-content-shifted {
+  margin-top: -15vh !important;
+}
 </style>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { ref, onMounted, onBeforeUnmount, computed } from 'vue';
 import Data_loader from "../components/data_loader.vue";
 import Filter_menu from "../components/filter_menu.vue";
 import Datatable from "../components/datatable.vue";
@@ -13,7 +13,10 @@ import { useDataStore } from "../stores/dataStore.ts";
 
 const dataStore = useDataStore();
 const isMobile = ref(false);
-const isMapOpen = ref(true);
+const datamap = ref<InstanceType<typeof Datamap> | null>(null);
+
+// Use store's isMapVisible instead of local ref
+const isMapOpen = computed(() => dataStore.isMapVisible);
 
 // Prüfen, ob mobiles Gerät
 const checkIfMobile = () => {
@@ -22,12 +25,42 @@ const checkIfMobile = () => {
 
 // Karte ein-/ausklappen
 const toggleMap = () => {
-  isMapOpen.value = !isMapOpen.value;
+  dataStore.toggleMapVisible();
 };
 
 // Event-Handler für Klicks auf Items
 const handleItemClick = (item: any) => {
-  Datamap.value?.focusOnItem(item); // ToDo activate later
+  // Only focus on map if map is visible
+  if (dataStore.isMapVisible && datamap.value) {
+    dataStore.set_focused_item(item);
+  }
+};
+
+// Close the detail dialog
+const closeDialog = () => {
+  dataStore.clear_current_item();
+  dataStore.clear_focused_item();
+};
+
+// Track mouse position to distinguish click from pan/scroll
+const backdropMouseStart = ref<{ x: number; y: number } | null>(null);
+
+const onBackdropMouseDown = (e: MouseEvent) => {
+  backdropMouseStart.value = { x: e.clientX, y: e.clientY };
+};
+
+const onBackdropMouseUp = (e: MouseEvent) => {
+  if (!backdropMouseStart.value) return;
+  
+  const dx = Math.abs(e.clientX - backdropMouseStart.value.x);
+  const dy = Math.abs(e.clientY - backdropMouseStart.value.y);
+  
+  // Only close if mouse moved less than 5px (true click, not pan)
+  if (dx < 5 && dy < 5) {
+    closeDialog();
+  }
+  
+  backdropMouseStart.value = null;
 };
 
 onMounted(() => {
@@ -53,18 +86,28 @@ onBeforeUnmount(() => {
       <Filter_menu />
     </div>
 
-    <!--View when item selected /-->
-    <Curr_item_dialog class="mt-5" v-if="dataStore.current_item !== null" />
-
     <div class="content-container" :class="{ 'map-open': isMapOpen, 'mobile': isMobile }">
-        <!--List of Cards /-->
-        <Datatable 
-            class="datatable"
-            :class="{ 'datatable--collapsed': isMapOpen }"
-            :viewMode="dataStore.getViewMode()"
-            :items="dataStore.get_filtered_data()"
-            @item-clicked="handleItemClick"
-        />
+        <!--Wrapper for datatable and dialog (dialog only overlays datatable, not map) -->
+        <div class="datatable-wrapper" :class="{ 'datatable-wrapper--collapsed': isMapOpen }">
+          <!--List of Cards /-->
+          <Datatable 
+              class="datatable"
+              :viewMode="dataStore.getViewMode()"
+              :items="dataStore.get_filtered_data()"
+              @item-clicked="handleItemClick"
+          />
+          
+          <!-- Overlay to capture clicks when dialog is open -->
+          <div 
+            v-if="dataStore.current_item !== null" 
+            class="dialog-backdrop"
+            @mousedown="onBackdropMouseDown"
+            @mouseup="onBackdropMouseUp"
+          ></div>
+          
+          <!--View when item selected - now only overlays datatable /-->
+          <Curr_item_dialog class="mt-5" v-if="dataStore.current_item !== null" />
+        </div>
 
         <!-- Button zum Ein-/Ausklappen der Karte /-->
         <button
@@ -116,6 +159,23 @@ onBeforeUnmount(() => {
   transition: all 0.3s ease;
 }
 
+.datatable-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  transition: all 0.3s ease;
+}
+
+.dialog-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100;
+  cursor: pointer;
+}
+
 .datamap {
   position: absolute;
   right: 0;
@@ -158,7 +218,7 @@ onBeforeUnmount(() => {
 
 /* Desktop-Ansicht */
 @media (min-width: 768px) {
-  .content-container.map-open .datatable {
+  .content-container.map-open .datatable-wrapper {
     width: 60%;
   }
 
@@ -173,8 +233,12 @@ onBeforeUnmount(() => {
     flex-direction: column;
   }
 
-  .datatable {
+  .datatable-wrapper {
     height: 80vh;
+  }
+
+  .datatable {
+    height: 100%;
   }
 
   .datamap {

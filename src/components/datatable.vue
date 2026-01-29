@@ -1,13 +1,25 @@
 <script setup lang="ts">
 
+import { useDataStore } from "../stores/dataStore.ts";
 import Cards_view from "../components/cards_view.vue";
 import List_view from "../components/list_view.vue";
 import Scroll_up_button from "../components/scroll_up_button.vue";
+
+const dataStore = useDataStore()
 
 // Props
 const props = defineProps<{
   viewMode: string;
 }>();
+
+const emit = defineEmits<{
+  (e: 'item-clicked', item: any): void
+}>()
+
+const clicked = (item: any) => {
+  dataStore.set_current_item(item)
+  emit('item-clicked', item)
+}
 
 </script>
 
