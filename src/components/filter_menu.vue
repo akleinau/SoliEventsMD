@@ -6,6 +6,9 @@ import { ref, computed } from "vue";
 
 const dataStore = useDataStore();
 
+// Heute-Filter
+const heuteFilterActive = ref(false);
+
 // Unterkategorie
 const unterkategorieFilter = ref<string[]>([]);
 const unterkategorie = computed(() => {
@@ -21,17 +24,35 @@ const unterkategorie = computed(() => {
 
 // Wochentage bzw. alternative Beschreibung (alle Tage, werktags, jeden Tag, ...) - aber keine Aufzählung von Tagen.
 const wochentagFilter = ref<string[]>([]);
+const HEUTE_FILTER_VALUE = '__heute__';
 const wochentage = computed(() => {
   if (!dataStore.data) return [];
   const uniqueWochentage = new Set(dataStore.data.map(item => item.Wochentag));
   // erst mit "0 alle Tage", "1 Montag", ... sortieren
-  return Array.from(uniqueWochentage).sort()
+  const sortedWochentage = Array.from(uniqueWochentage).sort()
     // und danach nur noch den 'kurzen' Titel anzeigen (via ".map(...)")
     .map(tag => ({ 
       value: tag, 
       title: dataStore.getFormattedDay(tag ?? '')
     }));
+  // "Heute" als erste Option hinzufügen
+  return [{ value: HEUTE_FILTER_VALUE, title: 'Heute' }, ...sortedWochentage];
 });
+
+const onWochentagFilterChange = (newFilter: string[]) => {
+  const hasHeute = newFilter.includes(HEUTE_FILTER_VALUE);
+  const wasHeuteActive = heuteFilterActive.value;
+  
+  // Handle "Heute" filter state
+  if (hasHeute !== wasHeuteActive) {
+    heuteFilterActive.value = hasHeute;
+    dataStore.setHeuteFilter(hasHeute);
+  }
+  
+  // Filter out "Heute" from the regular Wochentag filter
+  const regularFilter = newFilter.filter(v => v !== HEUTE_FILTER_VALUE);
+  dataStore.add_filter('Wochentag', regularFilter);
+};
 
 // Wer
 const werFilter = ref<string[]>([]);
@@ -72,23 +93,7 @@ const wer = computed(() => {
         </v-select>
       </div-->
 
-      <div class="FilterDiv">
-        <v-select label="Wochentag"
-          variant="outlined" multiple density="compact" hide-details bg-color="white"
-          :items="wochentage" v-model="wochentagFilter"
-          @update:modelValue="dataStore.add_filter('Wochentag', wochentagFilter)">
-          <template v-slot:selection="{ item, index }">
-            <v-chip v-if="index < 2">
-              <span>{{ item.title }}</span>
-            </v-chip>
-            <span v-if="index === 2" class="text-grey text-caption align-self-center">
-                    (+{{ wochentagFilter.length - 2 }} weitere)
-            </span>
-          </template>
-        </v-select>
-      </div>
-
-      <div class="FilterDiv">
+      <!--div class="FilterDiv">
         <v-select label="Veranstalter"
           variant="outlined" multiple density="compact" hide-details bg-color="white"
           :items="wer" v-model="werFilter"
@@ -102,8 +107,23 @@ const wer = computed(() => {
             </span>
           </template>
         </v-select>
-      </div>
+      </div-->
       
+    <div class="FilterDiv">
+      <v-select label="Wochentag"
+        variant="outlined" multiple density="compact" hide-details bg-color="white"
+        :items="wochentage" v-model="wochentagFilter"
+        @update:modelValue="onWochentagFilterChange">
+        <template v-slot:selection="{ item, index }">
+          <v-chip v-if="index < 2">
+            <span>{{ item.title }}</span>
+          </v-chip>
+          <span v-if="index === 2" class="text-grey text-caption align-self-center">
+                  (+{{ wochentagFilter.length - 2 }} weitere)
+          </span>
+        </template>
+
+      </v-select>
     </div>
 
     <!-- Button zum Umschalten des viewMode (Kacheln / Liste) -->
