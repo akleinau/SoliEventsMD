@@ -80,9 +80,8 @@ onBeforeUnmount(() => {
     <!--Prepare data /-->
     <Data_loader />
 
-    <!--Filter the data in table [and map -- ToDo later] /-->
+    <!--Filter the data in table /-->
     <div class="filter-container">
-      <!--Initial_selection class="mt-5" /-->
       <Filter_menu />
     </div>
 
@@ -92,6 +91,7 @@ onBeforeUnmount(() => {
           <!--List of Cards /-->
           <Datatable 
               class="datatable"
+              :class="{ 'datatable--collapsed': isMapOpen}"
               :viewMode="dataStore.getViewMode()"
               :items="dataStore.get_filtered_data()"
               @item-clicked="handleItemClick"
@@ -162,7 +162,7 @@ onBeforeUnmount(() => {
 .datatable-wrapper {
   position: relative;
   width: 100%;
-  height: 100vh;
+  height: 100%;
   transition: all 0.3s ease;
 }
 
@@ -234,11 +234,7 @@ onBeforeUnmount(() => {
   }
 
   .datatable-wrapper {
-    height: 80vh;
-  }
-
-  .datatable {
-    height: 100%;
+    overflow-y: auto; /* Scrollbar bei Bedarf */
   }
 
   .datamap {
@@ -257,7 +253,7 @@ onBeforeUnmount(() => {
     align-self: center;
   }
 
-  .content-container.map-open.mobile .datatable {
+  .content-container.map-open.mobile .datatable-wrapper {
     height: 100vh;
   }
 
