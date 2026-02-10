@@ -276,6 +276,9 @@ export const useDataStore = defineStore('dataStore', {
         getCategoryIcon(category?: string | null): string | undefined {
             return getCategoryDefinition(category)?.icon;
         },
+        getCategoryIconUrl(category?: string | null): string | undefined {
+            return getCategoryDefinition(category)?.icon2;
+        },
         setVerificationThresholdMonths(months: number) {
             this.verificationThresholdMonths = months;
         },
