@@ -5,16 +5,24 @@ import {computed, onMounted, ref, watch} from "vue";
 
 const dataStore = useDataStore()
 
-const active = ref(true)
+const active = ref(true);
+
+type DataRow = Record<string, string | undefined>;
+const editableItem = ref(null as DataRow | null);
+const copyEditInfos = ref(null as String | null);
+const isEditing = ref(false);
+
 
 onMounted(() => {
-  active.value = true
+  active.value = true;
+  editableItem.value = JSON.parse(JSON.stringify(dataStore.current_item));
+  
 })
 
 watch(() => active.value, (newValue) => {
   if (!newValue) {
-    dataStore.current_item = null
-    dataStore.clear_focused_item()
+    dataStore.current_item = null;
+    dataStore.clear_focused_item();
   }
 })
 
@@ -41,6 +49,28 @@ const verificationWarning = computed(() => {
   return dataStore.getVerificationWarning(item.value.Letzte_Ueberpruefung);
 });
 
+
+const isVerificationStaleEditing = computed(() => {
+  if (!editableItem.value) {
+    return false;
+  }
+  return dataStore.shouldShowVerificationWarning(editableItem.value);
+});
+
+const verificationLabelEditing = computed(() => {
+  if (!editableItem.value) {
+    return null;
+  }
+  return dataStore.getVerificationLabel(editableItem.value.Letzte_Ueberpruefung);
+});
+
+const verificationWarningEditing = computed(() => {
+  if (!editableItem.value) {
+    return null;
+  }
+  return dataStore.getVerificationWarning(editableItem.value.Letzte_Ueberpruefung);
+});
+
 // Werbegrafik image handling
 const werbegrafikPath = computed(() => {
   return dataStore.getWerbegrafikPath(item.value);
@@ -61,6 +91,53 @@ const showWerbegrafik = computed(() => {
   return werbegrafikPath.value && !werbegrafikError.value;
 });
 
+const openMailTo = (content: string) => {  
+  // E-Mail-Adresse und Betreff festlegen
+  const email = "team@magdeburg-teilt.de";
+  const subject = "Vorschlag für Soli-Angebot";
+  const body = content;
+
+  // mailto-Link konstruieren
+  const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+  // Link im neuen Tab öffnen
+  window.open(mailtoLink, "_blank");
+};
+
+const toggleEdit = () => {
+  isEditing.value = !isEditing.value;
+  //editableItem.value = dataStore.current_item;
+  editableItem.value = JSON.parse(JSON.stringify(dataStore.current_item));
+};
+const cancelEdit = () => {
+  copyEditInfos.value = null;
+  isEditing.value = false;
+};
+const saveEdit = () => {
+  const content = JSON.stringify(editableItem.value);
+  const content_old = JSON.stringify(item.value);
+  copyEditInfos.value = "Hallo,\n\nich möchte folgende Veränderung eines Soli-Angebots melden.\n\nLiebe Grüße,\nDEIN_NAME" + "\n\nNEU:\n\n" + content + "\n\nALT:\n\n" + content_old;
+  openMailTo(copyEditInfos.value.toString());
+};
+
+const copied = ref(false);
+
+const copyToClipboard = async() => {
+  if (copyEditInfos.value != null) {
+    const copytext = copyEditInfos.value.toString();
+    try {
+      await navigator.clipboard.writeText(copytext);
+      copied.value = true;
+      setTimeout(() => {
+        copied.value = false;
+      }, 2000); // Rücksetzen nach 2 Sekunden
+    } catch (err) {
+      console.error("Fehler beim Kopieren:", err);
+      alert("Kopieren fehlgeschlagen. Bitte manuell kopieren: " + copyEditInfos.toString());
+    }
+  }
+}
+
 </script>
 
 <template>
@@ -74,7 +151,8 @@ const showWerbegrafik = computed(() => {
     :no-click-animation="true"
     content-class="dialog-content-shifted"
   >
-    <v-card v-if="item">
+    <!-- Anzeigemodus (View) -->
+    <v-card v-if="item && !isEditing">
       <v-card-title class="dialog-title">
         <span>{{ item.Was }}</span>
         <v-icon size="x-large" color="black" class="dialog-title__icon">{{ dataStore.getCategoryIcon(item.Kategorie) }}</v-icon>
@@ -86,9 +164,7 @@ const showWerbegrafik = computed(() => {
             <p class="mb-1"> <v-icon>mdi-map-marker</v-icon> {{ item.Wo }}</p>
             <p class="mb-1"> <v-icon>mdi-calendar</v-icon> {{ dataStore.getFormattedDay(item.Wochentag ?? '') }}, {{ item.Rhythmus }}</p>
             <p class="mb-1"> <v-icon>mdi-clock</v-icon> {{ item.Uhrzeit_Start }} - {{ item.Uhrzeit_Ende }}</p>
-            <p class="mt-5">
-              <a :href="item.Link" target="_blank">{{ item.Link }}</a>
-            </p>
+            <p class="mt-5"> <a :href="item.Link" target="_blank">{{ item.Link }}</a> </p>
           </v-col>
 
           <v-col v-if="showWerbegrafik" cols="12" md="5">
@@ -108,27 +184,121 @@ const showWerbegrafik = computed(() => {
           </v-col>
         </v-row>
 
-        <p
-            v-if="!isVerificationStale"
-            class="mt-5 text-grey-darken-1"
-        >
-          Letzte Überprüfung: {{ verificationLabel ?? 'keine Angabe' }}
-        </p>
-        <v-alert
-            v-else
-            type="warning"
-            variant="tonal"
-            density="comfortable"
-            class="mt-5"
-        >
-          {{ verificationWarning ?? 'Achtung!' }}
-        </v-alert>
+        <v-row class="edit-info-container">
+          <p
+              v-if="!isVerificationStale"
+              class="text-grey-darken-1"
+          >
+            Letzte Überprüfung: {{ verificationLabel ?? 'keine Angabe' }}
+          </p>
+          <v-alert class="px-2 py-2"
+              v-else
+              type="warning"
+              variant="tonal"
+              density="comfortable"
+          >
+            {{ verificationWarning ?? 'Achtung!' }}
+          </v-alert>
+          <div>
+            <v-btn size="small" @click="toggleEdit">Bearbeiten</v-btn>          
+          </div>
+        </v-row>
+
+      </v-card-text>
+    </v-card>
+    
+    
+    <!-- Bearbeitungsmodus (Edit) -->
+    <v-card v-if="editableItem && isEditing">
+      <v-card-title class="dialog-title">
+        <input v-model="editableItem.Was" placeholder="Was" type="text" />
+        <span>Kategorie: <input v-model="editableItem.Kategorie" placeholder="Kategorie" type="text" /></span>
+        <v-icon size="x-large" color="black" class="dialog-title__icon">{{ dataStore.getCategoryIcon(editableItem.Kategorie) }}</v-icon>
+      </v-card-title>
+      <v-card-text>
+        <v-row>
+          <v-col cols="12" :md="showWerbegrafik ? 7 : 12">
+            <p class="mb-3"> <input class="text-subtitle-1 text-medium-emphasis" v-model="editableItem.Wer" placeholder="Wer" type="text" /> </p>
+            <p class="mb-1 row-container"> <v-icon>mdi-map-marker</v-icon> <input v-model="editableItem.Wo" placeholder="Wo" type="text" />, <input v-model="editableItem.Koordinaten" placeholder="Koordinaten" type="text" /> </p>
+            <p class="mb-1 row-container"> <v-icon>mdi-calendar</v-icon> <input v-model="editableItem.Wochentag" placeholder="Wochentag" type="text" />, <input v-model="editableItem.Rhythmus" placeholder="Rhythmus" type="text" /> </p>
+            <p class="mb-1 row-container"> <v-icon>mdi-clock</v-icon> <input v-model="editableItem.Uhrzeit_Start" placeholder="Uhrzeit Start (HH:MM)" type="text" /> - <input v-model="editableItem.Uhrzeit_Ende" placeholder="Uhrzeit Ende (HH:MM)" type="text" /></p>
+            <p class="mt-5"> <input v-model="editableItem.Link" placeholder="Link" type="text" /> </p>
+          </v-col>
+
+          <v-col v-if="showWerbegrafik" cols="12" md="5">
+            <v-img
+                :src="werbegrafikPath!"
+                class="werbegrafik-image"
+                max-height="300"
+                contain
+                @error="handleWerbegrafikError"
+            >
+              <template v-slot:placeholder>
+                <v-row class="fill-height ma-0" align="center" justify="center">
+                  <v-progress-circular indeterminate color="grey-lighten-5"></v-progress-circular>
+                </v-row>
+              </template>
+            </v-img>
+          </v-col>
+        </v-row>
+
+        <v-row class="edit-info-container">
+          <p
+              v-if="!isVerificationStaleEditing"
+              class="text-grey-darken-1"
+          >
+            Letzte Überprüfung: {{ verificationLabelEditing ?? 'keine Angabe' }}
+          </p>
+          <v-alert class="px-2 py-2"
+              v-else
+              type="warning"
+              variant="tonal"
+              density="comfortable"
+          >
+            {{ verificationWarningEditing ?? 'Achtung!' }}
+          </v-alert>
+
+          <div>
+            <v-btn size="small" @click="saveEdit">Änderung vorschlagen</v-btn>
+            <v-btn size="small" @click="cancelEdit">Abbrechen</v-btn>       
+          </div>
+        </v-row>
+        <v-row v-if="copyEditInfos != null">
+          <div class="copyable-textarea-container">
+            <textarea
+              v-model="copyEditInfos"
+              class="copyable-textarea"
+              readonly
+            ></textarea>
+            <button
+              @click="copyToClipboard"
+              class="copy-button"
+              :title="copied ? 'Kopiert!' : 'Kopieren'"
+            >
+              {{ copied ? "✓" : "📋" }}
+            </button>
+          </div>
+        </v-row>
+
       </v-card-text>
     </v-card>
   </v-dialog>
 </template>
 
 <style scoped>
+
+input {
+  display: inline-block;
+  width: 80%;
+  max-width: 100%;
+  background-color: lightgrey;
+  padding: 0px 1px;
+  border: 1px solid lightgrey;
+  border-radius: 3px;
+  box-shadow:
+    3px 3px 5px rgba(0, 0, 0, 0.2), /* Schatten unten rechts */
+    -2px -2px 5px rgba(255, 255, 255, 0.8); /* "Licht" oben links */
+}
 
 .dialog-title {
   display: flex;
@@ -149,11 +319,57 @@ const showWerbegrafik = computed(() => {
   overflow: hidden;
 }
 
+.row-container {
+  display: flex;
+  width: 80%;
+  column-gap: 5px;
+}
+
+.edit-info-container {
+  display: flex;
+  column-gap: 10px;
+  align-items: center;
+}
+
+.copyable-textarea-container {
+  position: relative;
+  align-self: left;
+  width: 100%;
+}
+
+.copyable-textarea {
+  width: 100%;
+  min-height: 150px;
+  padding: 10px;
+  padding-right: 40px; /* Platz für den Copy-Button */
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-family: monospace;
+  resize: vertical; /* Nur vertikales Skalieren erlauben */
+}
+
+.copy-button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.copy-button:hover {
+  background: #e0e0e0;
+}
+
 </style>
 
 <style>
 /* Global style to shift dialog up */
 .dialog-content-shifted {
-  margin-top: -15vh !important;
+  margin-top: -5vh !important;
 }
 </style>
