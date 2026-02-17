@@ -93,7 +93,7 @@ const showWerbegrafik = computed(() => {
 
 const openMailTo = (content: string) => {  
   // E-Mail-Adresse und Betreff festlegen
-  const email = "team@magdeburg-teilt.de";
+  const email = "aenderung@magdeburg-teilt.de";
   const subject = "Vorschlag für Soli-Angebot";
   const body = content;
 
@@ -102,6 +102,10 @@ const openMailTo = (content: string) => {
 
   // Link im neuen Tab öffnen
   window.open(mailtoLink, "_blank");
+};
+
+const closeDialog = () => {
+  active.value = false;
 };
 
 const toggleEdit = () => {
@@ -113,7 +117,18 @@ const cancelEdit = () => {
   copyEditInfos.value = null;
   isEditing.value = false;
 };
+
+const getFormattedDate = () => {
+  const today = new Date();
+  const day = String(today.getDate()).padStart(2, '0'); // Tag (DD)
+  const month = String(today.getMonth() + 1).padStart(2, '0'); // Monat (MM, +1 weil Monate 0-indexiert sind)
+  const year = today.getFullYear(); // Jahr (YYYY)
+  return `${day}.${month}.${year}`;
+}
+
 const saveEdit = () => {
+  if (editableItem.value)
+  editableItem.value.Letzte_Ueberpruefung = getFormattedDate().toString();
   const content = JSON.stringify(editableItem.value);
   const content_old = JSON.stringify(item.value);
   copyEditInfos.value = "Hallo,\n\nich möchte folgende Veränderung eines Soli-Angebots melden.\n\nLiebe Grüße,\nDEIN_NAME" + "\n\nNEU:\n\n" + content + "\n\nALT:\n\n" + content_old;
@@ -143,7 +158,7 @@ const copyToClipboard = async() => {
 <template>
   <v-dialog 
     v-model="active" 
-    style="max-width: 1000px" 
+    class="dialog-container" 
     :attach="'.datatable-wrapper'" 
     :contained="true" 
     :scrim="false"
@@ -199,9 +214,10 @@ const copyToClipboard = async() => {
           >
             {{ verificationWarning ?? 'Achtung!' }}
           </v-alert>
-          <div>
-            <v-btn size="small" @click="toggleEdit">Bearbeiten</v-btn>          
-          </div>
+          
+          <v-btn size="small" @click="toggleEdit">Bearbeiten</v-btn>   
+          <v-btn size="small" @click="closeDialog">Schließen</v-btn>        
+          
         </v-row>
 
       </v-card-text>
@@ -258,10 +274,9 @@ const copyToClipboard = async() => {
             {{ verificationWarningEditing ?? 'Achtung!' }}
           </v-alert>
 
-          <div>
-            <v-btn size="small" @click="saveEdit">Änderung vorschlagen</v-btn>
-            <v-btn size="small" @click="cancelEdit">Abbrechen</v-btn>       
-          </div>
+          <v-btn size="small" @click="saveEdit">Änderung vorschlagen</v-btn>
+          <v-btn size="small" @click="cancelEdit">Abbrechen</v-btn>       
+          
         </v-row>
         <v-row v-if="copyEditInfos != null">
           <div class="copyable-textarea-container">
@@ -300,6 +315,17 @@ input {
     -2px -2px 5px rgba(255, 255, 255, 0.8); /* "Licht" oben links */
 }
 
+.dialog-container {
+  max-width: 1000px;
+}
+
+/* Mobile-Ansicht ToDo: fix code or this section -> use "@media ..."" OR use "".XYZ--mobile" ! */
+@media (max-width: 767px) {
+  .dialog-container {
+    position: fixed;
+  }
+}
+
 .dialog-title {
   display: flex;
   align-items: center;
@@ -326,9 +352,19 @@ input {
 }
 
 .edit-info-container {
-  display: flex;
   column-gap: 10px;
   align-items: center;
+}
+
+/* Mobile-Ansicht ToDo: fix code or this section -> use "@media ..."" OR use "".XYZ--mobile" ! */
+@media (max-width: 767px) {
+  .edit-info-container {
+    display: grid;
+  }
+}
+
+.v-btn {
+  margin: 3px 0px;
 }
 
 .copyable-textarea-container {
