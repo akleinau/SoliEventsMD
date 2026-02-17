@@ -234,7 +234,6 @@ onBeforeUnmount(() => {
   .datamap {
     position: relative;
     width: 100%;
-    height: 0;
     order: 2;
   }
 

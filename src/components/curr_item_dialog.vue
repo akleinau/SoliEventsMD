@@ -1,7 +1,8 @@
 <script setup lang="ts">
 
-import {useDataStore} from "../stores/dataStore.ts";
-import {computed, onMounted, ref, watch} from "vue";
+import { computed, onMounted, ref, watch } from "vue";
+import { useDataStore } from "../stores/dataStore.ts";
+import { MAIN_CATEGORIES } from "../constants/categoryConfig";
 
 const dataStore = useDataStore()
 
@@ -27,6 +28,8 @@ watch(() => active.value, (newValue) => {
 })
 
 const item = computed(() => dataStore.current_item)
+
+const isMobile = computed(() => dataStore.isMobile)
 
 const isVerificationStale = computed(() => {
   if (!item.value) {
@@ -169,16 +172,16 @@ const copyToClipboard = async() => {
     <!-- Anzeigemodus (View) -->
     <v-card v-if="item && !isEditing">
       <v-card-title class="dialog-title">
-        <span>{{ item.Was }}</span>
+        {{ item.Was }}
         <v-icon size="x-large" color="black" class="dialog-title__icon">{{ dataStore.getCategoryIcon(item.Kategorie) }}</v-icon>
       </v-card-title>
       <v-card-text>
         <v-row>
           <v-col cols="12" :md="showWerbegrafik ? 7 : 12">
             <p class="mb-3 text-subtitle-1 text-medium-emphasis">{{ item.Wer }}</p>
-            <p class="mb-1"> <v-icon>mdi-map-marker</v-icon> {{ item.Wo }}</p>
-            <p class="mb-1"> <v-icon>mdi-calendar</v-icon> {{ dataStore.getFormattedDay(item.Wochentag ?? '') }}, {{ item.Rhythmus }}</p>
-            <p class="mb-1"> <v-icon>mdi-clock</v-icon> {{ item.Uhrzeit_Start }} - {{ item.Uhrzeit_Ende }}</p>
+            <p class="mb-1 col-container"> <v-icon>mdi-map-marker</v-icon> <div>{{ item.Wo }}</div></p>
+            <p class="mb-1 col-container"> <v-icon>mdi-calendar</v-icon> <div>{{ dataStore.getFormattedDay(item.Wochentag ?? '') }}, {{ item.Rhythmus }}</div></p>
+            <p class="mb-1 col-container"> <v-icon>mdi-clock</v-icon> <div>{{ item.Uhrzeit_Start }} - {{ item.Uhrzeit_Ende }}</div></p>
             <p class="mt-5"> <a :href="item.Link" target="_blank">{{ item.Link }}</a> </p>
           </v-col>
 
@@ -227,18 +230,32 @@ const copyToClipboard = async() => {
     <!-- Bearbeitungsmodus (Edit) -->
     <v-card v-if="editableItem && isEditing">
       <v-card-title class="dialog-title">
-        <input v-model="editableItem.Was" placeholder="Was" type="text" />
-        <span>Kategorie: <input v-model="editableItem.Kategorie" placeholder="Kategorie" type="text" /></span>
-        <v-icon size="x-large" color="black" class="dialog-title__icon">{{ dataStore.getCategoryIcon(editableItem.Kategorie) }}</v-icon>
+        <v-col class="pb-0">
+          <v-row>
+            <textarea v-model="editableItem.Was" placeholder="Was" type="text" :rows="isMobile ? '2' : '1'" />
+          </v-row>
+          <v-card-text class="pb-0">
+            <v-row class="align-center justify-end">
+              <span>Kategorie: 
+                <select v-model="editableItem.Kategorie">
+                  <option v-for="option in MAIN_CATEGORIES" :value="option.path" :placeholder="editableItem.Kategorie">
+                    {{ option.label }}
+                  </option>
+                </select>
+              </span>
+            <v-icon size="x-large" color="black" class="dialog-title__icon">{{ dataStore.getCategoryIcon(editableItem.Kategorie) }}</v-icon>
+          </v-row>
+        </v-card-text>
+        </v-col>
       </v-card-title>
       <v-card-text>
         <v-row>
           <v-col cols="12" :md="showWerbegrafik ? 7 : 12">
             <p class="mb-3"> <input class="text-subtitle-1 text-medium-emphasis" v-model="editableItem.Wer" placeholder="Wer" type="text" /> </p>
-            <p class="mb-1 row-container"> <v-icon>mdi-map-marker</v-icon> <input v-model="editableItem.Wo" placeholder="Wo" type="text" />, <input v-model="editableItem.Koordinaten" placeholder="Koordinaten" type="text" /> </p>
-            <p class="mb-1 row-container"> <v-icon>mdi-calendar</v-icon> <input v-model="editableItem.Wochentag" placeholder="Wochentag" type="text" />, <input v-model="editableItem.Rhythmus" placeholder="Rhythmus" type="text" /> </p>
-            <p class="mb-1 row-container"> <v-icon>mdi-clock</v-icon> <input v-model="editableItem.Uhrzeit_Start" placeholder="Uhrzeit Start (HH:MM)" type="text" /> - <input v-model="editableItem.Uhrzeit_Ende" placeholder="Uhrzeit Ende (HH:MM)" type="text" /></p>
-            <p class="mt-5"> <input v-model="editableItem.Link" placeholder="Link" type="text" /> </p>
+            <p class="mb-1 col-container"> <v-icon>mdi-map-marker</v-icon> <div class="row-container"><p class="col-container"><input v-model="editableItem.Wo" placeholder="Wo" type="text" />,</p> <input v-model="editableItem.Koordinaten" placeholder="Koordinaten" type="text" /> </div></p>
+            <p class="mb-1 col-container"> <v-icon>mdi-calendar</v-icon> <div class="row-container"><p class="col-container"><input v-model="editableItem.Wochentag" placeholder="Wochentag" type="text" />,</p> <input v-model="editableItem.Rhythmus" placeholder="Rhythmus" type="text" /> </div></p>
+            <p class="mb-1 col-container"> <v-icon>mdi-clock</v-icon> <div class="row-container"><p class="col-container"><input v-model="editableItem.Uhrzeit_Start" placeholder="Uhrzeit Start (HH:MM)" type="text" /> -</p> <input v-model="editableItem.Uhrzeit_Ende" placeholder="Uhrzeit Ende (HH:MM)" type="text" /> </div></p>
+            <p class="mt-5"> <textarea v-model="editableItem.Link" placeholder="Link" type="text" :rows="isMobile ? '2' : '1'"/> </p>
           </v-col>
 
           <v-col v-if="showWerbegrafik" cols="12" md="5">
@@ -302,10 +319,19 @@ const copyToClipboard = async() => {
 
 <style scoped>
 
-input {
-  display: inline-block;
-  width: 80%;
-  max-width: 100%;
+.dialog-container {
+  max-width: 1000px;
+}
+
+/* Mobile-Ansicht ToDo: fix code or this section -> use "@media ..."" OR use "".XYZ--mobile" ! */
+@media (max-width: 767px) {
+  .dialog-container {
+    position: fixed;
+    height: 100%;
+  }
+}
+
+input, select, textarea {
   background-color: lightgrey;
   padding: 0px 1px;
   border: 1px solid lightgrey;
@@ -315,19 +341,15 @@ input {
     -2px -2px 5px rgba(255, 255, 255, 0.8); /* "Licht" oben links */
 }
 
-.dialog-container {
-  max-width: 1000px;
-}
-
-/* Mobile-Ansicht ToDo: fix code or this section -> use "@media ..."" OR use "".XYZ--mobile" ! */
-@media (max-width: 767px) {
-  .dialog-container {
-    position: fixed;
-  }
+input, textarea {
+  display: inline-block;
+  width: 100%;
+  max-width: 100%;
 }
 
 .dialog-title {
   display: flex;
+  text-wrap: initial;
   align-items: center;
   justify-content: space-between;
   column-gap: 16px;
@@ -345,11 +367,42 @@ input {
   overflow: hidden;
 }
 
-.row-container {
+.col-container {
   display: flex;
-  width: 80%;
+  flex-direction: row;
+  flex: 1 1 0;
   column-gap: 5px;
 }
+.row-container {
+  display: grid;
+  grid-template-columns: auto auto;
+  flex-direction: row;
+  flex: 1 1 0;
+  column-gap: 5px;
+}
+
+/* Mobile-Ansicht ToDo: fix code or this section -> use "@media ..."" OR use "".XYZ--mobile" ! */
+@media (max-width: 767px) {
+
+  input, textarea {
+    display: inline-block;
+    width: 100%;
+    max-width: 95%;
+  }
+
+  .col-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+  }
+  .row-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    column-gap: 5px;
+  }
+}
+
 
 .edit-info-container {
   column-gap: 10px;
