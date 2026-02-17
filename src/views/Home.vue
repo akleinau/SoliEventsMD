@@ -12,16 +12,11 @@ import Curr_item_dialog from "../components/curr_item_dialog.vue";
 import { useDataStore } from "../stores/dataStore.ts";
 
 const dataStore = useDataStore();
-const isMobile = ref(false);
 const datamap = ref<InstanceType<typeof Datamap> | null>(null);
 
 // Use store's isMapVisible instead of local ref
 const isMapOpen = computed(() => dataStore.isMapVisible);
-
-// Prüfen, ob mobiles Gerät
-const checkIfMobile = () => {
-  isMobile.value = window.innerWidth <= 768;
-};
+const isMobile = computed(() => dataStore.isMobile);
 
 // Karte ein-/ausklappen
 const toggleMap = () => {
@@ -64,12 +59,11 @@ const onBackdropMouseUp = (e: MouseEvent) => {
 };
 
 onMounted(() => {
-  checkIfMobile();
-  window.addEventListener('resize', checkIfMobile);
+  window.addEventListener('resize', dataStore.checkIfMobile);
 });
 
 onBeforeUnmount(() => {
-  window.removeEventListener('resize', checkIfMobile);
+  window.removeEventListener('resize', dataStore.checkIfMobile);
 });
 
 </script>
