@@ -124,14 +124,10 @@ export const useDataStore = defineStore('dataStore', {
                 
                 filteredData = filteredData.filter(item => {
                     const wochentag = item.Wochentag ?? '';
-                    const rhythmus = item.Rhythmus ?? '';
                     const itemDayName = this.extractDayName(wochentag);
                     
-                    // Exclude always-open events: "wenn geöffnet" or rhythmus contains "immer"
+                    // Exclude events without a specific schedule
                     if (itemDayName === 'wenn geöffnet') {
-                        return false;
-                    }
-                    if (rhythmus.toLowerCase().includes('immer')) {
                         return false;
                     }
                     
