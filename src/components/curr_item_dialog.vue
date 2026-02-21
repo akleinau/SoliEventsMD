@@ -76,7 +76,10 @@ const showWerbegrafik = computed(() => {
   >
     <v-card 
       v-if="item"
-      :style="{ 'background': dataStore.getCardColor(item.Kategorie) }">
+      :style="{
+        'background': dataStore.getCardColor(item.Kategorie), 
+        'border': '5px solid color-mix(in oklch, ' + dataStore.getCardColor(item.Kategorie) + ', black 20%)'
+      }">
       <v-card-title class="dialog-title">
         <span>{{ item.Was }}</span>
         <v-icon size="x-large" color="black" class="dialog-title__icon">{{ dataStore.getCategoryIcon(item.Kategorie) }}</v-icon>
@@ -120,7 +123,7 @@ const showWerbegrafik = computed(() => {
             v-else
             type="warning"
             variant="tonal"
-            density="comfortable"
+            density="compact"
             class="mt-5"
         >
           {{ verificationWarning ?? 'Achtung!' }}
@@ -131,6 +134,10 @@ const showWerbegrafik = computed(() => {
 </template>
 
 <style scoped>
+
+a {
+  color: grey;
+}
 
 .dialog-title {
   display: flex;

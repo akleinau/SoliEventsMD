@@ -10,8 +10,7 @@ const dataStore = useDataStore()
 type SelectionOption = CategoryDefinition & { path: string }
 
 const looking_for_options: SelectionOption[] = [
-  { label: 'Alles', path: 'alles', color: 'linear-gradient( to right, red, orange, yellow, green, blue, indigo, violet)', //'#fcd8d8'
-  icon: 'mdi-star', icon2: '' },
+  { label: 'Alles', path: 'alles', color: '#fcd8d8', icon: 'mdi-star', icon2: '' },
   ...MAIN_CATEGORIES,
 ]
 
@@ -94,10 +93,6 @@ const apply_filter = () => {
 
     .v-btn {
       padding-bottom: 5px;
-    }
-
-    .button-container {
-      
     }
 
     .category-button {
