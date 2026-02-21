@@ -111,12 +111,38 @@ const getFormattedDate = () => {
   return `${day}.${month}.${year}`;
 }
 
+const dataRowtoCsv = (data: DataRow | any) => {
+  const delimiter = ","
+  // Header (Spaltennamen) extrahieren
+  const headers = Object.keys(data).join(delimiter);
+
+  // Werte extrahieren und in Anführungszeichen setzen, falls nötig
+  const values = Object.values(data)
+    .map(value => {
+      if (typeof value === "string" && (value.includes(delimiter) || value.includes('"'))) {
+        return `"${value.replace(/"/g, '""')}"`; // Anführungszeichen escapen
+      }
+      return value;
+    })
+    .join(delimiter);
+
+  // CSV-Zeile zurückgeben
+  return `${headers}\n${values}`;
+}
+
 const saveEdit = () => {
   if (editableItem.value)
   editableItem.value.Letzte_Ueberpruefung = getFormattedDate().toString();
-  const content = JSON.stringify(editableItem.value);
-  const content_old = JSON.stringify(item.value);
-  copyEditInfos.value = "Hallo,\nich möchte folgende Veränderung eines Soli-Angebots melden.\nLiebe Grüße,\nDEIN_NAME" + "\n\n# NEU:\n\n" + content + "\n\n# ALT:\n\n" + content_old;
+
+  // remove columns with sensitive data
+  delete editableItem.value?.Kontakt;
+  delete editableItem.value?.Kommentar;
+  delete item.value?.Kontakt;
+  delete item.value?.Kommentar;
+  
+  const contentAsCsv = dataRowtoCsv(editableItem?.value);
+  const oldContentAsCsv = dataRowtoCsv(item?.value)
+  copyEditInfos.value = "Hallo,\nich möchte folgende Veränderung eines Soli-Angebots melden.\nLiebe Grüße,\nDEIN_NAME" + "\n\n# NEU:\n\n" + contentAsCsv + "\n\n# ALT:\n\n" + oldContentAsCsv;
   openMailTo(copyEditInfos.value.toString());
 };
 
