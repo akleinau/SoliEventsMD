@@ -74,7 +74,9 @@ const showWerbegrafik = computed(() => {
     :no-click-animation="true"
     content-class="dialog-content-shifted"
   >
-    <v-card v-if="item">
+    <v-card 
+      v-if="item"
+      :style="{ 'background': dataStore.getCardColor(item.Kategorie) }">
       <v-card-title class="dialog-title">
         <span>{{ item.Was }}</span>
         <v-icon size="x-large" color="black" class="dialog-title__icon">{{ dataStore.getCategoryIcon(item.Kategorie) }}</v-icon>
