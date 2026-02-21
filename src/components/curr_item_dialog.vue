@@ -184,8 +184,8 @@ const copyToClipboard = async() => {
         'border': '5px solid color-mix(in oklch, ' + dataStore.getCardColor(item.Kategorie) + ', black 20%)'
       }">    
       <v-card-title class="dialog-title">
-        {{ item.Was }}
-        <v-icon size="x-large" color="black" class="dialog-title__icon">{{ dataStore.getCategoryIcon(item.Kategorie) }}</v-icon>
+        <span>{{ item.Was }}</span>
+        <v-icon size="x-large" color="black" class="dialog-title__icon">{{ item.Unterkategorie ? dataStore.getSubCategoryIcon(item.Unterkategorie) : dataStore.getCategoryIcon(item.Kategorie) }}</v-icon>
       </v-card-title>
       <v-card-text>
         <v-row>

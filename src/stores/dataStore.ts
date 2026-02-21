@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { getCategoryDefinition } from "../constants/categoryConfig";
+import { getCategoryDefinition, getSubCategoryDefinition } from "../constants/categoryConfig";
 
 const DEFAULT_VERIFICATION_THRESHOLD_MONTHS = 3;
 
@@ -59,6 +59,8 @@ export const useDataStore = defineStore('dataStore', {
       columns: [
             { title: 'Was', key: 'Was' },
             { title: 'Kategorie', key: 'Kategorie' },
+            { title: 'Unterkategorie', key: 'Unterkategorie' },
+            { title: 'Nutzung', key: 'Nutzung' },
             { title: 'Wochentag', key: 'Wochentag' },
             { title: 'Rhythmus', key: 'Rhythmus' },
             { title: 'Uhrzeit Start', key: 'Uhrzeit_Start' },
@@ -89,6 +91,8 @@ export const useDataStore = defineStore('dataStore', {
             newData = newData.filter((d: DataRow) => d["inaktiv"] != "inaktiv");
 
             this.data = newData;
+            //console.log(this.data.[1]["Unterkategorie"]);
+            
         },
         // not needed at the moment since the raw data should already be sorted before (using a spreadsheet app with filters)
         /*sort_data() {
@@ -108,6 +112,24 @@ export const useDataStore = defineStore('dataStore', {
                 return this.columns.filter(column => column_subset.includes(column.key));
             }
             return this.columns;
+        },
+        get_category_filtered_data() {
+            let filteredData = this.data;
+
+            // Apply *only* category column filter               
+            const categoryFilters = this.filter.filter(f => f.column === "Kategorie");
+            
+            if (categoryFilters.length === 0) {
+                return filteredData;
+            }
+
+            return filteredData.filter(item => {
+                return categoryFilters.every(f => {
+                    const value = item[f.column] ?? '';
+                    if (value === '') return false;
+                    return f.values.includes(value);
+                });
+            });
         },
         get_filtered_data() {
             let filteredData = this.data;
@@ -190,6 +212,9 @@ export const useDataStore = defineStore('dataStore', {
         clear_filter(column: string) {
             this.filter = this.filter.filter(f => f.column !== column);
         },
+        clear_all_filters() {
+            this.filter = [];
+        },        
         // Helper to extract the day name from Wochentag (removes number prefix)
         extractDayName(wochentag: string): string {
             const firstSpaceIndex = wochentag.indexOf(' ');
@@ -272,6 +297,9 @@ export const useDataStore = defineStore('dataStore', {
         },
         getCategoryIcon(category?: string | null): string | undefined {
             return getCategoryDefinition(category)?.icon;
+        },
+        getSubCategoryIcon(category?: string | null): string | undefined {
+            return getSubCategoryDefinition(category)?.icon;
         },
         setVerificationThresholdMonths(months: number) {
             this.verificationThresholdMonths = months;
