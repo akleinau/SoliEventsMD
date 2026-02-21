@@ -4,7 +4,7 @@
 
 <template>
 
-    <div class="my-10 mx-10">
+    <div class="my-5 mx-5">
         <h1>IMPRESSUM</h1>
         <div>
             Benjamin Parske<br>

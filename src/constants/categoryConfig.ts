@@ -17,21 +17,21 @@ export const CATEGORY_CONFIG: Record<string, CategoryDefinition> = {
   begegnung: {
     label: 'Begegnung',
     path: 'begegnung',
-    color: '#fcd8d8',
+    color: '#eae2fd',
     icon: 'mdi-account-multiple-outline',
     icon2: begegnungIcon,
   },
   /*buecher: {
     label: 'Bücher',
     path: 'buecher',
-    color: '#dbebff',
+    color: '',//'#dbebff',
     icon: 'mdi-book-open-variant-outline',
     icon2: buecherIcon,
   },*/
   digitales: {
     label: 'Digitales',
     path: 'digitales',
-    color: '#eae2fd',
+    color: '#dbebff',
     icon: 'mdi-laptop',
     icon2: digitalesIcon,
   },

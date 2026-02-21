@@ -4,9 +4,9 @@
 
 <template>
     
-    <div class="my-10 mx-10">
+    <div class="my-5 mx-5">
 
-        <h1>DATENSCHUTZERKLÄRUNG</h1>
+        <h1 class="wrap-it">DATENSCHUTZ&shy;ERKLÄRUNG</h1>
 
         <h2>Verantwortlicher</h2>
 
@@ -71,6 +71,11 @@
 </template>
 
 <style scoped>
+
+.wrap-it {
+    word-wrap: break-word;
+    hyphens:initial;
+}
 
 </style>
 
