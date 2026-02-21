@@ -77,7 +77,7 @@ const showWerbegrafik = computed(() => {
     <v-card v-if="item">
       <v-card-title class="dialog-title">
         <span>{{ item.Was }}</span>
-        <v-icon size="x-large" color="black" class="dialog-title__icon">{{ dataStore.getCategoryIcon(item.Kategorie) }}</v-icon>
+        <v-icon size="x-large" color="black" class="dialog-title__icon">{{ item.Unterkategorie ? dataStore.getSubCategoryIcon(item.Unterkategorie) : dataStore.getCategoryIcon(item.Kategorie) }}</v-icon>
       </v-card-title>
       <v-card-text>
         <v-row>

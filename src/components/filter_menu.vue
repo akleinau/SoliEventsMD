@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 import { useDataStore } from "../stores/dataStore.ts";
-import { getCategoryDefinition } from "../constants/categoryConfig.ts"
+import { getSubCategoryDefinition } from "../constants/categoryConfig.ts"
 import { ref, computed } from "vue";
 
 const dataStore = useDataStore();
@@ -11,15 +11,41 @@ const heuteFilterActive = ref(false);
 
 // Unterkategorie
 const unterkategorieFilter = ref<string[]>([]);
-const unterkategorie = computed(() => {
+const unterkategorien = computed(() => {
   if (!dataStore.data) return [];
-  const uniqueKategorie = new Set(dataStore.data.map(item => item.Unterkategorie));
-  return Array.from(uniqueKategorie).sort()
+  const uniqueUnterkategorie = new Set(dataStore.get_category_filtered_data()
+    .filter(item => item.Unterkategorie && item.Unterkategorie.trim() !== "")
+    .flatMap(item => 
+      !item.Unterkategorie
+        ? []
+        : item.Unterkategorie
+        .split(";")
+        .map(value => value.trim())
+        .filter(value => value !== "")
+    ));
+  return Array.from(uniqueUnterkategorie).sort()
     .map(unterkategorie => ({      
       value: unterkategorie, // Rohwert für die Logik
-      title: getCategoryDefinition(unterkategorie)?.label ?? unterkategorie, // Label aus der Konfiguration, oder der Rohwert als Fallback      
-      icon: getCategoryDefinition(unterkategorie)?.icon, // Icon aus der Konfiguration
+      title: getSubCategoryDefinition(unterkategorie)?.label, // Label aus der Konfiguration, oder der Rohwert als Fallback      
+      icon: getSubCategoryDefinition(unterkategorie)?.icon, // Icon aus der Konfiguration
     }));
+});
+
+// Nutzungsart
+const nutzungFilter = ref<string[]>([]);
+const nutzungen = computed(() => {
+  if (!dataStore.data) return [];
+  const uniqueNutzung = new Set(dataStore.data
+    .filter(item => item.Nutzung && item.Nutzung.trim() !== "")
+    .flatMap(item => 
+      !item.Nutzung
+        ? []
+        : item.Nutzung
+        .split(";")
+        .map(value => value.trim())
+        .filter(value => value !== "")
+    ));
+  return Array.from(uniqueNutzung).sort();
 });
 
 // Wochentage bzw. alternative Beschreibung (alle Tage, werktags, jeden Tag, ...) - aber keine Aufzählung von Tagen.
@@ -27,7 +53,17 @@ const wochentagFilter = ref<string[]>([]);
 const HEUTE_FILTER_VALUE = '__heute__';
 const wochentage = computed(() => {
   if (!dataStore.data) return [];
-  const uniqueWochentage = new Set(dataStore.data.map(item => item.Wochentag));
+  const uniqueWochentage = new Set(dataStore.data
+    .filter(item => item.Wochentag && item.Wochentag.trim() !== "")
+    .flatMap(item =>
+      !item.Wochentag
+        ? []
+        : item.Wochentag
+        .split(";")
+        .map(value => value.trim())
+        .filter(value => value !== "")
+    ));
+    
   // erst mit "0 alle Tage", "1 Montag", ... sortieren
   const sortedWochentage = Array.from(uniqueWochentage).sort()
     // und danach nur noch den 'kurzen' Titel anzeigen (via ".map(...)")
@@ -58,14 +94,38 @@ const onWochentagFilterChange = (newFilter: string[]) => {
 const werFilter = ref<string[]>([]);
 const wer = computed(() => {
   if (!dataStore.data) return [];
-  const uniqueWer = new Set(dataStore.data.map(item => item.Wer));
+  const uniqueWer = new Set(dataStore.data
+    .filter(item => item.Wer && item.Wer.trim() !== "")
+    .flatMap(item => 
+      !item.Wer
+        ? []
+        : item.Wer
+        .split(";")
+        .map(value => value.trim())
+        .filter(value => value !== "")
+    ));
   return Array.from(uniqueWer).sort();
 });
+
+const resetFilters = () => {
+  dataStore.clear_all_filters();
+  unterkategorieFilter.value = [];
+  nutzungFilter.value = [];
+  wochentagFilter.value = [];
+  werFilter.value = [];
+};
 
 </script>
 
 <template>
   <div class="filter-container d-flex py-1 px-3 align-center flex-wrap " style="background: #f3f3f3; max-width:100%">
+
+    <!-- Button zum Umschalten des viewMode (Kacheln / Liste) -->
+    <div>
+      <v-btn v-if="dataStore.filter.length > 0" @click="resetFilters()">
+        <v-icon>mdi-trash-can-outline</v-icon>
+      </v-btn>
+    </div>
 
     <div class="mx-3">
       <h3>Filter nach: </h3>
@@ -73,17 +133,17 @@ const wer = computed(() => {
 
     <div class="filter-items">
 
-      <!-- Das folgende Element soll zu **Unterkategorien** umgebaut werden. Die Hauptkategorien sollen dann nur noch über den Header anwählbar sein. >
+      <!-- Das folgende Element soll zu **Unterkategorien** umgebaut werden. Die Hauptkategorien sollen dann nur noch über den Header anwählbar sein. -->
       <div class="FilterDiv">
         <v-select label="Unterkategorie"
           variant="outlined" multiple density="compact" hide-details bg-color="white"
-          :items="unterkategorie" v-model="unterkategorieFilter"
+          :items="unterkategorien" v-model="unterkategorieFilter"
           @update:modelValue="dataStore.add_filter('Unterkategorie', unterkategorieFilter)">
           <template v-slot:selection="{ item, index }">
             <v-chip v-if="index < 2">
               <span class="pr-2">{{ item.title }}</span>
               <v-icon size="x-large" color="ec4d0b" class="pl-2 pr-2">
-                  {{ getCategoryDefinition(item.value)?.icon }}
+                  {{ item.icon }}
               </v-icon>
             </v-chip>
             <span v-if="index === 2" class="text-grey text-caption align-self-center">
@@ -91,7 +151,24 @@ const wer = computed(() => {
             </span>
           </template>        
         </v-select>
-      </div-->
+      </div>
+
+      <div class="FilterDiv">
+        <v-select label="Nutzung"
+          variant="outlined" multiple density="compact" hide-details bg-color="white"
+          :items="nutzungen" v-model="nutzungFilter"
+          @update:modelValue="dataStore.add_filter('Nutzung', nutzungFilter)">
+          <template v-slot:selection="{ item, index }">
+            <v-chip v-if="index < 2">
+              <span>{{ item.title }}</span>
+            </v-chip>
+            <span v-if="index === 2" class="text-grey text-caption align-self-center">
+                    (+{{ nutzungFilter.length - 2 }} weitere)
+            </span>
+          </template>
+
+        </v-select>
+      </div>
 
       <!--div class="FilterDiv">
         <v-select label="Veranstalter"
@@ -122,7 +199,6 @@ const wer = computed(() => {
                     (+{{ wochentagFilter.length - 2 }} weitere)
             </span>
           </template>
-
         </v-select>
       </div>
     </div>
