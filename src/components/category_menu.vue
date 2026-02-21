@@ -10,7 +10,7 @@ const dataStore = useDataStore()
 type SelectionOption = CategoryDefinition & { path: string }
 
 const looking_for_options: SelectionOption[] = [
-  { label: 'Alles', path: 'alles', color: 'light-orange', icon: 'mdi-star', icon2: '' },
+  { label: 'Alles', path: 'alles', color: '#fcd8d8', icon: 'mdi-star', icon2: '' },
   ...MAIN_CATEGORIES,
 ]
 
@@ -58,18 +58,16 @@ const apply_filter = () => {
 
     <v-item-group
         v-model="looking_for"
-        class="d-flex flex-wrap justify-center align-center">
+        class="d-flex flex-wrap justify-center align-center button-container">
         <v-item v-slot="{ isSelected, toggle }" v-for="option in looking_for_options"
             :key="option.label"
             :value="option.path">
             <v-btn class="category-button"
-                variant="flat"
+                variant="elevated"
                 :class="{ 'category-button--selected': isSelected }"
-                :to="'/' + option.path"                
+                :to="'/' + option.path"                                
                 :style="{
-                    backgroundColor: isSelected ? option.color : '#ffffff',
-                    // ToDo: Was genau soll mit der folgenden Zeile erreicht werden? Ist da auf dem Weg etwas kaputtgegangen? Falls ja, bitte fixen.
-                    '--category-border-color': isSelected ? option.color : 'transparent',
+                    'background-color': option.color
                 } as Record<string, string>"
                 @click="toggle">
             <span v-if="!isMobile" class="category-button__label">{{ option.label }}</span>
@@ -89,7 +87,7 @@ const apply_filter = () => {
     }
 
     .v-btn--active {
-      border-bottom: 5px solid #ec4d0b;
+      border-bottom: 5px solid black;
       padding-bottom: 0 !important;
     }
 
