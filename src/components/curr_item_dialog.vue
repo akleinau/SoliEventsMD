@@ -52,28 +52,6 @@ const verificationWarning = computed(() => {
   return dataStore.getVerificationWarning(item.value.Letzte_Ueberpruefung);
 });
 
-
-const isVerificationStaleEditing = computed(() => {
-  if (!editableItem.value) {
-    return false;
-  }
-  return dataStore.shouldShowVerificationWarning(editableItem.value);
-});
-
-const verificationLabelEditing = computed(() => {
-  if (!editableItem.value) {
-    return null;
-  }
-  return dataStore.getVerificationLabel(editableItem.value.Letzte_Ueberpruefung);
-});
-
-const verificationWarningEditing = computed(() => {
-  if (!editableItem.value) {
-    return null;
-  }
-  return dataStore.getVerificationWarning(editableItem.value.Letzte_Ueberpruefung);
-});
-
 // Werbegrafik image handling
 const werbegrafikPath = computed(() => {
   return dataStore.getWerbegrafikPath(item.value);
@@ -103,8 +81,12 @@ const openMailTo = (content: string) => {
   // mailto-Link konstruieren
   const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
-  // Link im neuen Tab öffnen
-  window.open(mailtoLink, "_blank");
+  const openInSameWindow = confirm("Soll Dein E-Mail-Programm geöffnet werden, damit Du eine vorbereitete E-Mail komfortabel versenden kannst?");
+
+  if (openInSameWindow) {
+    window.location.href = mailtoLink; // "Gleiches" Fenster
+  } else {
+  }
 };
 
 const closeDialog = () => {
@@ -134,7 +116,7 @@ const saveEdit = () => {
   editableItem.value.Letzte_Ueberpruefung = getFormattedDate().toString();
   const content = JSON.stringify(editableItem.value);
   const content_old = JSON.stringify(item.value);
-  copyEditInfos.value = "Hallo,\n\nich möchte folgende Veränderung eines Soli-Angebots melden.\n\nLiebe Grüße,\nDEIN_NAME" + "\n\nNEU:\n\n" + content + "\n\nALT:\n\n" + content_old;
+  copyEditInfos.value = "Hallo,\nich möchte folgende Veränderung eines Soli-Angebots melden.\nLiebe Grüße,\nDEIN_NAME" + "\n\n# NEU:\n\n" + content + "\n\n# ALT:\n\n" + content_old;
   openMailTo(copyEditInfos.value.toString());
 };
 
@@ -178,11 +160,11 @@ const copyToClipboard = async() => {
       <v-card-text>
         <v-row>
           <v-col cols="12" :md="showWerbegrafik ? 7 : 12">
-            <p class="mb-3 text-subtitle-1 text-medium-emphasis">{{ item.Wer }}</p>
-            <p class="mb-1 col-container"> <v-icon>mdi-map-marker</v-icon> <div>{{ item.Wo }}</div></p>
-            <p class="mb-1 col-container"> <v-icon>mdi-calendar</v-icon> <div>{{ dataStore.getFormattedDay(item.Wochentag ?? '') }}, {{ item.Rhythmus }}</div></p>
-            <p class="mb-1 col-container"> <v-icon>mdi-clock</v-icon> <div>{{ item.Uhrzeit_Start }} - {{ item.Uhrzeit_Ende }}</div></p>
-            <p class="mt-5"> <a :href="item.Link" target="_blank">{{ item.Link }}</a> </p>
+            <div class="mb-3 text-subtitle-1 text-medium-emphasis">{{ item.Wer }}</div>
+            <div class="mb-1 col-container"> <v-icon>mdi-map-marker</v-icon> <div>{{ item.Wo }}</div></div>
+            <div class="mb-1 col-container"> <v-icon>mdi-calendar</v-icon> <div>{{ dataStore.getFormattedDay(item.Wochentag ?? '') }}, {{ item.Rhythmus }}</div></div>
+            <div class="mb-1 col-container"> <v-icon>mdi-clock</v-icon> <div>{{ item.Uhrzeit_Start }} - {{ item.Uhrzeit_Ende }}</div></div>
+            <div class="mt-5"> <a :href="item.Link" target="_blank">{{ item.Link }}</a> </div>
           </v-col>
 
           <v-col v-if="showWerbegrafik" cols="12" md="5">
@@ -229,33 +211,42 @@ const copyToClipboard = async() => {
     
     <!-- Bearbeitungsmodus (Edit) -->
     <v-card v-if="editableItem && isEditing">
-      <v-card-title class="dialog-title">
+      <v-card-title class="dialog-title pb-0 pt-5">
         <v-col class="pb-0">
           <v-row>
             <textarea v-model="editableItem.Was" placeholder="Was" type="text" :rows="isMobile ? '2' : '1'" />
           </v-row>
-          <v-card-text class="pb-0">
-            <v-row class="align-center justify-end">
-              <span>Kategorie: 
-                <select v-model="editableItem.Kategorie">
-                  <option v-for="option in MAIN_CATEGORIES" :value="option.path" :placeholder="editableItem.Kategorie">
-                    {{ option.label }}
-                  </option>
-                </select>
-              </span>
-            <v-icon size="x-large" color="black" class="dialog-title__icon">{{ dataStore.getCategoryIcon(editableItem.Kategorie) }}</v-icon>
-          </v-row>
-        </v-card-text>
+          <v-row>
+            <v-card-text>
+              <v-row class="align-center justify-end">
+                <div class="d-flex mr-5">Inaktiv: 
+                    <input v-model="editableItem.inaktiv"
+                      type="checkbox"
+                      true-value="inaktiv"
+                      false-value="aktiv"
+                      class="ml-1" />
+                </div>
+                <div>Kategorie: 
+                  <select v-model="editableItem.Kategorie">
+                    <option v-for="option in MAIN_CATEGORIES" :value="option.path" :placeholder="editableItem.Kategorie">
+                      {{ option.label }}
+                    </option>
+                  </select>
+                </div>
+              <v-icon size="x-large" color="black" class="dialog-title__icon">{{ dataStore.getCategoryIcon(editableItem.Kategorie) }}</v-icon>
+            </v-row>
+          </v-card-text>
+        </v-row>
         </v-col>
       </v-card-title>
       <v-card-text>
         <v-row>
           <v-col cols="12" :md="showWerbegrafik ? 7 : 12">
-            <p class="mb-3"> <input class="text-subtitle-1 text-medium-emphasis" v-model="editableItem.Wer" placeholder="Wer" type="text" /> </p>
-            <p class="mb-1 col-container"> <v-icon>mdi-map-marker</v-icon> <div class="row-container"><p class="col-container"><input v-model="editableItem.Wo" placeholder="Wo" type="text" />,</p> <input v-model="editableItem.Koordinaten" placeholder="Koordinaten" type="text" /> </div></p>
-            <p class="mb-1 col-container"> <v-icon>mdi-calendar</v-icon> <div class="row-container"><p class="col-container"><input v-model="editableItem.Wochentag" placeholder="Wochentag" type="text" />,</p> <input v-model="editableItem.Rhythmus" placeholder="Rhythmus" type="text" /> </div></p>
-            <p class="mb-1 col-container"> <v-icon>mdi-clock</v-icon> <div class="row-container"><p class="col-container"><input v-model="editableItem.Uhrzeit_Start" placeholder="Uhrzeit Start (HH:MM)" type="text" /> -</p> <input v-model="editableItem.Uhrzeit_Ende" placeholder="Uhrzeit Ende (HH:MM)" type="text" /> </div></p>
-            <p class="mt-5"> <textarea v-model="editableItem.Link" placeholder="Link" type="text" :rows="isMobile ? '2' : '1'"/> </p>
+            <div class="mb-3"> <input class="text-subtitle-1 text-medium-emphasis" v-model="editableItem.Wer" placeholder="Wer" type="text" /> </div>
+            <div class="mb-1 col-container"> <v-icon>mdi-map-marker</v-icon> <div class="row-container"><p class="col-container"><input v-model="editableItem.Wo" placeholder="Wo" type="text" />,</p> <input v-model="editableItem.Koordinaten" placeholder="Koordinaten" type="text" /> </div></div>
+            <div class="mb-1 col-container"> <v-icon>mdi-calendar</v-icon> <div class="row-container"><p class="col-container"><input v-model="editableItem.Wochentag" placeholder="Wochentag" type="text" />,</p> <input v-model="editableItem.Rhythmus" placeholder="Rhythmus" type="text" /> </div></div>
+            <div class="mb-1 col-container"> <v-icon>mdi-clock</v-icon> <div class="row-container"><p class="col-container"><input v-model="editableItem.Uhrzeit_Start" placeholder="Uhrzeit Start (HH:MM)" type="text" /> -</p> <input v-model="editableItem.Uhrzeit_Ende" placeholder="Uhrzeit Ende (HH:MM)" type="text" /> </div></div>
+            <div class="mt-5"> <textarea v-model="editableItem.Link" placeholder="Link" type="text" :rows="isMobile ? '2' : '1'"/> </div>
           </v-col>
 
           <v-col v-if="showWerbegrafik" cols="12" md="5">
@@ -277,10 +268,10 @@ const copyToClipboard = async() => {
 
         <v-row class="edit-info-container">
           <p
-              v-if="!isVerificationStaleEditing"
+              v-if="!isVerificationStale"
               class="text-grey-darken-1"
           >
-            Letzte Überprüfung: {{ verificationLabelEditing ?? 'keine Angabe' }}
+            Letzte Überprüfung: {{ verificationLabel ?? 'keine Angabe' }}
           </p>
           <v-alert class="px-2 py-2"
               v-else
@@ -288,7 +279,7 @@ const copyToClipboard = async() => {
               variant="tonal"
               density="comfortable"
           >
-            {{ verificationWarningEditing ?? 'Achtung!' }}
+            {{ verificationWarning ?? 'Achtung!' }}
           </v-alert>
 
           <v-btn size="small" @click="saveEdit">Änderung vorschlagen</v-btn>
@@ -300,7 +291,7 @@ const copyToClipboard = async() => {
             <textarea
               v-model="copyEditInfos"
               class="copyable-textarea"
-              readonly
+              style="font-size: 12px;"
             ></textarea>
             <button
               @click="copyToClipboard"
@@ -310,6 +301,21 @@ const copyToClipboard = async() => {
               {{ copied ? "✓" : "📋" }}
             </button>
           </div>
+        </v-row>
+
+        <v-row v-if="copyEditInfos != null" class="pt-2" style="justify-content: center; align-content: center;">
+          <v-alert class="px-2 py-2"
+              type="info"
+              variant="flat"
+              density="comfortable"
+          >
+          <div style="text-align: center;">
+            <i>
+              Schicke die vorbereitete Nachricht komfortabel <b><u style="cursor: pointer;" @click="saveEdit">» per Mail «</u></b> ab!
+              <br>Oder kopiere den Text und sende ihn <a href="https://cloud.magdeburg.jetzt/apps/forms/embed/sWAy75S2qAq5JeccorqTEQFq" target="_blank"><b>» per Kontaktformular «</b></a> ein.
+            </i>
+          </div>
+          </v-alert>
         </v-row>
 
       </v-card-text>
@@ -329,6 +335,10 @@ const copyToClipboard = async() => {
     position: fixed;
     height: 100%;
   }
+}
+
+a {
+  color: inherit;
 }
 
 input, select, textarea {
@@ -353,6 +363,7 @@ input, textarea {
   align-items: center;
   justify-content: space-between;
   column-gap: 16px;
+  padding: 15x 15px 0px 15px;
 }
 
 .dialog-title__icon {
@@ -428,7 +439,7 @@ input, textarea {
 
 .copyable-textarea {
   width: 100%;
-  min-height: 150px;
+  min-height: 120px;
   padding: 10px;
   padding-right: 40px; /* Platz für den Copy-Button */
   border: 1px solid #ddd;

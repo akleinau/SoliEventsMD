@@ -85,8 +85,8 @@ export const useDataStore = defineStore('dataStore', {
         // Add actions here as needed
         set_data(newData: DataRow[]) {
 
-             //entries who are inactive should be hidden by default: d["inaktiv?"] != "inaktiv")
-            newData = newData.filter((d: DataRow) => d["inaktiv?"] != "inaktiv");
+             //entries who are inactive should be hidden by default: d["inaktiv"] != "inaktiv")
+            newData = newData.filter((d: DataRow) => d["inaktiv"] != "inaktiv");
 
             this.data = newData;
         },
