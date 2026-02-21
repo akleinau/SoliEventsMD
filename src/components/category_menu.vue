@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useDataStore } from '../stores/dataStore.ts'
 import { MAIN_CATEGORIES, type CategoryDefinition } from '../constants/categoryConfig'
 import { useRoute } from 'vue-router';
@@ -15,7 +15,9 @@ const looking_for_options: SelectionOption[] = [
 ]
 
 const route = useRoute();
-const looking_for = ref('alles') // Default value
+const looking_for = ref('alles'); // Default value
+
+const isMobile = computed(() => dataStore.isMobile);
 
 // if URL path changes, also change the category class
 watch(
@@ -70,7 +72,7 @@ const apply_filter = () => {
                     '--category-border-color': isSelected ? option.color : 'transparent',
                 } as Record<string, string>"
                 @click="toggle">
-            <span class="category-button__label">{{ option.label }}</span>
+            <span v-if="!isMobile" class="category-button__label">{{ option.label }}</span>
             <v-icon size="x-large" color="ec4d0b" class="pl-2 mr-2">
                 {{ option.icon }}
             </v-icon>
@@ -87,12 +89,12 @@ const apply_filter = () => {
     }
 
     .v-btn--active {
-        border-bottom: 5px solid #ec4d0b;
-        padding-bottom: 0 !important;
+      border-bottom: 5px solid #ec4d0b;
+      padding-bottom: 0 !important;
     }
 
     .v-btn {
-        padding-bottom: 5px;
+      padding-bottom: 5px;
     }
 
     .category-button {
@@ -103,7 +105,6 @@ const apply_filter = () => {
         column-gap: 8px;
         padding: 5px 10px;
     }
-
 
     .category-button__label {
         display: inline-flex;
@@ -120,6 +121,17 @@ const apply_filter = () => {
     :deep(.v-btn__overlay) {
         display: none
     }
+
+
+  /* Mobile-Ansicht ToDo: fix code or this section -> use "@media ..."" OR use "".XYZ--mobile" ! */
+  @media (max-width: 767px) {
+    .v-btn {          
+      min-width: 0 !important; /* allows the v-btn to be smaller  */
+      flex: 1 1 auto; 
+      max-width: 40px !important; /* limits the button width, so all can appear next to each other on smaller mobile screen */
+      margin: 3px; /* to avoid clicking the wrong item */
+    }
+  }
 
 </style>
 
