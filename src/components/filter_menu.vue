@@ -143,7 +143,7 @@ const resetFilters = () => {
             <v-chip v-if="index < 2">
               <span class="pr-2">{{ item.title }}</span>
               <v-icon size="x-large" color="ec4d0b" class="pl-2 pr-2">
-                  {{ item.icon }}
+                  {{ dataStore.getSubCategoryIcon(item.value) }}
               </v-icon>
             </v-chip>
             <span v-if="index === 2" class="text-grey text-caption align-self-center">
@@ -219,6 +219,11 @@ const resetFilters = () => {
   display: flex;  
   flex-direction: row;
   justify-content: left;
+  font-size: 14px;
+}
+
+.filter-container * {
+  font-size: inherit;
 }
 
 /* Mobile-Ansicht */

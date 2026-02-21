@@ -352,7 +352,7 @@ export const useDataStore = defineStore('dataStore', {
                 return null;
             }
             
-            const value = item['Werbegrafik?'];
+            const value = item['Werbegrafik'];
             if (!value) {
                 return null;
             }

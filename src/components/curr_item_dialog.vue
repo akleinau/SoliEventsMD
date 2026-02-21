@@ -136,9 +136,11 @@ const saveEdit = () => {
 
   // remove columns with sensitive data
   delete editableItem.value?.Kontakt;
-  delete editableItem.value?.Kommentar;
+  delete editableItem.value?.Telefonnummer;
+  delete editableItem.value?.Kurzbeschreibung;
   delete item.value?.Kontakt;
-  delete item.value?.Kommentar;
+  delete item.value?.Telefonnummer;
+  delete item.value?.Kurzbeschreibung;
   
   const contentAsCsv = dataRowtoCsv(editableItem?.value);
   const oldContentAsCsv = dataRowtoCsv(item?.value)
@@ -195,6 +197,7 @@ const copyToClipboard = async() => {
             <div class="mb-1 col-container"> <v-icon>mdi-calendar</v-icon> <div>{{ dataStore.getFormattedDay(item.Wochentag ?? '') }}, {{ item.Rhythmus }}</div></div>
             <div class="mb-1 col-container"> <v-icon>mdi-clock</v-icon> <div>{{ item.Uhrzeit_Start }} - {{ item.Uhrzeit_Ende }}</div></div>
             <div class="mt-5"> <a :href="item.Link" target="_blank">{{ item.Link }}</a> </div>
+            <div class="mt-5 col-container" v-if="item.Kommentar"> <v-icon>mdi-comment-processing-outline</v-icon> <div>Hinweis: {{ item.Kommentar }}</div></div>
           </v-col>
 
           <v-col v-if="showWerbegrafik" cols="12" md="5">
@@ -240,7 +243,11 @@ const copyToClipboard = async() => {
     
     
     <!-- Bearbeitungsmodus (Edit) -->
-    <v-card v-if="editableItem && isEditing">
+    <v-card v-if="editableItem && isEditing"
+      :style="{
+        'background': dataStore.getCardColor(editableItem.Kategorie), 
+        'border': '5px solid color-mix(in oklch, ' + dataStore.getCardColor(editableItem.Kategorie) + ', black 20%)'
+      }">
       <v-card-title class="dialog-title pb-0 pt-5">
         <v-col class="pb-0">
           <v-row>
@@ -277,6 +284,7 @@ const copyToClipboard = async() => {
             <div class="mb-1 col-container"> <v-icon>mdi-calendar</v-icon> <div class="row-container"><p class="col-container"><input v-model="editableItem.Wochentag" placeholder="Wochentag" type="text" />,</p> <input v-model="editableItem.Rhythmus" placeholder="Rhythmus" type="text" /> </div></div>
             <div class="mb-1 col-container"> <v-icon>mdi-clock</v-icon> <div class="row-container"><p class="col-container"><input v-model="editableItem.Uhrzeit_Start" placeholder="Uhrzeit Start (HH:MM)" type="text" /> -</p> <input v-model="editableItem.Uhrzeit_Ende" placeholder="Uhrzeit Ende (HH:MM)" type="text" /> </div></div>
             <div class="mt-5"> <textarea v-model="editableItem.Link" placeholder="Link" type="text" :rows="isMobile ? '2' : '1'"/> </div>
+            <div class="mt-5 col-container"> <v-icon>mdi-comment-processing-outline</v-icon> <textarea v-model="editableItem.Kommentar" placeholder="Hinweis" type="text"  :rows="isMobile ? '2' : '1'"/></div>
           </v-col>
 
           <v-col v-if="showWerbegrafik" cols="12" md="5">
@@ -385,6 +393,7 @@ input, textarea {
   display: inline-block;
   width: 100%;
   max-width: 100%;
+  background-color: white;
 }
 
 .dialog-title {

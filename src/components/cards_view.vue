@@ -25,7 +25,7 @@ const clicked = (item: any) => {
         <v-card-title class="category-card__title">{{ item.Was }}</v-card-title>
         <v-card-subtitle>{{ item.Wer }}</v-card-subtitle>
         <v-card-text>
-          <p class="mb-1"> <v-icon>mdi-map-marker</v-icon>  {{ item.Wo }}</p>
+          <p class="mb-1"> <v-icon>mdi-map-marker</v-icon> {{ item.Wo }}</p>
           <p class="mb-1"> <v-icon>mdi-calendar</v-icon> {{ dataStore.getFormattedDay(item.Wochentag ?? '')}}, {{ item.Uhrzeit_Start }} - {{ item.Uhrzeit_Ende }}</p>
         </v-card-text>
     </v-card>
