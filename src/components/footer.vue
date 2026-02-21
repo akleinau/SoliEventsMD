@@ -4,7 +4,7 @@ const links = [
   { text: 'Home', url: '/home', icon: 'mdi-home' },
   { text: 'Kontaktformular', url: '/kontakt', icon: 'mdi-email' },
   { text: 'Impressum', url: '/impressum', icon: 'mdi-information' },
-  { text: 'Datenschutzerklärung', url: '/datenschutz', icon: 'mdi-shield-lock' },
+  { text: 'Datenschutz', url: '/datenschutz', icon: 'mdi-shield-lock' },
   { text: 'Sharing in Magdeburg (Telegram)', url: 'https://t.me/sharinginmagdeburg', icon: 'mdi-open-in-new' }
 ];
 
@@ -27,12 +27,12 @@ const links = [
             :to="link.url.startsWith('http') ? undefined : link.url"
             :href="link.url.startsWith('http') ? link.url : undefined"
             :target="link.url.startsWith('http') ? '_blank' : undefined"
-            class="ma-1"
+            class="mx-1"
         >
             <v-icon left class="mr-2">{{ link.icon }}</v-icon> {{ link.text }}
         </v-btn>
 
-        <div class="ma-2" style="color: #ec4d0b; text-align: end;">
+        <div class="ma-1" style="color: #ec4d0b; text-align: end;">
             {{ new Date().getFullYear() }} — <strong>ein Projekt von Sharing in Magdeburg</strong>
         </div>
 
@@ -49,6 +49,14 @@ const links = [
 
     a {
         color: inherit;
+    }
+
+    /* Mobile-Ansicht ToDo: fix code or this section -> use "@media ..."" OR use "".XYZ--mobile" ! */
+    @media (max-width: 767px) {
+        a.v-btn {
+            padding: 0px;
+            margin: 0px;
+        }
     }
 
 </style>

@@ -1,22 +1,32 @@
 <script setup lang="ts">
 
-//import { ref } from 'vue';
-
 </script>
 
 <template>
 
-    <div class="my-10 mx-10">
-        KONTAKT
-        <br></br>
-        -- work in progress --
-        <br></br>
-        kontakt@magdeburg-teilt.de
+    <div class="myclass my-5 mx-5 justify-center">
+        <h1>KONTAKT</h1>
+        <div>
+            Schreib uns über das folgende Formular.
+            <br>
+            ...oder an kontakt@magdeburg-teilt.de        
+        </div>
+
+        <iframe class="myframe" src="https://cloud.magdeburg.jetzt/apps/forms/embed/sWAy75S2qAq5JeccorqTEQFq"></iframe>
     </div>
 
 </template>
 
 <style scoped>
+
+.myclass {
+    height: 70vh;
+}
+
+.myframe {
+    width: 100%;
+    height: 100%;
+}
 
 </style>
 

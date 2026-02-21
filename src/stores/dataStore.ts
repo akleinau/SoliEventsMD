@@ -75,6 +75,7 @@ export const useDataStore = defineStore('dataStore', {
       filter: [] as Filter[],
       current_item: null as DataRow | null,
       focused_item: null as DataRow | null,
+      isMobile: false,
       isMapVisible: true,
       verificationThresholdMonths: DEFAULT_VERIFICATION_THRESHOLD_MONTHS,
       viewMode: 'cards' as string,
@@ -84,8 +85,8 @@ export const useDataStore = defineStore('dataStore', {
         // Add actions here as needed
         set_data(newData: DataRow[]) {
 
-             //entries who are inactive should be hidden by default: d["inaktiv?"] != "inaktiv")
-            newData = newData.filter((d: DataRow) => d["inaktiv?"] != "inaktiv");
+             //entries who are inactive should be hidden by default: d["inaktiv"] != "inaktiv")
+            newData = newData.filter((d: DataRow) => d["inaktiv"] != "inaktiv");
 
             this.data = newData;
         },
@@ -124,14 +125,10 @@ export const useDataStore = defineStore('dataStore', {
                 
                 filteredData = filteredData.filter(item => {
                     const wochentag = item.Wochentag ?? '';
-                    const rhythmus = item.Rhythmus ?? '';
                     const itemDayName = this.extractDayName(wochentag);
                     
-                    // Exclude always-open events: "wenn geöffnet" or rhythmus contains "immer"
+                    // Exclude events without a specific schedule
                     if (itemDayName === 'wenn geöffnet') {
-                        return false;
-                    }
-                    if (rhythmus.toLowerCase().includes('immer')) {
                         return false;
                     }
                     
@@ -365,6 +362,11 @@ export const useDataStore = defineStore('dataStore', {
             }
             
             return `/werbegrafik/${filename}`;
-        }
+        },
+
+        // Prüfen, ob mobiles Gerät
+        checkIfMobile () {
+            this.isMobile = window.innerWidth <= 768;
+        },
     }
 });
