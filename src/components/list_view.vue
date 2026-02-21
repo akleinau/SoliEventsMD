@@ -1,16 +1,60 @@
 <script setup lang="ts">
 
 import { useDataStore } from "../stores/dataStore.ts";
+import { getCategoryDefinition } from "../constants/categoryConfig.ts";
+import { ref } from 'vue'
 
-const dataStore = useDataStore()
+const dataStore = useDataStore();
+
+const search = ref('');
+const headers = [
+  { key: 'Was', title: 'Was', value: item => `${item.Was}` },
+  { key: 'Wer', title: 'Wer' },
+  { key: 'Wo', title: 'Wo' },
+  { key: 'Wochentag', title: 'Wochentag', value: item => `${dataStore.getFormattedDay(item.Wochentag ?? '')}` },
+  { key: 'Uhrzeit', title: 'Uhrzeit', value: item => `${item.Uhrzeit_Start}-${item.Uhrzeit_Ende}` }
+];
+/*const icons = [
+  { key: 'was', title: 'Was', icon: 'mdi-newspaper-variant-outline', sortable: true, align: 'start' },
+  { key: 'wer', title: 'Wer', icon: 'mdi-account-group', sortable: true, align: 'start' },
+  { key: 'wo', title: 'Wo', icon: 'mdi-map-marker', sortable: true, align: 'start' },
+  { key: 'tag', title: 'Wochentag', icon: 'mdi-calendar', sortable: true, align: 'start' },
+  { key: 'uhrzeit', title: 'Uhrzeit', icon: null, sortable: true, align: 'start' },
+];*/
+
+const getRowProps = (item: any) => {
+  const categoryColor = getCategoryDefinition(item.Kategorie)?.color;
+  console.log(categoryColor);  
+  return {
+    class: '',
+    style: `background-color: ${categoryColor} !important;`
+  };
+}
 
 const clicked = (item: any) => {
   dataStore.set_current_item(item);
-}
+};
 
 </script>
 
 <template>
+    
+      <v-text-field
+        v-model="search"
+        label="Search"
+        prepend-inner-icon="mdi-magnify"
+        variant="outlined"
+        hide-details
+        single-line
+      ></v-text-field>
+    
+    <v-data-table      
+      :headers="headers"
+      :items="dataStore.get_filtered_data()"
+      :item-props="getRowProps"
+      :search="search"
+      :multi-sort="{ mode: 'append', modifier: 'alt' }"
+    ></v-data-table>
 
     <v-table>
         <thead>
