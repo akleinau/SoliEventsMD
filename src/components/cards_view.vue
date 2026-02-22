@@ -1,8 +1,13 @@
 <script setup lang="ts">
 
+import { computed } from "vue";
 import { useDataStore } from "../stores/dataStore.ts";
 
-const dataStore = useDataStore()
+const dataStore = useDataStore();
+
+const emptyItem = computed(() => {
+  return dataStore.getEmptyItem()
+});
 
 const clicked = (item: any) => {
   dataStore.set_current_item(item);
@@ -27,6 +32,22 @@ const clicked = (item: any) => {
         <v-card-text>
           <p class="mb-1"> <v-icon>mdi-map-marker</v-icon> {{ item.Wo }}</p>
           <p class="mb-1"> <v-icon>mdi-calendar</v-icon> {{ dataStore.getFormattedDay(item.Wochentag ?? '')}}, {{ item.Uhrzeit_Start }} - {{ item.Uhrzeit_Ende }}</p>
+        </v-card-text>
+    </v-card>
+    <v-card
+        class="ma-2 category-card" 
+        width="350"
+        max-height="180"
+        :color="dataStore.getCardColor(emptyItem?.Kategorie ?? '')"
+        link @click="clicked(emptyItem)">
+        <div class="category-card__icon" v-if="dataStore.getCategoryIcon(emptyItem?.Kategorie)">
+          <v-icon size="large" color="black">{{ emptyItem?.Unterkategorie ? dataStore.getSubCategoryIcon(emptyItem?.Unterkategorie) : dataStore.getCategoryIcon(emptyItem?.Kategorie) }}</v-icon>          
+        </div>
+        <v-card-title class="category-card__title">{{ emptyItem?.Was }}</v-card-title>
+        <v-card-subtitle>{{ emptyItem?.Wer }}</v-card-subtitle>
+        <v-card-text>
+          <p class="mb-1"> <v-icon>mdi-map-marker</v-icon>  {{ emptyItem?.Wo }}</p>
+          <p class="mb-1"> <v-icon>mdi-calendar</v-icon> {{ dataStore.getFormattedDay(emptyItem?.Wochentag ?? '')}}, {{ emptyItem?.Uhrzeit_Start }} - {{ emptyItem?.Uhrzeit_Ende }}</p>
         </v-card-text>
     </v-card>
 

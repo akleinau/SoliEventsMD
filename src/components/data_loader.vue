@@ -41,6 +41,7 @@ onMounted(async () => {
   dataStore.loadViewMode();
   await load_dataset();
   //await sort_dataset();
+  dataStore.prepareEmptyItem();
 })
 
 
