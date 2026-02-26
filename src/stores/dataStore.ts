@@ -75,6 +75,7 @@ export const useDataStore = defineStore('dataStore', {
             { title: 'Kommentar', key: 'Kommentar' },
           ],
       filter: [] as Filter[],
+      empty_item: null as DataRow | null,
       current_item: null as DataRow | null,
       focused_item: null as DataRow | null,
       isMobile: false,
@@ -86,13 +87,10 @@ export const useDataStore = defineStore('dataStore', {
     actions: {
         // Add actions here as needed
         set_data(newData: DataRow[]) {
-
-             //entries who are inactive should be hidden by default: d["inaktiv"] != "inaktiv")
+            //entries who are inactive should be hidden by default: d["inaktiv"] != "inaktiv")
             newData = newData.filter((d: DataRow) => d["inaktiv"] != "inaktiv");
 
-            this.data = newData;
-            //console.log(this.data.[1]["Unterkategorie"]);
-            
+            this.data = newData;            
         },
         // not needed at the moment since the raw data should already be sorted before (using a spreadsheet app with filters)
         /*sort_data() {
@@ -107,6 +105,7 @@ export const useDataStore = defineStore('dataStore', {
                 return 0;
             });
         },*/
+        // ToDo: wofür wird das benötigt?
         get_columns(column_subset?: string[]) {
             if (column_subset) {
                 return this.columns.filter(column => column_subset.includes(column.key));
@@ -214,7 +213,33 @@ export const useDataStore = defineStore('dataStore', {
         },
         clear_all_filters() {
             this.filter = [];
-        },        
+        },
+        prepareEmptyItem() {
+            this.empty_item = {
+                Was: "Neues Angebot anlegen",
+                Kategorie: "",
+                Unterkategorie: "",
+                Nutzung: "",
+                Wochentag: "Wann?",
+                Rhythmus: "",
+                Uhrzeit_Start: "",
+                Uhrzeit_Ende: "",
+                Wo: "Wo?",
+                Koordinaten: "",
+                Wer: "Von wem?",
+                Link: "",
+                Werbegrafik: "",
+                inaktiv: "",
+                Letzte_Ueberpruefung: "",
+                Kommentar: "",
+                Kontakt: "",
+                //Telefonnummer: "",
+                //Kurzbeschreibung: "",
+            };
+        },
+        getEmptyItem() {
+            return this.empty_item;
+        },
         // Helper to extract the day name from Wochentag (removes number prefix)
         extractDayName(wochentag: string): string {
             const firstSpaceIndex = wochentag.indexOf(' ');
@@ -292,11 +317,11 @@ export const useDataStore = defineStore('dataStore', {
             const title = firstSpaceIndex === -1 ? day : day.substring(firstSpaceIndex + 1);
             return title;
         },
-        getCardColor(category: string): string {                  
-            return getCategoryDefinition(category)?.color ?? '#d5d5d5';
+        getCardColor(category: string | undefined): string {                  
+            return getCategoryDefinition(category)?.color ?? '#fcd8d8';
         },
         getCategoryIcon(category?: string | null): string | undefined {
-            return getCategoryDefinition(category)?.icon;
+            return getCategoryDefinition(category)?.icon ?? 'mdi-new-box';
         },
         getSubCategoryIcon(category?: string | null): string | undefined {
             return getSubCategoryDefinition(category)?.icon;

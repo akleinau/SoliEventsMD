@@ -12,12 +12,16 @@ type DataRow = Record<string, string | undefined>;
 const editableItem = ref(null as DataRow | null);
 const copyEditInfos = ref(null as String | null);
 const isEditing = ref(false);
+const isNew = ref(false);
 
 
 onMounted(() => {
   active.value = true;
   editableItem.value = JSON.parse(JSON.stringify(dataStore.current_item));
-  
+
+  // Wenn Card "Neues Angebot anlegen" das current_item ist, direkt zum Bearbeitungsmodus wechseln!
+  isNew.value = (editableItem.value?.Was === "Neues Angebot anlegen");
+  if (isNew.value) isEditing.value = true;
 })
 
 watch(() => active.value, (newValue) => {
@@ -91,6 +95,7 @@ const openMailTo = (content: string) => {
 
 const closeDialog = () => {
   active.value = false;
+  isNew.value = false;
 };
 
 const toggleEdit = () => {
@@ -101,6 +106,9 @@ const toggleEdit = () => {
 const cancelEdit = () => {
   copyEditInfos.value = null;
   isEditing.value = false;
+
+  // wenn das Neue Item nicht mehr bearbeitet wird, wird der Dialog direkt komplett geschlossen, statt zur reinen Card-Detailansicht zurückzukehren
+  if (isNew.value) closeDialog();
 };
 
 const getFormattedDate = () => {
