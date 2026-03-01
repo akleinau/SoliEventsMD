@@ -9,11 +9,11 @@ const dataStore = useDataStore();
 
 const search = ref('');
 const headers = [
-  { key: 'Was', title: 'Was', value: item => `${item.Was}` },
+  { key: 'Was', title: 'Was', value: (item : any) => `${item.Was}` },
   { key: 'Wer', title: 'Wer' },
   { key: 'Wo', title: 'Wo' },
-  { key: 'Wochentag', title: 'Wochentag', value: item => `${dataStore.getFormattedDay(item.Wochentag ?? '')}` },
-  { key: 'Uhrzeit', title: 'Uhrzeit', value: item => `${item.Uhrzeit_Start}-${item.Uhrzeit_Ende}` }
+  { key: 'Wochentag', title: 'Wochentag', value: (item : any) => `${dataStore.getFormattedDay(item.Wochentag ?? '')}` },
+  { key: 'Uhrzeit', title: 'Uhrzeit', value: (item : any) => `${item.Uhrzeit_Start}-${item.Uhrzeit_Ende}` }
 ];
 /*const icons = [
   { key: 'was', title: 'Was', icon: 'mdi-newspaper-variant-outline', sortable: true, align: 'start' },
