@@ -1,6 +1,6 @@
-# Magdeburg teilt – SoliAngeboteMD
+# Magdeburg teilt – Solidarische Angebote in Magdeburg
 
-Magdeburg teilt (SoliAngeboteMD) ist eine Vue-3-Anwendung, die solidarische Angebote in und um Magdeburg sichtbar macht. Die Informationen stammen aus einer kuratierten CSV-Datei, werden nach Themen farblich markiert und als interaktiver Katalog präsentiert.
+Magdeburg teilt ist eine Vue-3-Anwendung, die solidarische Angebote in und um Magdeburg sichtbar macht. Die Informationen stammen aus einer kuratierten CSV-Datei, werden nach Themen farblich markiert und als interaktiver Katalog präsentiert.
 
 ## Voraussetzungen
 - Node.js ab Version 18 (empfohlen: 20 oder höher) sowie npm.
@@ -8,8 +8,8 @@ Magdeburg teilt (SoliAngeboteMD) ist eine Vue-3-Anwendung, die solidarische Ange
 
 ## Schnellstart
 ```bash
-git clone https://github.com/akleinau/SoliAngeboteMD.git
-cd SoliAngeboteMD
+git clone https://github.com/akleinau/SoliEventsMD.git
+cd SoliEventsMD
 npm install
 npm run dev
 ```

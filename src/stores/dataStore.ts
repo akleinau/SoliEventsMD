@@ -245,6 +245,32 @@ export const useDataStore = defineStore('dataStore', {
             const firstSpaceIndex = wochentag.indexOf(' ');
             return firstSpaceIndex === -1 ? wochentag.toLowerCase() : wochentag.substring(firstSpaceIndex + 1).toLowerCase();
         },
+
+        // Wochentage bzw. alternative Beschreibung (alle Tage, werktags, jeden Tag, ...) - aber keine Aufzählung von Tagen.        
+        getSortedWochentageOptionen () {
+            if (!this.data) return [];
+            const uniqueWochentage = new Set(this.data
+                .filter(item => item.Wochentag && item.Wochentag.trim() !== "")
+                .flatMap(item =>
+                !item.Wochentag
+                    ? []
+                    : item.Wochentag
+                    .split(";")
+                    .map(value => value.trim())
+                    .filter(value => value !== "")
+                ));
+                
+            // erst mit "0 alle Tage", "1 Montag", ... sortieren
+            const sortedWochentage = Array.from(uniqueWochentage).sort()
+                // und danach nur noch den 'kurzen' Titel anzeigen (via ".map(...)")
+                .map(tag => ({ 
+                value: tag, 
+                title: this.getFormattedDay(tag ?? '')
+                }));
+            // "Heute" als erste Option hinzufügen
+            return sortedWochentage;
+        },
+        
         // Check if a Wochentag value matches any of the selected filter values
         // Handles edge cases like "alle Tage", "werktags", "Wochenende"
         matchesWochentagFilter(itemWochentag: string, filterValues: string[]): boolean {
@@ -323,6 +349,7 @@ export const useDataStore = defineStore('dataStore', {
         getCategoryIcon(category?: string | null): string | undefined {
             return getCategoryDefinition(category)?.icon ?? 'mdi-new-box';
         },
+
         getSubCategoryIcon(category?: string | null): string | undefined {
             return getSubCategoryDefinition(category)?.icon;
         },
@@ -415,8 +442,11 @@ export const useDataStore = defineStore('dataStore', {
         },
 
         // Prüfen, ob mobiles Gerät
+            // wird u.a. bei "Home.vue" genutzt, um zu entscheiden, 
+            // ob die Map initial angezeigt werden soll oder nicht (wie z.B. in mobiler Ansicht)
         checkIfMobile () {
             this.isMobile = window.innerWidth <= 768;
+            if(this.isMobile) this.isMapVisible = false;
         },
     }
 });

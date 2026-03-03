@@ -22,7 +22,7 @@ const dataStore = useDataStore();
 // Reaktive Variablen
 const mapElement = ref<HTMLElement | null>(null);
 const map = ref<L.Map | null>(null);
-const markers = ref<Map<any, { marker: L.Marker; originalIcon: L.Icon; highlightIcon: L.DivIcon }>>(new Map());
+const markers = ref<Map<any, { marker: L.Marker; originalIcon: L.DivIcon; highlightIcon: L.DivIcon }>>(new Map());
 const markersClusterGroup = ref<L.MarkerClusterGroup | null>(null);
 const highlightedItem = ref<any | null>(null);
 
@@ -74,21 +74,22 @@ const addMarker = async (item: any) => {
   const coords = await getCoordinates(item.Koordinaten);
   if (!coords) return;
 
-  // Icon für die Kategorie laden
-  const iconName = dataStore.getCategoryIcon(item.Kategorie);
-  const iconUrl = import.meta.env.VITE_ICONS_URL + 'assets/category-icons/' +  iconName + '.svg';
+  // MDI Icon laden
+  const mdiIcon = dataStore.getCategoryIcon(item.Kategorie);
+  if (!mdiIcon) return;
   
-  // Original icon
-  const originalIcon = L.icon({
-    iconUrl: iconUrl,
+  // Original icon as DivIcon with MDI font
+  const originalIcon = L.divIcon({
+    className: 'map-marker-icon',
+    html: `<i class="mdi ${mdiIcon}"></i>`,
     iconSize: [32, 32],
     iconAnchor: [16, 32],
   });
 
-  // Highlighted icon using DivIcon with the same image but with a highlight ring
+  // Highlighted icon with glow effect
   const highlightIcon = L.divIcon({
-    className: 'highlighted-marker-icon',
-    html: `<img src="${iconUrl}" class="marker-icon-img" />`,
+    className: 'map-marker-icon highlighted-marker-icon',
+    html: `<i class="mdi ${mdiIcon}"></i>`,
     iconSize: [32, 32],
     iconAnchor: [16, 32],
   });
@@ -148,7 +149,7 @@ const initMap = () => {
   updateMarkers();
 };
 
-// TODO ##### Fokus auf ein Item setzen (z. B. nach Klick in der Tabelle)
+// Fokus auf ein Item setzen (z. B. nach Klick in der Liste)
 const focusOnItemInternal = async (item: any) => {
   if (!map.value || !item || !markersClusterGroup.value) return;
 
@@ -164,19 +165,19 @@ const focusOnItemInternal = async (item: any) => {
   }
 
   const { marker, highlightIcon } = markerData;
-  
-  // Remove marker from cluster group and add directly to map
-  // This way it stays visible even when zoomed out
-  markersClusterGroup.value.removeLayer(marker);
-  marker.addTo(map.value);
-  
-  // Set the highlighted icon on the marker
+
+  // Set the highlighted icon on the marker (stays within cluster group)
   marker.setIcon(highlightIcon);
   highlightedItem.value = item;
-  
-  // Center on the marker
-  const latlng = marker.getLatLng();
-  map.value.setView(latlng, Math.max(map.value.getZoom(), 15), { animate: true });
+
+  // zoomToShowLayer will zoom in and spiderfy the cluster if needed to reveal the marker
+  markersClusterGroup.value.zoomToShowLayer(marker, () => {
+    // After zoom/spiderfy, ensure the marker is centered
+    if (map.value) {
+      const latlng = marker.getLatLng();
+      map.value.setView(latlng, Math.max(map.value.getZoom(), 15), { animate: true });
+    }
+  });
 };
 
 // Public function to focus on item (sets the store which triggers the watch)
@@ -186,14 +187,10 @@ const focusOnItem = (item: any) => {
 
 const clearHighlight = () => {
   // Restore the original icon on the previously highlighted marker
-  // and move it back to the cluster group
-  if (highlightedItem.value && map.value && markersClusterGroup.value) {
+  if (highlightedItem.value) {
     const markerData = markers.value.get(highlightedItem.value);
     if (markerData) {
-      // Remove from map and add back to cluster group
-      map.value.removeLayer(markerData.marker);
       markerData.marker.setIcon(markerData.originalIcon);
-      markersClusterGroup.value.addLayer(markerData.marker);
     }
     highlightedItem.value = null;
   }
@@ -205,13 +202,11 @@ watch(() => dataStore.focused_item, (newItem, oldItem) => {
   if (newItem === oldItem) return;
   
   if (newItem && props.isMapOpen) {
-    // Clear previous highlight and move marker back to cluster
+    // Clear previous highlight
     if (highlightedItem.value && highlightedItem.value !== newItem) {
       const markerData = markers.value.get(highlightedItem.value);
-      if (markerData && map.value && markersClusterGroup.value) {
-        map.value.removeLayer(markerData.marker);
+      if (markerData) {
         markerData.marker.setIcon(markerData.originalIcon);
-        markersClusterGroup.value.addLayer(markerData.marker);
       }
       highlightedItem.value = null;
     }
@@ -277,15 +272,19 @@ defineExpose({
 </style>
 
 <style>
-/* Global styles for Leaflet highlighted marker */
-.highlighted-marker-icon {
-  position: relative;
+/* Global styles for Leaflet map marker icons */
+.map-marker-icon {
+  background: none !important;
+  border: none !important;
 }
 
-.highlighted-marker-icon .marker-icon-img {
-  width: 32px;
-  height: 32px;
-  display: block;
+.map-marker-icon .mdi {
+  font-size: 32px;
+  color: #000;
+}
+
+.highlighted-marker-icon .mdi {
   filter: drop-shadow(0 0 4px rgba(255, 102, 0, 1)) drop-shadow(0 0 8px rgba(255, 102, 0, 0.8));
+  color: rgb(255, 102, 0);
 }
 </style>

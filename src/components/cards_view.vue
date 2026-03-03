@@ -9,8 +9,12 @@ const emptyItem = computed(() => {
   return dataStore.getEmptyItem()
 });
 
+const emit = defineEmits<{
+  (e: 'item-clicked', item: any): void
+}>()
+
 const clicked = (item: any) => {
-  dataStore.set_current_item(item);
+  emit('item-clicked', item);
 }
 
 </script>

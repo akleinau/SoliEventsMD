@@ -28,12 +28,12 @@ const clicked = (item: any) => {
 
     <!-- Kachelansicht -->
     <div v-if="viewMode === 'cards'" class="cards-container d-flex flex-wrap pa-2" style="background: white">
-      <Cards_view />
+      <Cards_view @item-clicked="clicked" />
     </div>
 
     <!-- Listenansicht (Tabelle) -->
     <div v-else class="list-container pa-2" style="background: white">
-      <List_view />
+      <List_view @item-clicked="clicked" />
     </div>
       
       <Scroll_up_button />
