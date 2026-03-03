@@ -2,7 +2,7 @@
 
 import { computed, onMounted, ref, watch } from "vue";
 import { useDataStore } from "../stores/dataStore.ts";
-import { MAIN_CATEGORIES } from "../constants/categoryConfig";
+import { MAIN_CATEGORIES, SUB_CATEGORIES } from "../constants/categoryConfig";
 
 const dataStore = useDataStore()
 
@@ -164,6 +164,8 @@ const copyToClipboard = async() => {
   }
 }
 
+const sortedWochentage = dataStore.getSortedWochentageOptionen();
+
 </script>
 
 <template>
@@ -256,26 +258,64 @@ const copyToClipboard = async() => {
                       false-value="aktiv"
                       class="ml-1" />
                 </div>
+                <div>Unterkategorie: 
+                  <select v-model="editableItem.Unterkategorie">
+                    <option v-for="option in SUB_CATEGORIES" :value="option.path" :placeholder="editableItem.Unterkategorie">
+                      {{ option.label }}
+                    </option>
+                  </select>
+                  <v-icon size="x-large" color="black" class="dialog-title__icon">{{ dataStore.getSubCategoryIcon(editableItem.Unterkategorie) }}</v-icon>
+                </div>
                 <div>Kategorie: 
                   <select v-model="editableItem.Kategorie">
                     <option v-for="option in MAIN_CATEGORIES" :value="option.path" :placeholder="editableItem.Kategorie">
                       {{ option.label }}
                     </option>
                   </select>
+                  <v-icon size="x-large" color="black" class="dialog-title__icon">{{ dataStore.getCategoryIcon(editableItem.Kategorie) }}</v-icon>
                 </div>
-              <v-icon size="x-large" color="black" class="dialog-title__icon">{{ dataStore.getCategoryIcon(editableItem.Kategorie) }}</v-icon>
-            </v-row>
-          </v-card-text>
-        </v-row>
+              </v-row>
+            </v-card-text>
+          </v-row>
         </v-col>
       </v-card-title>
       <v-card-text>
         <v-row>
           <v-col cols="12" :md="showWerbegrafik ? 7 : 12">
             <div class="mb-3"> <input class="text-subtitle-1 text-medium-emphasis" v-model="editableItem.Wer" placeholder="Wer" type="text" /> </div>
-            <div class="mb-1 col-container"> <v-icon>mdi-map-marker</v-icon> <div class="row-container"><p class="col-container"><input v-model="editableItem.Wo" placeholder="Wo" type="text" />,</p> <input v-model="editableItem.Koordinaten" placeholder="Koordinaten" type="text" /> </div></div>
-            <div class="mb-1 col-container"> <v-icon>mdi-calendar</v-icon> <div class="row-container"><p class="col-container"><input v-model="editableItem.Wochentag" placeholder="Wochentag" type="text" />,</p> <input v-model="editableItem.Rhythmus" placeholder="Rhythmus" type="text" /> </div></div>
-            <div class="mb-1 col-container"> <v-icon>mdi-clock</v-icon> <div class="row-container"><p class="col-container"><input v-model="editableItem.Uhrzeit_Start" placeholder="Uhrzeit Start (HH:MM)" type="text" /> -</p> <input v-model="editableItem.Uhrzeit_Ende" placeholder="Uhrzeit Ende (HH:MM)" type="text" /> </div></div>
+            <div class="mb-1 col-container">
+              <v-icon>mdi-map-marker</v-icon> 
+              <div class="row-container">
+                <p class="col-container">
+                  <input v-model="editableItem.Wo" placeholder="Wo" type="text" />
+                  ,
+                </p> 
+                <input v-model="editableItem.Koordinaten" placeholder="Koordinaten" type="text" /> 
+              </div>
+            </div>
+            <div class="mb-1 col-container">
+              <v-icon>mdi-calendar</v-icon>
+              <div class="row-container">
+                <p class="col-container" style="width: 100%;">
+                  <select v-model="editableItem.Wochentag" style="width: 100%;">
+                    <option v-for="option in sortedWochentage" :value="option.value" :placeholder="editableItem.Wochentag">
+                      {{ option.title }}
+                    </option>
+                  </select>
+                  ,
+                </p> 
+                <input v-model="editableItem.Rhythmus" placeholder="Rhythmus" type="text" />
+              </div>
+            </div>
+            
+              <div class="mb-1 col-container"> <v-icon>mdi-clock</v-icon> <div class="row-container">
+                <p class="col-container">
+                  <input v-model="editableItem.Uhrzeit_Start" placeholder="Uhrzeit Start (HH:MM)" type="text" /> 
+                -</p>
+                <input v-model="editableItem.Uhrzeit_Ende" placeholder="Uhrzeit Ende (HH:MM / 'open end')" type="text" />                
+              </div>
+            </div>
+
             <div class="mt-5"> <textarea v-model="editableItem.Link" placeholder="Link" type="text" :rows="isMobile ? '2' : '1'"/> </div>
           </v-col>
 
@@ -416,7 +456,7 @@ input, textarea {
 }
 .row-container {
   display: grid;
-  grid-template-columns: auto auto;
+  grid-template-columns: 1fr 1fr;
   flex-direction: row;
   flex: 1 1 0;
   column-gap: 5px;

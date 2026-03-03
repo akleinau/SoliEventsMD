@@ -52,25 +52,7 @@ const nutzungen = computed(() => {
 const wochentagFilter = ref<string[]>([]);
 const HEUTE_FILTER_VALUE = '__heute__';
 const wochentage = computed(() => {
-  if (!dataStore.data) return [];
-  const uniqueWochentage = new Set(dataStore.data
-    .filter(item => item.Wochentag && item.Wochentag.trim() !== "")
-    .flatMap(item =>
-      !item.Wochentag
-        ? []
-        : item.Wochentag
-        .split(";")
-        .map(value => value.trim())
-        .filter(value => value !== "")
-    ));
-    
-  // erst mit "0 alle Tage", "1 Montag", ... sortieren
-  const sortedWochentage = Array.from(uniqueWochentage).sort()
-    // und danach nur noch den 'kurzen' Titel anzeigen (via ".map(...)")
-    .map(tag => ({ 
-      value: tag, 
-      title: dataStore.getFormattedDay(tag ?? '')
-    }));
+  const sortedWochentage = dataStore.getSortedWochentageOptionen();
   // "Heute" als erste Option hinzufügen
   return [{ value: HEUTE_FILTER_VALUE, title: 'Heute' }, ...sortedWochentage];
 });
