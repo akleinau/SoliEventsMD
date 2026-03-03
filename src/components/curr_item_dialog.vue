@@ -164,29 +164,7 @@ const copyToClipboard = async() => {
   }
 }
 
-const wochentage = computed(() => {
-  if (!dataStore.data) return [];
-  const uniqueWochentage = new Set(dataStore.data
-    .filter(item => item.Wochentag && item.Wochentag.trim() !== "")
-    .flatMap(item =>
-      !item.Wochentag
-        ? []
-        : item.Wochentag
-        .split(";")
-        .map(value => value.trim())
-        .filter(value => value !== "")
-    ));
-    
-  // erst mit "0 alle Tage", "1 Montag", ... sortieren
-  const sortedWochentage = Array.from(uniqueWochentage).sort()
-    // und danach nur noch den 'kurzen' Titel anzeigen (via ".map(...)")
-    .map(tag => ({ 
-      value: tag, 
-      title: dataStore.getFormattedDay(tag ?? '')
-    }));
-  // "Heute" als erste Option hinzufügen
-  return sortedWochentage;
-});
+const sortedWochentage = dataStore.getSortedWochentageOptionen();
 
 </script>
 
@@ -320,7 +298,7 @@ const wochentage = computed(() => {
               <div class="row-container">
                 <p class="col-container" style="width: 100%;">
                   <select v-model="editableItem.Wochentag" style="width: 100%;">
-                    <option v-for="option in wochentage" :value="option.value" :placeholder="editableItem.Wochentag">
+                    <option v-for="option in sortedWochentage" :value="option.value" :placeholder="editableItem.Wochentag">
                       {{ option.title }}
                     </option>
                   </select>
@@ -330,10 +308,11 @@ const wochentage = computed(() => {
               </div>
             </div>
             
-              <div class="mb-1 col-container"> <v-icon>mdi-clock</v-icon> <div class="row-container"><p class="col-container">
-                <input v-model="editableItem.Uhrzeit_Start" placeholder="Uhrzeit Start (HH:MM)" type="time" /> 
-              -</p>
-                <input v-model="editableItem.Uhrzeit_Ende" placeholder="Uhrzeit Ende (HH:MM)" type="time" /> 
+              <div class="mb-1 col-container"> <v-icon>mdi-clock</v-icon> <div class="row-container">
+                <p class="col-container">
+                  <input v-model="editableItem.Uhrzeit_Start" placeholder="Uhrzeit Start (HH:MM)" type="text" /> 
+                -</p>
+                <input v-model="editableItem.Uhrzeit_Ende" placeholder="Uhrzeit Ende (HH:MM / 'open end')" type="text" />                
               </div>
             </div>
 
