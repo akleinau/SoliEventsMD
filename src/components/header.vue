@@ -26,8 +26,7 @@
   .header-container {
       display: flex;
       position: sticky;
-      top: 0; /* Klebt am oberen Rand */
-      color: #ec4d0b;
+      top: 0; /* Klebt am oberen Rand */      
       background-color: white;
       padding: 10px;
       z-index: 100; /* Stellt sicher, dass der Header über anderen Elementen liegt */
@@ -38,6 +37,7 @@
       align-content: center;
       padding: 0 10px;
       flex: 2;
+      color: #ec4d0b;
   }
 
   .categories-container {
