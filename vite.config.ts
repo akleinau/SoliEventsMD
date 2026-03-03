@@ -14,4 +14,11 @@ export default defineConfig({
         vue: 'vue/dist/vue.esm-bundler.js',
       },
     },
+    server: {
+      fs: {
+        // Allow serving files from the dataset directory at the project root
+        allow: ['..'],
+      },
+    },
+    publicDir: 'public',
 })

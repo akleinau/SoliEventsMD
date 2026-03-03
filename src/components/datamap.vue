@@ -75,8 +75,8 @@ const addMarker = async (item: any) => {
   if (!coords) return;
 
   // Icon für die Kategorie laden
-  const iconName = dataStore.getCategoryIcon(item.Kategorie);
-  const iconUrl = import.meta.env.VITE_ICONS_URL + 'assets/category-icons/' +  iconName + '.svg';
+  const iconUrl = dataStore.getCategoryIconUrl(item.Kategorie);
+  if (!iconUrl) return;
   
   // Original icon
   const originalIcon = L.icon({
