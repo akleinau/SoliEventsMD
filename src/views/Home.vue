@@ -59,6 +59,7 @@ const onBackdropMouseUp = (e: MouseEvent) => {
 };
 
 onMounted(() => {
+  dataStore.checkIfMobile();
   window.addEventListener('resize', dataStore.checkIfMobile);
 });
 
