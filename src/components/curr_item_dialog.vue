@@ -250,7 +250,11 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
     
     
     <!-- Bearbeitungsmodus (Edit) -->
-    <v-card v-if="editableItem && isEditing">
+    <v-card v-if="editableItem && isEditing"
+      :style="{
+        'background': dataStore.getCardColor(editableItem.Kategorie), 
+        'border': '5px solid color-mix(in oklch, ' + dataStore.getCardColor(editableItem.Kategorie) + ', black 20%)'
+      }">
       <v-card-title class="dialog-title pb-0 pt-5">
         <v-col class="pb-0">
           <v-row>
@@ -420,9 +424,9 @@ a {
 }
 
 input, select, textarea {
-  background-color: lightgrey;
+  background-color: white;
   padding: 0px 1px;
-  border: 1px solid lightgrey;
+  border: 1px solid white;
   border-radius: 3px;
   box-shadow:
     3px 3px 5px rgba(0, 0, 0, 0.2), /* Schatten unten rechts */
