@@ -5,6 +5,11 @@ import { getSubCategoryDefinition } from "../constants/categoryConfig.ts"
 import { ref, computed } from "vue";
 
 const dataStore = useDataStore();
+const isFilterMenuVisible = ref(false);
+// Filter ein-/ausklappen
+const toggleFilterMenuVisible = () => {
+    isFilterMenuVisible.value = !isFilterMenuVisible.value;
+};
 
 // Heute-Filter
 const heuteFilterActive = ref(false);
@@ -109,11 +114,19 @@ const resetFilters = () => {
       </v-btn>
     </div>
 
-    <div class="mx-3">
-      <h3>Filter nach: </h3>
+    <div class="mx-3 my-1">
+      <!-- für mobile Ansicht: Button zum Ein-/Ausklappen des Filters /-->
+      <v-btn
+        v-if="dataStore.isMobile"
+        @click="toggleFilterMenuVisible"
+      >
+        <h3>{{ isFilterMenuVisible ? '▲ Filter nach:' : '▼ Filter einblenden' }}</h3>
+      </v-btn>
+      <!-- für Desktop-Ansicht: Filter immer offen /-->
+      <h3 v-else>Filter nach: </h3>
     </div>
-
-    <div class="filter-items">
+        
+    <div class="filter-items" v-show="(!dataStore.isMobile || isFilterMenuVisible)">
 
       <!-- Das folgende Element soll zu **Unterkategorien** umgebaut werden. Die Hauptkategorien sollen dann nur noch über den Header anwählbar sein. -->
       <div class="FilterDiv">
@@ -186,7 +199,7 @@ const resetFilters = () => {
     </div>
 
     <!-- Button zum Umschalten des viewMode (Kacheln / Liste) -->
-    <div>
+    <div class="mx-3 my-1">
       <v-btn @click="dataStore.switchViewMode()">
         {{ dataStore.getViewMode() === 'cards' ? 'Zur Listenansicht' : 'Zur Kachelansicht' }}
       </v-btn>
