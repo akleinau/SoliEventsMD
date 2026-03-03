@@ -419,8 +419,11 @@ export const useDataStore = defineStore('dataStore', {
         },
 
         // Prüfen, ob mobiles Gerät
+            // wird u.a. bei "Home.vue" genutzt, um zu entscheiden, 
+            // ob die Map initial angezeigt werden soll oder nicht (wie z.B. in mobiler Ansicht)
         checkIfMobile () {
             this.isMobile = window.innerWidth <= 768;
+            if(this.isMobile) this.isMapVisible = false;
         },
     }
 });
