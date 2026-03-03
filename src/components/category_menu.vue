@@ -10,7 +10,7 @@ const dataStore = useDataStore()
 type SelectionOption = CategoryDefinition & { path: string }
 
 const looking_for_options: SelectionOption[] = [
-  { label: 'Alles', path: 'alles', color: '#fcd8d8', icon: 'mdi-star', icon2: '' },
+  { label: 'Alles', path: 'alles', color: '#fcd8d8', icon: 'mdi-star' },
   ...MAIN_CATEGORIES,
 ]
 

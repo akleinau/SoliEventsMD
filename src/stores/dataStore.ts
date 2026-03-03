@@ -298,9 +298,7 @@ export const useDataStore = defineStore('dataStore', {
         getCategoryIcon(category?: string | null): string | undefined {
             return getCategoryDefinition(category)?.icon;
         },
-        getCategoryIconUrl(category?: string | null): string | undefined {
-            return getCategoryDefinition(category)?.icon2;
-        },
+
         getSubCategoryIcon(category?: string | null): string | undefined {
             return getSubCategoryDefinition(category)?.icon;
         },
