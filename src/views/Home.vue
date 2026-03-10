@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import { ref, onMounted, onBeforeUnmount, computed } from 'vue';
+import { ref, onMounted, onBeforeUnmount, computed, watch } from 'vue';
 import Data_loader from "../components/data_loader.vue";
 import Filter_menu from "../components/filter_menu.vue";
 import Datatable from "../components/datatable.vue";
@@ -63,8 +63,18 @@ onMounted(() => {
   window.addEventListener('resize', dataStore.checkIfMobile);
 });
 
+watch([isMobile, isMapOpen], ([mobile, mapOpen]) => {
+  if (mobile && mapOpen) {
+    document.body.style.overflow = 'hidden';
+    return;
+  }
+
+  document.body.style.overflow = '';
+});
+
 onBeforeUnmount(() => {
   window.removeEventListener('resize', dataStore.checkIfMobile);
+  document.body.style.overflow = '';
 });
 
 </script>
@@ -91,17 +101,6 @@ onBeforeUnmount(() => {
               :items="dataStore.get_filtered_data()"
               @item-clicked="handleItemClick"
           />
-          
-          <!-- Overlay to capture clicks when dialog is open -->
-          <div 
-            v-if="dataStore.current_item !== null" 
-            class="dialog-backdrop"
-            @mousedown="onBackdropMouseDown"
-            @mouseup="onBackdropMouseUp"
-          ></div>
-          
-          <!--View when item selected - now only overlays datatable /-->
-          <Curr_item_dialog class="mt-5" v-if="dataStore.current_item !== null" />
         </div>
 
         <!-- Button zum Ein-/Ausklappen der Karte /-->
@@ -110,7 +109,8 @@ onBeforeUnmount(() => {
           class="toggle-map-button"
           :class="{
             'toggle-map-button--mobile': isMobile,
-            'toggle-map-button--open': isMapOpen
+            'toggle-map-button--open': isMapOpen,
+            'toggle-map-button--mobile-open': isMobile && isMapOpen
           }"
         >
           {{ isMapOpen ? (isMobile ? '▼ Karte ausblenden' : '◀ Karte ausblenden') : (isMobile ? '▲ Karte anzeigen' : 'Karte anzeigen ▶') }}
@@ -121,10 +121,29 @@ onBeforeUnmount(() => {
             v-show="isMapOpen"
             ref="datamap"
             class="datamap"
-            :class="{ 'datamap--mobile': isMobile }"
+            :class="{
+              'datamap--mobile': isMobile,
+              'datamap--mobile-open': isMobile && isMapOpen
+            }"
             :isMobile="isMobile"
             :isMapOpen="isMapOpen"
             :items="dataStore.get_filtered_data()"
+        />
+
+        <!-- Overlay to capture clicks when dialog is open -->
+        <div 
+          v-if="dataStore.current_item !== null"
+          class="dialog-backdrop"
+          :class="{ 'dialog-backdrop--fullscreen': isMobile && isMapOpen }"
+          @mousedown="onBackdropMouseDown"
+          @mouseup="onBackdropMouseUp"
+        ></div>
+
+        <!-- Item dialog is attached to content container so it also works above map fullscreen -->
+        <Curr_item_dialog
+          class="mt-5"
+          v-if="dataStore.current_item !== null"
+          attachTarget=".content-container"
         />
     </div>
   </div>
@@ -167,8 +186,13 @@ onBeforeUnmount(() => {
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 100;
+  z-index: 1250;
   cursor: pointer;
+}
+
+.dialog-backdrop--fullscreen {
+  position: fixed;
+  inset: 0;
 }
 
 .datamap {
@@ -248,11 +272,26 @@ onBeforeUnmount(() => {
   }
 
   .content-container.map-open.mobile .datatable-wrapper {
-    height: 100vh;
+    display: none;
   }
 
-  .content-container.map-open.mobile .datamap {
-    height: 100vh;
+  .datamap--mobile-open {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100dvh;
+    z-index: 1200;
+    background: white;
+  }
+
+  .toggle-map-button--mobile-open {
+    position: fixed;
+    left: 50%;
+    right: auto;
+    bottom: max(12px, env(safe-area-inset-bottom));
+    transform: translateX(-50%);
+    margin: 0;
+    z-index: 1300;
   }
 
   .toggle-map-button--open {
