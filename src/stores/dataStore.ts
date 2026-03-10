@@ -1,6 +1,11 @@
 import { defineStore } from "pinia";
 import { getCategoryDefinition, getSubCategoryDefinition } from "../constants/categoryConfig";
 
+export interface SortLevel {
+    column: string;
+    direction: 'asc' | 'desc';
+}
+
 const DEFAULT_VERIFICATION_THRESHOLD_MONTHS = 3;
 
 const parseVerificationDate = (rawDate?: string | null): Date | null => {
@@ -83,6 +88,8 @@ export const useDataStore = defineStore('dataStore', {
       verificationThresholdMonths: DEFAULT_VERIFICATION_THRESHOLD_MONTHS,
       viewMode: 'cards' as string,
       heuteFilterActive: false,
+      searchTerm: '',
+      sortLevels: [] as SortLevel[],
   }),
     actions: {
         // Add actions here as needed
@@ -178,22 +185,36 @@ export const useDataStore = defineStore('dataStore', {
             }
             
             // Apply regular column filters
-            if (this.filter.length === 0) {
-                return filteredData;
-            }
-            return filteredData.filter(item => {
-                return this.filter.every(f => {
-                    const value = item[f.column] ?? '';
-                    if (value === '') return false;
-                    
-                    // Use special matching logic for Wochentag
-                    if (f.column === 'Wochentag') {
-                        return this.matchesWochentagFilter(value, f.values);
-                    }
-                    
-                    return f.values.includes(value);
+            if (this.filter.length > 0) {
+                filteredData = filteredData.filter(item => {
+                    return this.filter.every(f => {
+                        const value = item[f.column] ?? '';
+                        if (value === '') return false;
+                        
+                        // Use special matching logic for Wochentag
+                        if (f.column === 'Wochentag') {
+                            return this.matchesWochentagFilter(value, f.values);
+                        }
+                        
+                        return f.values.includes(value);
+                    });
                 });
-            });
+            }
+
+            // Apply multi-level sorting
+            if (this.sortLevels.length > 0) {
+                filteredData = [...filteredData].sort((a, b) => {
+                    for (const level of this.sortLevels) {
+                        const valA = (a[level.column] ?? '').toLowerCase();
+                        const valB = (b[level.column] ?? '').toLowerCase();
+                        if (valA < valB) return level.direction === 'asc' ? -1 : 1;
+                        if (valA > valB) return level.direction === 'asc' ? 1 : -1;
+                    }
+                    return 0;
+                });
+            }
+
+            return filteredData;
         },
         add_filter(column: string, values: string[]) {
             if (values.length === 0) {
@@ -308,6 +329,25 @@ export const useDataStore = defineStore('dataStore', {
         },
         setHeuteFilter(active: boolean) {
             this.heuteFilterActive = active;
+        },
+        setSearchTerm(term: string) {
+            this.searchTerm = term;
+        },
+        toggleSortLevel(column: string) {
+            const idx = this.sortLevels.findIndex(s => s.column === column);
+            if (idx === -1) {
+                // Not selected → add as ascending
+                this.sortLevels.push({ column, direction: 'asc' });
+            } else if (this.sortLevels[idx].direction === 'asc') {
+                // Ascending → switch to descending
+                this.sortLevels[idx].direction = 'desc';
+            } else {
+                // Descending → remove
+                this.sortLevels.splice(idx, 1);
+            }
+        },
+        clearSortLevels() {
+            this.sortLevels = [];
         },
         set_current_item(item: DataRow) {
             this.current_item = item;
