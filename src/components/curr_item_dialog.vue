@@ -194,17 +194,26 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
         'border': '5px solid color-mix(in oklch, ' + dataStore.getCardColor(item.Kategorie) + ', black 20%)'
       }">    
       <v-card-title class="dialog-title">
-        <span>{{ item.Was }}</span>
-        <v-icon size="x-large" color="black" class="dialog-title__icon">{{ item.Unterkategorie ? dataStore.getSubCategoryIcon(item.Unterkategorie) : dataStore.getCategoryIcon(item.Kategorie) }}</v-icon>
+        <span style="font-weight: bold">{{ item.Was }}</span>
+        <v-icon size="x-large" color="black" class="dialog-title__icon">{{ item.Unterkategorie ? dataStore.getSubCategoryIcon(item.Unterkategorie) : dataStore.getCategoryIcon(item.Kategorie) }}</v-icon>        
       </v-card-title>
       <v-card-text>
         <v-row>
-          <v-col cols="12" :md="showWerbegrafik ? 7 : 12">
-            <div class="mb-3 text-subtitle-1 text-medium-emphasis">{{ item.Wer }}</div>
+          <v-col v-if="item.Kurzbeschreibung != ''"class="mb-3 text-subtitle-1 text-medium-emphasis">{{ item.Kurzbeschreibung }}</v-col>
+          <v-col cols="12" :md="showWerbegrafik ? 7 : 12">            
+            <div class="mb-1 col-container"> <v-icon>mdi-account-question</v-icon> <div>{{ item.Wer }}</div></div>
             <div class="mb-1 col-container"> <v-icon>mdi-map-marker</v-icon> <div>{{ item.Wo }}</div></div>
-            <div class="mb-1 col-container"> <v-icon>mdi-calendar</v-icon> <div>{{ dataStore.getFormattedDay(item.Wochentag ?? '') }}, {{ item.Rhythmus }}</div></div>
-            <div class="mb-1 col-container"> <v-icon>mdi-clock</v-icon> <div>{{ item.Uhrzeit_Start }} - {{ item.Uhrzeit_Ende }}</div></div>
-            <div class="mt-5"> <a :href="item.Link" target="_blank">{{ item.Link }}</a> </div>
+            <div class="mb-1 col-container"> 
+              <v-icon>mdi-calendar</v-icon>
+              <div>
+                {{ dataStore.getFormattedDay(item.Wochentag ?? '') }}, 
+                {{ item.Rhythmus }},
+                {{ item.Uhrzeit_Start }} Uhr bis {{ item.Uhrzeit_Ende }} Uhr
+              </div>
+            </div>
+            <div v-if="item.Kommentar != ''" class="mb-1 col-container"> <v-icon>mdi-comment</v-icon> <div>{{ item.Kommentar }}</div></div>
+            <div v-if="item.Kontakt != ''" class="mb-1 col-container"> <v-icon>mdi-email</v-icon> <div>{{ item.Kontakt }}</div></div>
+            <div class="mt-5"> {{ item.Link }} </div>
           </v-col>
 
           <v-col v-if="showWerbegrafik" cols="12" md="5">
@@ -258,7 +267,7 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
       <v-card-title class="dialog-title pb-0 pt-5">
         <v-col class="pb-0">
           <v-row>
-            <textarea v-model="editableItem.Was" placeholder="Was" type="text" :rows="isMobile ? '2' : '1'" />
+            <textarea v-model="editableItem.Was" placeholder="Was" type="text" :rows="isMobile ? '2' : '1'" style="font-weight: bold" />
           </v-row>
           <v-row>
             <v-card-text>
@@ -293,8 +302,13 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
       </v-card-title>
       <v-card-text>
         <v-row>
+          <v-col class="mb-3 text-subtitle-1 text-medium-emphasis">
+            <textarea v-model="editableItem.Kurzbeschreibung" maxlength="240" placeholder="Kurzbeschreibung" type="text" :rows=" isMobile ? 3 : 2" /></v-col>
           <v-col cols="12" :md="showWerbegrafik ? 7 : 12">
-            <div class="mb-3"> <input class="text-subtitle-1 text-medium-emphasis" v-model="editableItem.Wer" placeholder="Wer" type="text" /> </div>
+            <div class="mb-1 col-container"> 
+              <v-icon>mdi-account-question</v-icon>
+              <input v-model="editableItem.Wer" placeholder="Wer" type="text" /> 
+            </div>
             <div class="mb-1 col-container">
               <v-icon>mdi-map-marker</v-icon> 
               <div class="row-container">
@@ -307,7 +321,7 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
             </div>
             <div class="mb-1 col-container">
               <v-icon>mdi-calendar</v-icon>
-              <div class="row-container">
+              <div class="row3-container">
                 <p class="col-container" style="width: 100%;">
                   <select v-model="editableItem.Wochentag" style="width: 100%;">
                     <option v-for="option in sortedWochentage" :value="option.value" :placeholder="editableItem.Wochentag">
@@ -316,17 +330,20 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
                   </select>
                   ,
                 </p> 
+                <p class="col-container">
                 <input v-model="editableItem.Rhythmus" placeholder="Rhythmus" type="text" />
+                  ,
+                </p> 
+                <div class="col-container">
+                  <p class="col-container"><input v-model="editableItem.Uhrzeit_Start" placeholder="Start (HH:MM)" type="text" /> Uhr</p>
+                  <p>bis</p>
+                  <p class="col-container"><input v-model="editableItem.Uhrzeit_Ende" placeholder="Ende (HH:MM / 'open end')" type="text" /> Uhr</p>
+                </div>
               </div>
             </div>
             
-              <div class="mb-1 col-container"> <v-icon>mdi-clock</v-icon> <div class="row-container">
-                <p class="col-container">
-                  <input v-model="editableItem.Uhrzeit_Start" placeholder="Uhrzeit Start (HH:MM)" type="text" /> 
-                -</p>
-                <input v-model="editableItem.Uhrzeit_Ende" placeholder="Uhrzeit Ende (HH:MM / 'open end')" type="text" />                
-              </div>
-            </div>
+            <div class="mb-1 col-container"> <v-icon>mdi-comment</v-icon> <input v-model="editableItem.Kommentar" maxlength="120" placeholder="Kommentar/Hinweis" type="text" /> </div>
+            <div class="mb-1 col-container"> <v-icon>mdi-email</v-icon> <input v-model="editableItem.Kontakt" maxlength="60" placeholder="Kontakt" type="text" /> </div>
 
             <div class="mt-5"> <textarea v-model="editableItem.Link" placeholder="Link" type="text" :rows="isMobile ? '2' : '1'"/> </div>
           </v-col>
@@ -455,6 +472,17 @@ input, textarea {
   opacity: 0.85;
 }
 
+/* Mobile-Ansicht */
+@media (max-width: 767px) {
+  .dialog-title__icon {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    opacity: 0.85;
+    margin-bottom: 5px;
+  }
+}
+
 .werbegrafik-image {
   border-radius: 8px;
   overflow: hidden;
@@ -469,6 +497,13 @@ input, textarea {
 .row-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
+  flex-direction: row;
+  flex: 1 1 0;
+  column-gap: 5px;
+}
+.row3-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
   flex-direction: row;
   flex: 1 1 0;
   column-gap: 5px;
@@ -488,14 +523,13 @@ input, textarea {
     flex-direction: row;
     width: 100%;
   }
-  .row-container {
+  .row-container, .row3-container {
     display: flex;
     flex-direction: column;
     width: 100%;
     column-gap: 5px;
   }
 }
-
 
 .edit-info-container {
   column-gap: 10px;
