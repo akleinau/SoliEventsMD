@@ -102,6 +102,7 @@ const apply_filter = () => {
         align-items: center;
         column-gap: 8px;
         padding: 5px 10px;
+        margin: 5px;
     }
 
     .category-button__label {
