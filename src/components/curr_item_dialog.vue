@@ -4,6 +4,12 @@ import { computed, onMounted, ref, watch } from "vue";
 import { useDataStore } from "../stores/dataStore.ts";
 import { MAIN_CATEGORIES, SUB_CATEGORIES } from "../constants/categoryConfig";
 
+const props = withDefaults(defineProps<{
+  attachTarget?: string;
+}>(), {
+  attachTarget: '.datatable-wrapper',
+});
+
 const dataStore = useDataStore()
 
 const active = ref(true);
@@ -180,7 +186,7 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
   <v-dialog 
     v-model="active" 
     class="dialog-container" 
-    :attach="'.datatable-wrapper'" 
+    :attach="props.attachTarget" 
     :contained="true" 
     :scrim="false"
     :persistent="true"
