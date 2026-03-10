@@ -113,7 +113,7 @@ onBeforeUnmount(() => {
             'toggle-map-button--open': isMapOpen
           }"
         >
-          {{ isMapOpen ? (isMobile ? '▼ Karte ausblenden' : '◀ Karte ausblenden') : (isMobile ? '▲ Karte anzeigen' : 'Karte anzeigen ▶') }}
+          {{ isMapOpen ? (isMobile ? '▼ Karte ausblenden' : 'Karte ausblenden ▶') : (isMobile ? '▲ Karte anzeigen' : '◀ Karte anzeigen') }}
         </button>
 
         <!--Datamap /-->
