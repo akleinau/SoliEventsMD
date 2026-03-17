@@ -201,7 +201,11 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
       }">    
       <v-card-title class="dialog-title">
         <span>{{ item.Was }}</span>
-        <v-icon size="x-large" color="black" class="dialog-title__icon">{{ item.Unterkategorie ? dataStore.getSubCategoryIcon(item.Unterkategorie) : dataStore.getCategoryIcon(item.Kategorie) }}</v-icon>
+        <v-tooltip :text="dataStore.getIconText(item)" location="top" open-on-click>
+          <template v-slot:activator="{ props }">
+              <v-icon v-bind="props" size="x-large" color="black" class="dialog-title__icon">{{ dataStore.getIcon(item) }}</v-icon>
+          </template>
+        </v-tooltip>        
       </v-card-title>
       <v-card-text>
         <v-row>
@@ -282,7 +286,11 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
                       {{ option.label }}
                     </option>
                   </select>
-                  <v-icon size="x-large" color="black" class="dialog-title__icon">{{ dataStore.getSubCategoryIcon(editableItem.Unterkategorie) }}</v-icon>
+                  <v-tooltip :text="dataStore.getSubCategoryName(editableItem.Unterkategorie ?? '')" location="top" open-on-click>
+                    <template v-slot:activator="{ props }">
+                        <v-icon v-bind="props" size="x-large" color="black" class="dialog-title__icon">{{ dataStore.getSubCategoryIcon(editableItem.Unterkategorie) }}</v-icon>
+                    </template>
+                  </v-tooltip>
                 </div>
                 <div>Kategorie: 
                   <select v-model="editableItem.Kategorie">
@@ -290,7 +298,11 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
                       {{ option.label }}
                     </option>
                   </select>
-                  <v-icon size="x-large" color="black" class="dialog-title__icon">{{ dataStore.getCategoryIcon(editableItem.Kategorie) }}</v-icon>
+                  <v-tooltip :text="dataStore.getCategoryName(editableItem.Kategorie ?? '')" location="top" open-on-click>
+                    <template v-slot:activator="{ props }">
+                        <v-icon v-bind="props" size="x-large" color="black" class="dialog-title__icon">{{ dataStore.getCategoryIcon(editableItem.Kategorie) }}</v-icon>
+                    </template>
+                  </v-tooltip>
                 </div>
               </v-row>
             </v-card-text>

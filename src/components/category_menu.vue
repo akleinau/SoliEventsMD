@@ -70,10 +70,12 @@ const apply_filter = () => {
                     'background-color': option.color
                 } as Record<string, string>"
                 @click="toggle">
-            <span v-if="!isMobile" class="category-button__label">{{ option.label }}</span>
-            <v-icon size="x-large" color="ec4d0b" class="pl-2 mr-2">
-                {{ option.icon }}
-            </v-icon>
+              <span v-if="!isMobile" class="category-button__label">{{ option.label }}</span>
+              <v-tooltip :text="option.label" location="bottom" open-on-click>
+                <template v-slot:activator="{ props }">
+                    <v-icon v-bind="props" size="x-large" color="ec4d0b" class="pl-2 mr-2">{{ option.icon }}</v-icon>
+                </template>
+              </v-tooltip>
             </v-btn>
         </v-item>
     </v-item-group>

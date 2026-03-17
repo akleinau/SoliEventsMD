@@ -355,13 +355,30 @@ export const useDataStore = defineStore('dataStore', {
         getCardColor(category: string | undefined): string {                  
             return getCategoryDefinition(category)?.color ?? '#fcd8d8';
         },
+
+        getCategoryName(category?: string | null): string | undefined {
+            return getCategoryDefinition(category)?.label ?? 'Neu';
+        },
         getCategoryIcon(category?: string | null): string | undefined {
             return getCategoryDefinition(category)?.icon ?? 'mdi-new-box';
         },
 
-        getSubCategoryIcon(category?: string | null): string | undefined {
-            return getSubCategoryDefinition(category)?.icon;
+        getSubCategoryName(subcategory?: string | null): string | undefined {
+            return getSubCategoryDefinition(subcategory)?.label;
         },
+        getSubCategoryIcon(subcategory?: string | null): string | undefined {
+            return getSubCategoryDefinition(subcategory)?.icon;
+        },
+
+
+        getIconText(item: any) {
+            return (item.Unterkategorie && !item.Unterkategorie.includes(";")) ? this.getSubCategoryName(item.Unterkategorie) : this.getCategoryName(item.Kategorie)
+        },
+
+        getIcon(item: any) {
+            return (item.Unterkategorie && !item.Unterkategorie.includes(";")) ? this.getSubCategoryIcon(item.Unterkategorie) : this.getCategoryIcon(item.Kategorie)
+        },
+
         setVerificationThresholdMonths(months: number) {
             this.verificationThresholdMonths = months;
         },
