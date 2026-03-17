@@ -28,10 +28,14 @@ const clicked = (item: any) => {
         max-height="180"
         :color="dataStore.getCardColor(item.Kategorie ?? '')"
         link @click="clicked(item)">
-        <div class="category-card__icon" v-if="dataStore.getCategoryIcon(item.Kategorie)">
-          <v-icon size="large" color="black">{{ item.Unterkategorie ? dataStore.getSubCategoryIcon(item.Unterkategorie) : dataStore.getCategoryIcon(item.Kategorie) }}</v-icon>          
-        </div>
         <v-card-title class="category-card__title">{{ item.Was }}</v-card-title>
+        <div class="category-card__icon" v-if="dataStore.getCategoryIcon(item.Kategorie)">
+          <v-tooltip :text="dataStore.getIconText(item)" location="top" open-on-click>
+            <template v-slot:activator="{ props }">
+                <v-icon v-bind="props" size="large" color="black">{{ dataStore.getIcon(item) }}</v-icon>
+            </template>
+          </v-tooltip>
+        </div>
         <v-card-subtitle>{{ item.Wer }}</v-card-subtitle>
         <v-card-text>
           <p class="mb-1"> <v-icon>mdi-map-marker</v-icon>  {{ item.Wo }}</p>
@@ -45,7 +49,11 @@ const clicked = (item: any) => {
         :color="dataStore.getCardColor(emptyItem?.Kategorie ?? '')"
         link @click="clicked(emptyItem)">
         <div class="category-card__icon" v-if="dataStore.getCategoryIcon(emptyItem?.Kategorie)">
-          <v-icon size="large" color="black">{{ emptyItem?.Unterkategorie ? dataStore.getSubCategoryIcon(emptyItem?.Unterkategorie) : dataStore.getCategoryIcon(emptyItem?.Kategorie) }}</v-icon>          
+          <v-tooltip :text="dataStore.getIconText(emptyItem)" location="top" open-on-click>
+            <template v-slot:activator="{ props }">
+                <v-icon v-bind="props" size="large" color="black">{{ dataStore.getIcon(emptyItem) }}</v-icon>
+            </template>
+          </v-tooltip>          
         </div>
         <v-card-title class="category-card__title">{{ emptyItem?.Was }}</v-card-title>
         <v-card-subtitle>{{ emptyItem?.Wer }}</v-card-subtitle>
@@ -81,7 +89,6 @@ const clicked = (item: any) => {
   width: 30px;
   height: 30px;
   opacity: 0.9;
-  pointer-events: none;
 }
 
 .category-card__icon img {
