@@ -191,7 +191,16 @@ export const useDataStore = defineStore('dataStore', {
                         return this.matchesWochentagFilter(value, f.values);
                     }
                     
-                    return f.values.includes(value);
+                    // ALT: Prüft nur, ob die Filterwerte den Datensatz-Wert enthalten
+                    //return f.values.includes(value);
+
+                    // NEU:
+                    return f.values.some(filterValue => 
+                        //Prüfung 1: Datensatz enthält Filterwert?
+                        value.includes(filterValue) || 
+                        //Prüfung 2: Filterwert enthält Datensatz-Wert?
+                        filterValue.includes(value)
+                    );
                 });
             });
         },
