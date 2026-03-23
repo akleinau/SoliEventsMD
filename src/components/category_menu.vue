@@ -59,7 +59,7 @@ const apply_filter = () => {
     <v-item-group
         v-model="looking_for"
         class="d-flex flex-wrap justify-center align-center button-container">
-        <v-item v-slot="{ isSelected, toggle }" v-for="option in looking_for_options"
+        <v-item v-slot="{ isSelected, toggle }" v-for="(option, index) in looking_for_options"
             :key="option.label"
             :value="option.path">
             <v-btn class="category-button"
@@ -67,7 +67,8 @@ const apply_filter = () => {
                 :class="{ 'category-button--selected': isSelected }"
                 :to="'/' + option.path"                                
                 :style="{
-                    'background-color': option.color
+                  'background-color': option.color,
+                  'border-left': index === 0 ? '0' : '3px solid #000'
                 } as Record<string, string>"
                 @click="toggle">
               <span v-if="!isMobile" class="category-button__label">{{ option.label }}</span>
@@ -89,7 +90,7 @@ const apply_filter = () => {
     }
 
     .v-btn--active {
-      border-bottom: 5px solid black;
+      border-bottom: 5px solid black !important;
       padding-bottom: 0 !important;
     }
 
@@ -97,13 +98,16 @@ const apply_filter = () => {
       padding-bottom: 5px;
     }
 
+
     .category-button {
         position: relative;
         overflow: hidden;
         display: inline-flex;
         align-items: center;
-        column-gap: 8px;
-        padding: 5px 10px;
+        padding: 5px 12px;
+        border-radius: 0;
+        box-shadow: none !important;
+        border: 0;
     }
 
     .category-button__label {
