@@ -2,7 +2,6 @@
 
 import { ref, onMounted, onBeforeUnmount, computed } from 'vue';
 import Data_loader from "../components/data_loader.vue";
-import Filter_menu from "../components/filter_menu.vue";
 import Datatable from "../components/datatable.vue";
 import Datamap from "../components/datamap.vue";
 import Curr_item_dialog from "../components/curr_item_dialog.vue";
@@ -74,11 +73,6 @@ onBeforeUnmount(() => {
   <div class="home-container">
     <!--Prepare data /-->
     <Data_loader />
-
-    <!--Filter the data in table /-->
-    <div class="filter-container">
-      <Filter_menu />
-    </div>
 
     <div class="content-container" :class="{ 'map-open': isMapOpen, 'mobile': isMobile }">
         <!--Wrapper for datatable and dialog (dialog only overlays datatable, not map) -->

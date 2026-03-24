@@ -87,8 +87,7 @@ const apply_filter = () => {
     }
 
     .v-btn--active {
-      border-bottom: 5px solid black;
-      padding-bottom: 0 !important;
+      border: 2px solid black;
     }
 
     .v-btn {
@@ -114,6 +113,10 @@ const apply_filter = () => {
         height: 28px;
         opacity: 0.6;
         pointer-events: none;
+    }
+
+    .button-container {
+        gap: 16px;
     }
 
     :deep(.v-btn__overlay) {

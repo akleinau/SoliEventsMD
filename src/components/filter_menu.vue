@@ -203,6 +203,7 @@ const resetFilters = () => {
         hide-details
         clearable
         bg-color="white"
+        single-line
       />
 
       <!-- Filter toggle button with badge -->
@@ -215,7 +216,7 @@ const resetFilters = () => {
         <v-badge
           v-if="activeFilterCount > 0"
           :content="activeFilterCount"
-          color="orange"
+          color="#ec4d0b"
           floating
         >
           <v-icon>mdi-filter-variant</v-icon>
@@ -351,15 +352,64 @@ const resetFilters = () => {
   flex: 1 1 180px;
   min-width: 120px;
   max-width: 360px;
+  height: 36px;
+}
+
+.control-bar__search :deep(.v-input__control) {
+  height: 36px;
+  display: flex;
+  align-items: center;
+}
+
+.control-bar__search :deep(.v-field) {
+  height: 36px;
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+}
+
+.control-bar__search :deep(.v-field__input) {
+  height: 36px;
+  padding: 0 4px;
+  display: flex;
+  align-items: center;
+}
+
+.control-bar__search :deep(.v-input__slot) {
+  height: 36px;
+  display: flex;
+  align-items: center;
+}
+
+.control-bar__search :deep(.v-field__prepend-inner) {
+  display: flex;
+  align-items: center;
+  margin-top: 0;
+}
+
+.control-bar__search :deep(input) {
+  height: 36px;
+  line-height: 36px;
 }
 
 .control-bar__btn {
   flex: 0 0 auto;
+  height: 36px;
+  min-width: 44px;
 }
 
 .control-bar__view-toggle {
   flex: 0 0 auto;
   margin-left: auto;
+  height: 36px;
+}
+
+.control-bar__view-toggle :deep(.v-btn-toggle) {
+  height: 36px;
+}
+
+.control-bar__view-toggle :deep(.v-btn) {
+  min-height: 36px;
 }
 
 /* ─── Inline filter row ─── */
@@ -410,6 +460,10 @@ const resetFilters = () => {
   font-weight: 700;
   color: white;
   line-height: 1;
+}
+
+.control-bar__row :deep(.v-btn) {
+  border-color: rgba(0, 0, 0, 0.38);
 }
 
 /* Hide button text on very small screens, keep icons */
