@@ -7,6 +7,8 @@ export interface SortLevel {
 }
 
 const DEFAULT_VERIFICATION_THRESHOLD_MONTHS = 3;
+const MAX_SORT_LEVELS = 3;
+const NEWEST_SORT_COLUMN = 'Letzte_Ueberpruefung';
 
 const parseVerificationDate = (rawDate?: string | null): Date | null => {
     if (!rawDate) {
@@ -49,6 +51,13 @@ const formatVerificationDate = (rawDate?: string | null): string | null => {
         month: "long",
         year: "numeric",
     });
+};
+
+const normalizeSearchText = (value: string): string => {
+    return value
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase();
 };
 
 export interface Filter {
@@ -201,14 +210,44 @@ export const useDataStore = defineStore('dataStore', {
                 });
             }
 
+            // Apply search term across row text values (in combination with active filters)
+            const searchTokens = normalizeSearchText(this.searchTerm)
+                .split(/\s+/)
+                .filter(token => token.length > 0);
+
+            if (searchTokens.length > 0) {
+                filteredData = filteredData.filter(item => {
+                    const searchableText = Object.values(item)
+                        .filter((value): value is string => Boolean(value))
+                        .map(value => normalizeSearchText(value))
+                        .join(' ');
+
+                    return searchTokens.every(token => searchableText.includes(token));
+                });
+            }
+
             // Apply multi-level sorting
             if (this.sortLevels.length > 0) {
                 filteredData = [...filteredData].sort((a, b) => {
                     for (const level of this.sortLevels) {
-                        const valA = (a[level.column] ?? '').toLowerCase();
-                        const valB = (b[level.column] ?? '').toLowerCase();
-                        if (valA < valB) return level.direction === 'asc' ? -1 : 1;
-                        if (valA > valB) return level.direction === 'asc' ? 1 : -1;
+                        let comparison = 0;
+
+                        if (level.column === NEWEST_SORT_COLUMN) {
+                            const dateA = parseVerificationDate(a[level.column])?.getTime() ?? Number.NEGATIVE_INFINITY;
+                            const dateB = parseVerificationDate(b[level.column])?.getTime() ?? Number.NEGATIVE_INFINITY;
+
+                            if (dateA < dateB) comparison = -1;
+                            if (dateA > dateB) comparison = 1;
+                        } else {
+                            const valA = (a[level.column] ?? '').toLowerCase();
+                            const valB = (b[level.column] ?? '').toLowerCase();
+                            if (valA < valB) comparison = -1;
+                            if (valA > valB) comparison = 1;
+                        }
+
+                        if (comparison !== 0) {
+                            return level.direction === 'asc' ? comparison : -comparison;
+                        }
                     }
                     return 0;
                 });
@@ -335,15 +374,35 @@ export const useDataStore = defineStore('dataStore', {
         },
         toggleSortLevel(column: string) {
             const idx = this.sortLevels.findIndex(s => s.column === column);
+            const isNewestSort = column === NEWEST_SORT_COLUMN;
+
             if (idx === -1) {
-                // Not selected → add as ascending
-                this.sortLevels.push({ column, direction: 'asc' });
-            } else if (this.sortLevels[idx].direction === 'asc') {
-                // Ascending → switch to descending
-                this.sortLevels[idx].direction = 'desc';
+                // Keep sort priorities bounded: when a 4th column is added, drop the oldest one.
+                if (this.sortLevels.length >= MAX_SORT_LEVELS) {
+                    this.sortLevels.shift();
+                }
+
+                // Not selected → add as descending for "Neuste", otherwise ascending.
+                this.sortLevels.push({ column, direction: isNewestSort ? 'desc' : 'asc' });
+                return;
+            }
+
+            if (isNewestSort) {
+                if (this.sortLevels[idx].direction === 'desc') {
+                    // Descending (newest first) → switch to ascending
+                    this.sortLevels[idx].direction = 'asc';
+                } else {
+                    // Ascending → remove
+                    this.sortLevels.splice(idx, 1);
+                }
             } else {
-                // Descending → remove
-                this.sortLevels.splice(idx, 1);
+                if (this.sortLevels[idx].direction === 'asc') {
+                    // Ascending → switch to descending
+                    this.sortLevels[idx].direction = 'desc';
+                } else {
+                    // Descending → remove
+                    this.sortLevels.splice(idx, 1);
+                }
             }
         },
         clearSortLevels() {

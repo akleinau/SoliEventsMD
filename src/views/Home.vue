@@ -5,6 +5,7 @@ import Data_loader from "../components/data_loader.vue";
 import Datatable from "../components/datatable.vue";
 import Datamap from "../components/datamap.vue";
 import Curr_item_dialog from "../components/curr_item_dialog.vue";
+import Filter_menu from "../components/filter_menu.vue";
 
 //const reduced_columns = ['Was', 'Wer', 'Wo', 'Uhrzeit', 'Wochentag']
 
@@ -77,25 +78,31 @@ onBeforeUnmount(() => {
     <div class="content-container" :class="{ 'map-open': isMapOpen, 'mobile': isMobile }">
         <!--Wrapper for datatable and dialog (dialog only overlays datatable, not map) -->
         <div class="datatable-wrapper" :class="{ 'datatable-wrapper--collapsed': isMapOpen }">
-          <!--List of Cards /-->
-          <Datatable 
-              class="datatable"
-              :class="{ 'datatable--collapsed': isMapOpen}"
-              :viewMode="dataStore.getViewMode()"
-              :items="dataStore.get_filtered_data()"
-              @item-clicked="handleItemClick"
-          />
-          
-          <!-- Overlay to capture clicks when dialog is open -->
-          <div 
-            v-if="dataStore.current_item !== null" 
-            class="dialog-backdrop"
-            @mousedown="onBackdropMouseDown"
-            @mouseup="onBackdropMouseUp"
-          ></div>
-          
-          <!--View when item selected - now only overlays datatable /-->
-          <Curr_item_dialog class="mt-5" v-if="dataStore.current_item !== null" />
+          <div class="datatable-controls">
+            <Filter_menu />
+          </div>
+
+          <div class="datatable-content">
+            <!--List of Cards /-->
+            <Datatable 
+                class="datatable"
+                :class="{ 'datatable--collapsed': isMapOpen}"
+                :viewMode="dataStore.getViewMode()"
+                :items="dataStore.get_filtered_data()"
+                @item-clicked="handleItemClick"
+            />
+
+            <!-- Overlay to capture clicks when dialog is open -->
+            <div 
+              v-if="dataStore.current_item !== null" 
+              class="dialog-backdrop"
+              @mousedown="onBackdropMouseDown"
+              @mouseup="onBackdropMouseUp"
+            ></div>
+
+            <!--View when item selected - now only overlays datatable /-->
+            <Curr_item_dialog class="mt-5" v-if="dataStore.current_item !== null" />
+          </div>
         </div>
 
         <!-- Button zum Ein-/Ausklappen der Karte /-->
@@ -152,7 +159,22 @@ onBeforeUnmount(() => {
   position: relative;
   width: 100%;
   height: 100%;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
   transition: all 0.3s ease;
+}
+
+.datatable-controls {
+  flex: 0 0 auto;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  z-index: 3;
+}
+
+.datatable-content {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
 }
 
 .dialog-backdrop {
@@ -223,7 +245,7 @@ onBeforeUnmount(() => {
   }
 
   .datatable-wrapper {
-    overflow-y: auto; /* Scrollbar bei Bedarf */
+    overflow: hidden;
   }
 
   .datamap {

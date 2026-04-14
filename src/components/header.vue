@@ -1,7 +1,6 @@
 <script setup lang="ts">
 
   import Category_menu from "../components/category_menu.vue";
-  import Filter_menu from "../components/filter_menu.vue";
 
 </script>
 
@@ -14,10 +13,6 @@
 
         <div class="categories-container">
           <Category_menu />
-        </div>
-
-        <div class="controls-container">
-          <Filter_menu />
         </div>
       </div>
     </div>
@@ -39,16 +34,21 @@
 
   .header-top {
       display: grid;
-      grid-template-columns: auto 1fr auto;
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
       align-items: center;
       column-gap: 12px;
       width: 100%;
   }
 
+    .header-top::after {
+      content: "";
+    }
+
   .title-container {
       align-content: center;
       padding: 0;
       color: #ec4d0b;
+      grid-column: 1;
       justify-self: start;
       white-space: nowrap;
       padding-left: 25px;
@@ -63,36 +63,11 @@
   }
 
   .categories-container {
-      width: 100%;
+      width: auto;
       margin: 0;
+      grid-column: 2;
       justify-self: center;
       padding-left: 0;
-  }
-
-  .controls-container {
-      justify-self: end;
-      width: min(100%, 620px);
-      min-width: 420px;
-      padding-right: 6px;
-    }
-
-    .controls-container :deep(.control-bar) {
-      background: transparent !important;
-      padding: 0;
-    }
-
-  .controls-container :deep(.control-bar__row) {
-      justify-content: flex-end;
-  }
-
-  .controls-container :deep(.control-bar__search) {
-      flex: 0 1 200px;
-      max-width: 220px;
-      min-width: 130px;
-  }
-
-    .controls-container :deep(.control-bar__view-toggle) {
-      margin-left: 0;
   }
 
   a {
@@ -112,17 +87,16 @@
       .header-top {
         display: flex;
         flex-direction: column;
-          align-items: flex-start;
+        align-items: stretch;
           gap: 4px;
+      }
+
+      .categories-container {
+        width: 100%;
       }
 
       .title-container h2 {
           font-size: 1.2rem;
-      }
-
-      .controls-container {
-          width: 100%;
-          min-width: 0;
       }
   }
 

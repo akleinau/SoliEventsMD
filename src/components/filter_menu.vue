@@ -6,9 +6,6 @@ import { ref, computed } from "vue";
 
 const dataStore = useDataStore();
 
-// --- Filter row visibility (toggles second row) ---
-const isFilterRowOpen = ref(false);
-
 // --- Heute-Filter ---
 const heuteFilterActive = ref(false);
 const HEUTE_FILTER_VALUE = '__heute__';
@@ -74,6 +71,7 @@ const onWochentagFilterChange = (newFilter: string[]) => {
 
 // --- Sort categories (tri-state cycling) ---
 const sortCategories = [
+  { key: 'Letzte_Ueberpruefung', label: 'Neuste' },
   { key: 'Was', label: 'Name' },
   { key: 'Wer', label: 'Veranstalter' },
   { key: 'Wo', label: 'Ort' },
@@ -109,73 +107,14 @@ const activeFilterCount = computed(() => {
   return count;
 });
 
-// --- Active filter chips ---
-interface ActiveChip {
-  key: string;
-  label: string;
-  icon?: string;
-}
-const activeChips = computed<ActiveChip[]>(() => {
-  const chips: ActiveChip[] = [];
-
-  if (heuteFilterActive.value) {
-    chips.push({ key: 'heute', label: 'Heute', icon: 'mdi-calendar-today' });
-  }
-
-  unterkategorieFilter.value.forEach(val => {
-    const def = getSubCategoryDefinition(val);
-    chips.push({
-      key: `unterkategorie:${val}`,
-      label: def?.label ?? val,
-      icon: def?.icon,
-    });
-  });
-
-  nutzungFilter.value.forEach(val => {
-    chips.push({ key: `nutzung:${val}`, label: val });
-  });
-
-  wochentagFilter.value
-    .filter(v => v !== HEUTE_FILTER_VALUE)
-    .forEach(val => {
-      chips.push({
-        key: `wochentag:${val}`,
-        label: dataStore.getFormattedDay(val),
-      });
-    });
-
-  return chips;
+const hasActiveControls = computed(() => {
+  return dataStore.searchTerm.trim() !== '' || activeFilterCount.value > 0 || dataStore.sortLevels.length > 0;
 });
-const MAX_VISIBLE_CHIPS = 3;
-const visibleChips = computed(() => activeChips.value.slice(0, MAX_VISIBLE_CHIPS));
-const hiddenChipCount = computed(() => Math.max(0, activeChips.value.length - MAX_VISIBLE_CHIPS));
-
-// --- Remove a single chip ---
-const removeChip = (chip: ActiveChip) => {
-  if (chip.key === 'heute') {
-    heuteFilterActive.value = false;
-    dataStore.setHeuteFilter(false);
-    // Also remove from wochentag selection
-    wochentagFilter.value = wochentagFilter.value.filter(v => v !== HEUTE_FILTER_VALUE);
-    return;
-  }
-
-  const [type, value] = chip.key.split(':');
-  if (type === 'unterkategorie') {
-    unterkategorieFilter.value = unterkategorieFilter.value.filter(v => v !== value);
-    dataStore.add_filter('Unterkategorie', unterkategorieFilter.value);
-  } else if (type === 'nutzung') {
-    nutzungFilter.value = nutzungFilter.value.filter(v => v !== value);
-    dataStore.add_filter('Nutzung', nutzungFilter.value);
-  } else if (type === 'wochentag') {
-    wochentagFilter.value = wochentagFilter.value.filter(v => v !== value);
-    dataStore.add_filter('Wochentag', wochentagFilter.value.filter(v => v !== HEUTE_FILTER_VALUE));
-  }
-};
 
 // --- Reset all ---
 const resetFilters = () => {
   dataStore.clear_all_filters();
+  dataStore.clearSortLevels();
   unterkategorieFilter.value = [];
   nutzungFilter.value = [];
   wochentagFilter.value = [];
@@ -201,41 +140,74 @@ const resetFilters = () => {
         variant="outlined"
         density="compact"
         hide-details
-        clearable
         bg-color="white"
         single-line
       />
 
-      <!-- Filter toggle button with badge -->
-      <v-btn
-        class="control-bar__btn"
-        :variant="isFilterRowOpen ? 'flat' : 'outlined'"
-        :color="isFilterRowOpen ? 'primary' : undefined"
-        @click="isFilterRowOpen = !isFilterRowOpen"
-      >
-        <v-badge
-          v-if="activeFilterCount > 0"
-          :content="activeFilterCount"
-          color="#ec4d0b"
-          floating
-        >
-          <v-icon>mdi-filter-variant</v-icon>
-        </v-badge>
-        <v-icon v-else>mdi-filter-variant</v-icon>
-        <span class="hidden-xs ml-1">Filter</span>
-        <v-icon end size="small">{{ isFilterRowOpen ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
-      </v-btn>
+      <div class="filter-select">
+        <v-select label="Unterkategorie"
+          variant="outlined" multiple density="compact" hide-details bg-color="white"
+          :items="unterkategorien" v-model="unterkategorieFilter"
+          @update:modelValue="dataStore.add_filter('Unterkategorie', unterkategorieFilter)">
+          <template v-slot:selection="{ item, index }">
+            <v-chip v-if="index < 1">
+              <span class="pr-2">{{ item.title }}</span>
+              <v-icon size="x-large" color="ec4d0b" class="pl-2 pr-2">{{ item.raw?.icon }}</v-icon>
+            </v-chip>
+            <span v-if="index === 1" class="text-grey text-caption align-self-center" style="white-space: nowrap;">
+              (+{{ unterkategorieFilter.length - 1 }})
+            </span>
+          </template>
+        </v-select>
+      </div>
+
+      <div class="filter-select">
+        <v-select label="Nutzung"
+          variant="outlined" multiple density="compact" hide-details bg-color="white"
+          :items="nutzungen" v-model="nutzungFilter"
+          @update:modelValue="dataStore.add_filter('Nutzung', nutzungFilter)">
+          <template v-slot:selection="{ item, index }">
+            <v-chip v-if="index < 1"><span>{{ item.title }}</span></v-chip>
+            <span v-if="index === 1" class="text-grey text-caption align-self-center" style="white-space: nowrap;">
+              (+{{ nutzungFilter.length - 1 }})
+            </span>
+          </template>
+        </v-select>
+      </div>
+
+      <div class="filter-select">
+        <v-select label="Wochentag"
+          variant="outlined" multiple density="compact" hide-details bg-color="white"
+          :items="wochentage" v-model="wochentagFilter"
+          @update:modelValue="onWochentagFilterChange">
+          <template v-slot:selection="{ item, index }">
+            <v-chip v-if="index < 1"><span>{{ item.title }}</span></v-chip>
+            <span v-if="index === 1" class="text-grey text-caption align-self-center" style="white-space: nowrap;">
+              (+{{ wochentagFilter.length - 1 }})
+            </span>
+          </template>
+        </v-select>
+      </div>
 
       <!-- Sort menu -->
       <v-menu :close-on-content-click="false">
         <template v-slot:activator="{ props }">
           <v-btn
-            class="control-bar__btn"
-            :variant="dataStore.sortLevels.length > 0 ? 'flat' : 'outlined'"
-            :color="dataStore.sortLevels.length > 0 ? 'primary' : undefined"
+            class="control-bar__btn control-bar__btn--sort"
+            :class="{ 'control-bar__btn--active': dataStore.sortLevels.length > 0 }"
+            variant="outlined"
             v-bind="props"
           >
-            <v-icon>mdi-sort</v-icon>
+            <div class="control-bar__sort-icon">
+              <v-icon>mdi-sort</v-icon>
+              <span
+                v-if="dataStore.sortLevels.length > 0"
+                class="control-bar__sort-count"
+                aria-hidden="true"
+              >
+                {{ dataStore.sortLevels.length }}
+              </span>
+            </div>
             <span class="hidden-xs ml-1">Sortieren</span>
           </v-btn>
         </template>
@@ -263,6 +235,15 @@ const resetFilters = () => {
         </v-list>
       </v-menu>
 
+      <v-btn
+        v-if="hasActiveControls"
+        class="control-bar__btn control-bar__clear-btn"
+        variant="outlined"
+        @click="resetFilters"
+      >
+        <v-icon>mdi-close-circle-outline</v-icon>
+      </v-btn>
+
       <!-- View mode toggle -->
       <v-btn-toggle
         class="control-bar__view-toggle"
@@ -271,65 +252,14 @@ const resetFilters = () => {
         density="compact"
         variant="outlined"
       >
-        <v-btn value="cards" @click="dataStore.viewMode !== 'cards' && dataStore.switchViewMode()">
+        <v-btn class="control-bar__btn" value="cards" @click="dataStore.viewMode !== 'cards' && dataStore.switchViewMode()">
           <v-icon>mdi-view-grid</v-icon>
         </v-btn>
-        <v-btn value="list" @click="dataStore.viewMode !== 'list' && dataStore.switchViewMode()">
+        <v-btn class="control-bar__btn" value="list" @click="dataStore.viewMode !== 'list' && dataStore.switchViewMode()">
           <v-icon>mdi-view-list</v-icon>
         </v-btn>
       </v-btn-toggle>
     </div>
-
-    <!-- ═══ Row 2: inline filter selects (slides open) ═══ -->
-    <v-expand-transition>
-      <div v-show="isFilterRowOpen" class="control-bar__filters">
-        <div class="filter-select">
-          <v-select label="Unterkategorie"
-            variant="outlined" multiple density="compact" hide-details bg-color="white"
-            :items="unterkategorien" v-model="unterkategorieFilter"
-            @update:modelValue="dataStore.add_filter('Unterkategorie', unterkategorieFilter)">
-            <template v-slot:selection="{ item, index }">
-              <v-chip v-if="index < 2">
-                <span class="pr-2">{{ item.title }}</span>
-                <v-icon size="x-large" color="ec4d0b" class="pl-2 pr-2">{{ item.raw?.icon }}</v-icon>
-              </v-chip>
-              <span v-if="index === 2" class="text-grey text-caption align-self-center" style="white-space: nowrap;">
-                (+{{ unterkategorieFilter.length - 2 }} weitere)
-              </span>
-            </template>
-          </v-select>
-        </div>
-
-        <div class="filter-select">
-          <v-select label="Nutzung"
-            variant="outlined" multiple density="compact" hide-details bg-color="white"
-            :items="nutzungen" v-model="nutzungFilter"
-            @update:modelValue="dataStore.add_filter('Nutzung', nutzungFilter)">
-            <template v-slot:selection="{ item, index }">
-              <v-chip v-if="index < 2"><span>{{ item.title }}</span></v-chip>
-              <span v-if="index === 2" class="text-grey text-caption align-self-center" style="white-space: nowrap;">
-                (+{{ nutzungFilter.length - 2 }} weitere)
-              </span>
-            </template>
-          </v-select>
-        </div>
-
-        <div class="filter-select">
-          <v-select label="Wochentag"
-            variant="outlined" multiple density="compact" hide-details bg-color="white"
-            :items="wochentage" v-model="wochentagFilter"
-            @update:modelValue="onWochentagFilterChange">
-            <template v-slot:selection="{ item, index }">
-              <v-chip v-if="index < 2"><span>{{ item.title }}</span></v-chip>
-              <span v-if="index === 2" class="text-grey text-caption align-self-center" style="white-space: nowrap;">
-                (+{{ wochentagFilter.length - 2 }} weitere)
-              </span>
-            </template>
-          </v-select>
-        </div>
-      </div>
-    </v-expand-transition>
-
 
   </div>
 </template>
@@ -339,13 +269,16 @@ const resetFilters = () => {
 /* ─── Control bar ─── */
 .control-bar {
   padding: 8px 12px;
+  --control-btn-height: 36px;
+  --control-btn-bg: #ffffff;
+  --control-btn-border: rgba(0, 0, 0, 0.38);
 }
 
 .control-bar__row {
   display: flex;
   align-items: center;
   gap: 8px;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
 }
 
 .control-bar__search {
@@ -394,39 +327,68 @@ const resetFilters = () => {
 
 .control-bar__btn {
   flex: 0 0 auto;
-  height: 36px;
+  height: var(--control-btn-height);
+  min-height: var(--control-btn-height);
   min-width: 44px;
+}
+
+.control-bar__btn--sort {
+  position: relative;
+  overflow: visible;
 }
 
 .control-bar__view-toggle {
   flex: 0 0 auto;
   margin-left: auto;
-  height: 36px;
+  height: var(--control-btn-height);
+}
+
+.control-bar__clear-btn {
+  flex: 0 0 auto;
 }
 
 .control-bar__view-toggle :deep(.v-btn-toggle) {
-  height: 36px;
+  height: var(--control-btn-height);
+  background-color: var(--control-btn-bg);
+  border-color: var(--control-btn-border);
 }
 
 .control-bar__view-toggle :deep(.v-btn) {
-  min-height: 36px;
-}
-
-/* ─── Inline filter row ─── */
-.control-bar__filters {
-  display: flex;
-  gap: 12px;
-  padding-top: 8px;
-  flex-wrap: wrap;
+  min-height: var(--control-btn-height);
 }
 
 .filter-select {
   flex: 0 1 auto;
   min-width: 180px;
+  height: var(--control-btn-height);
+}
+
+.filter-select :deep(.v-input),
+.filter-select :deep(.v-input__control),
+.filter-select :deep(.v-field) {
+  height: var(--control-btn-height);
+  min-height: var(--control-btn-height);
+}
+
+.filter-select :deep(.v-field__field),
+.filter-select :deep(.v-field__input) {
+  min-height: var(--control-btn-height);
+  height: var(--control-btn-height);
+  display: flex;
+  align-items: center;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 .filter-select :deep(.v-field__input) {
   flex-wrap: nowrap;
+}
+
+.filter-select :deep(.v-field__append-inner),
+.filter-select :deep(.v-field__prepend-inner) {
+  align-self: center;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 /* ─── Chips row ─── */
@@ -463,7 +425,38 @@ const resetFilters = () => {
 }
 
 .control-bar__row :deep(.v-btn) {
-  border-color: rgba(0, 0, 0, 0.38);
+  height: var(--control-btn-height);
+  min-height: var(--control-btn-height);
+  background-color: var(--control-btn-bg);
+  border-color: var(--control-btn-border);
+}
+
+.control-bar__row :deep(.v-btn:hover) {
+  background-color: var(--control-btn-bg);
+}
+
+.control-bar__sort-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.control-bar__sort-count {
+  position: absolute;
+  top: -9px;
+  right: 85px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #ec4d0b;
+  color: white;
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  pointer-events: none;
 }
 
 /* Hide button text on very small screens, keep icons */
