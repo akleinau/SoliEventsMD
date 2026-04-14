@@ -29,9 +29,9 @@
                     ></v-btn>
                 </template>
                 <v-card-text>
-                    <p>We currently do not have the resources to provide this website in a language other than German. Feel free to use the translation tool of your browser to translate the website.</p>
+                    <p>This website is only available in German at the moment. We do not have the resources to provide it in any other language. Please use the translation tool of your internet browser instead.</p>
                     <br>
-                    <p>Wir können diese Website gerade leider nicht auf einer anderen Sprache als Deutsch bereitstellen. Bitte nutze die Übersetzungsfunktion von deinem Browser, falls du eine andere Sprache benötigst.</p>
+                    <p>Diese Seite gibt es gerade nur auf Deutsch. Wir können sie leider nicht in einer anderen Sprache anbieten. Bitte nutze dafür die Funktion zum Übersetzen in deinem Internet-Browser.</p>
                     <br>
                     <p><b>Information on how to translate in different browsers:</b>
                         <br>
