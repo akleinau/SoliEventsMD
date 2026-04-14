@@ -1,6 +1,8 @@
 <script setup lang="ts">
 
-  import Category_menu from "../components/category_menu.vue";
+  import Category_menu from "./category_menu.vue";
+  import About_dialog from "./about_dialog.vue";
+  import Translation_dialog from "./translation_dialog.vue";
 
 </script>
 
@@ -11,11 +13,14 @@
         <h1><router-link to="/alles">Magdeburg teilt!</router-link></h1>
       </div>
 
-      <div class="categories-container mb-3 mt-3">
+      <div class="categories-container mb-2 mt-2">
         <Category_menu />
       </div>
 
-      <div class="space-container"></div>
+      <div class="space-container">
+        <About_dialog />
+        <Translation_dialog />
+      </div>
 
     </div>
 
@@ -44,6 +49,13 @@
       align-self: top;
       flex: 5;
       justify-content: space-between;
+  }
+
+  .space-container {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    gap: 3px;
   }
 
   a {
