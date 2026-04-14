@@ -16,7 +16,7 @@
         </template>
 
         <template v-slot:default="{ isActive }">
-            <v-card title="Über die Seite">
+            <v-card class="card" title="Die Idee ">
                 <template v-slot:prepend>
                     <v-icon size="x-large" color="ec4d0b"> mdi-information-variant </v-icon>
                 </template>
@@ -29,7 +29,7 @@
                     ></v-btn>
                 </template>
                 <v-card-text>
-                    <h3>Warum gibt es diese Seite?</h3>
+                    <h3>Warum gibt es die Seite?</h3>
                     <p>Auf "magdeburg-teilt.de" geht es darum, Dinge in Magdeburg miteinander zu teilen. 
                         Diese Seite bietet dir eine Übersicht über solidarische Angebote in der Stadt Magdeburg und der Umgebung.</p>
                     <p>Die Angebote kannst du nutzen, wenn du etwas kostenlos brauchst (oder für nur wenig Geld). 
@@ -57,6 +57,12 @@
 </template>
 
 <style scoped>
+
+.v-card-title {
+  white-space: wrap !important;
+  overflow: visible !important;
+  height: auto !important;
+}
 
 </style>
 

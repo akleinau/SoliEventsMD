@@ -13,13 +13,15 @@
         <h1><router-link to="/alles">Magdeburg teilt!</router-link></h1>
       </div>
 
-      <div class="categories-container mb-2 mt-2">
-        <Category_menu />
-      </div>
+      <div class="row-container">
+        <div class="categories-container mb-2 mt-2">
+          <Category_menu />
+        </div>
 
-      <div class="space-container">
-        <About_dialog />
-        <Translation_dialog />
+        <div class="dialog-container">
+          <About_dialog />
+          <Translation_dialog />
+        </div>
       </div>
 
     </div>
@@ -29,7 +31,8 @@
 <style scoped>
 
   .header-container {
-      display: flex;
+      display: grid;
+      grid-template-columns: auto 100fr auto;
       position: sticky;
       top: 0; /* Klebt am oberen Rand */      
       background-color: white;
@@ -38,24 +41,35 @@
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional: Schatten für bessere Sichtbarkeit */
   }
 
-  .title-container, .space-container {
-      align-content: center;
-      padding: 0 10px;
-      flex: 2;
-      color: #ec4d0b;
+  .title-container {
+    align-content: center;
+    justify-self: start;
+    color: #ec4d0b;
+    flex: 1;
+  }
+
+  .row-container{
+    display: flex;
+    flex: 5;
   }
 
   .categories-container {
-      align-self: top;
-      flex: 5;
-      justify-content: space-between;
+    align-self: top;
+    flex: 5;
+    align-content: center;
+    justify-content: space-between;
+    margin-left: 20px;
+    margin-right: 20px;
   }
 
-  .space-container {
+  .dialog-container {
     display: flex;
     align-items: center;
     justify-content: end;
-    gap: 3px;
+    gap: 5px;
+    flex: 1;
+    align-content: center;
+    color: #ec4d0b;
   }
 
   a {
@@ -72,7 +86,23 @@
   /* Mobile-Ansicht ToDo: fix code or this section -> use "@media ..."" OR use "".XYZ--mobile" ! */
   @media (max-width: 767px) {
       .header-container {
-          flex-direction: column;
+        grid-template-columns: auto;
+        grid-template-rows: 1fr 1fr;
+        justify-content: center;
+      }
+
+      .title-container {
+        justify-self: center;
+      }
+
+      .categories-container {
+        margin-left: 0px;
+        margin-right: 0px;
+      }
+
+      .row-container {
+        grid-template-columns: 1fr auto;
+        gap: 12px;
       }
   }
 
