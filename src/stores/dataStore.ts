@@ -204,6 +204,41 @@ export const useDataStore = defineStore('dataStore', {
                 });
             });
         },
+        get_grouped_data() {
+            const filtered = this.get_filtered_data();
+            const groups = {} as any;
+    
+            filtered.forEach(item => {
+                // Gruppierung nach Was + Wer (für Ihren Fall identisch)
+                const key = `${item.Was}|${item.Wer}`;
+                
+                if (!groups[key]) {
+                    groups[key] = {
+                    Was: item.Was,
+                    Wer: item.Wer,
+                    Kategorie: item.Kategorie,
+                    Wo: item.Wo,
+                    items: [],
+                    timeSlots: []
+                    };
+                }
+                
+                groups[key].items.push(item);
+                groups[key].timeSlots.push({
+                    Wochentag: this.getFormattedDay(item.Wochentag ?? ''),
+                    Uhrzeit_Start: item.Uhrzeit_Start,
+                    Uhrzeit_Ende: item.Uhrzeit_Ende,
+                    // Optional: Rhythmus anzeigen
+                    Rhythmus: item.Rhythmus || ''
+                });
+            });
+            
+            // Sortiert zurückgeben (nach Wochentag)
+            return Object.values(groups).map(group => ({
+                ...group,
+                timeSlots: /** this.sortTimeSlots(**/group.timeSlots/**)**/
+            }));
+        },
         add_filter(column: string, values: string[]) {
             if (values.length === 0) {
                 this.clear_filter(column);
@@ -347,10 +382,51 @@ export const useDataStore = defineStore('dataStore', {
         getViewMode() : string {
             return this.viewMode;
         },
+        shortFormattedDays(days: string[]) : string[]{
+            // Liste der Wochentage (normalisiert für den Vergleich)
+            const weekdayNames = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
+            return days.map(day => {
+                // Prüfen, ob der gesamte String ein Wochentag ist
+                const isWeekday = weekdayNames.includes(day);
+                if (isWeekday) {
+                    // Nur die ersten 2 Zeichen behalten
+                    return day.slice(0, 2);
+                }
+                // Wenn es kein einzelner Wochentag ist, bleibt der String unverändert (oder kann leer zurückgegeben werden)
+                return day;
+            });
+        },
+        sortFormattedDays(days: string[]) {
+            const dayOrder = {
+            'Montag': 1, 'Dienstag': 2, 'Mittwoch': 3, 'Donnerstag': 4,
+            'Freitag': 5, 'Samstag': 6, 'Sonntag': 7
+            };
+            
+            return days.sort((a, b) => {
+                return (dayOrder[a] || 99) - (dayOrder[b] || 99);
+            });
+        },
         getFormattedDay(day: string) : string {
-            const firstSpaceIndex = day.indexOf(' ');
+            /**const firstSpaceIndex = day.indexOf(' ');
             const title = firstSpaceIndex === -1 ? day : day.substring(firstSpaceIndex + 1);
-            return title;
+            return title;**/
+
+            // 1. Aufteilen nach Semikolon oder Komma (optional mit Leerzeichen trimmen)
+            // Wir nutzen eine Regex, um sowohl ";" als auch "," als Trenner zu erkennen
+            const parts = day.split(/[;,]/);
+
+            // 2. Jeden Teil bereinigen
+            const cleanParts = parts.map(part => {
+                const trimmed = part.trim();
+                if (!trimmed) return null; // Leere Teile entfernen
+
+                const spaceIndex = trimmed.indexOf(' ');
+                // Wenn ein Leerzeichen da ist, nimm den Text danach, sonst den ganzen String
+                return spaceIndex !== -1 ? trimmed.substring(spaceIndex + 1) : trimmed;
+            });
+
+            // 3. Filtern (null entfernen) und wieder mit Komma und Leerzeichen verbinden
+            return cleanParts.filter(p => p !== null).join(', ');
         },
         getCardColor(category: string | undefined): string {                  
             return getCategoryDefinition(category)?.color ?? '#fcd8d8';
