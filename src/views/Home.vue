@@ -2,10 +2,10 @@
 
 import { ref, onMounted, onBeforeUnmount, computed, watch } from 'vue';
 import Data_loader from "../components/data_loader.vue";
-import Filter_menu from "../components/filter_menu.vue";
 import Datatable from "../components/datatable.vue";
 import Datamap from "../components/datamap.vue";
 import Curr_item_dialog from "../components/curr_item_dialog.vue";
+import Filter_menu from "../components/filter_menu.vue";
 
 //const reduced_columns = ['Was', 'Wer', 'Wo', 'Uhrzeit', 'Wochentag']
 
@@ -85,22 +85,24 @@ onBeforeUnmount(() => {
     <!--Prepare data /-->
     <Data_loader />
 
-    <!--Filter the data in table /-->
-    <div class="filter-container">
-      <Filter_menu />
-    </div>
-
     <div class="content-container" :class="{ 'map-open': isMapOpen, 'mobile': isMobile }">
         <!--Wrapper for datatable and dialog (dialog only overlays datatable, not map) -->
         <div class="datatable-wrapper" :class="{ 'datatable-wrapper--collapsed': isMapOpen }">
-          <!--List of Cards /-->
-          <Datatable 
-              class="datatable"
-              :class="{ 'datatable--collapsed': isMapOpen}"
-              :viewMode="dataStore.getViewMode()"
-              :items="dataStore.get_filtered_data()"
-              @item-clicked="handleItemClick"
-          />
+          <div class="datatable-controls">
+            <Filter_menu />
+          </div>
+
+          <div class="datatable-content">
+            <!--List of Cards /-->
+            <Datatable 
+                class="datatable"
+                :class="{ 'datatable--collapsed': isMapOpen}"
+                :viewMode="dataStore.getViewMode()"
+                :items="dataStore.get_filtered_data()"
+                @item-clicked="handleItemClick"
+            />
+
+          </div>
         </div>
 
         <!-- Button zum Ein-/Ausklappen der Karte /-->
@@ -177,7 +179,22 @@ onBeforeUnmount(() => {
   position: relative;
   width: 100%;
   height: 100%;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
   transition: all 0.3s ease;
+}
+
+.datatable-controls {
+  flex: 0 0 auto;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  z-index: 3;
+}
+
+.datatable-content {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
 }
 
 .dialog-backdrop {
@@ -253,7 +270,7 @@ onBeforeUnmount(() => {
   }
 
   .datatable-wrapper {
-    overflow-y: auto; /* Scrollbar bei Bedarf */
+    overflow: hidden;
   }
 
   .datamap {

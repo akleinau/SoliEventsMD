@@ -44,7 +44,8 @@ const clicked = (item: any) => {
 
 .data-container {  
   position: relative;
-  height: 100vh;
+  height: 100%;
+  min-height: 0;
   overflow-y: auto; /* Scrollbar bei Bedarf */
 }
 
