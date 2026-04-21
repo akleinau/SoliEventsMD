@@ -1,5 +1,7 @@
 # Magdeburg teilt – Solidarische Angebote in Magdeburg
 
+### [https://magdeburg-teilt.de/](https://magdeburg-teilt.de/)
+
 Magdeburg teilt ist eine Vue-3-Anwendung, die solidarische Angebote in und um Magdeburg sichtbar macht. Die Informationen stammen aus einer kuratierten CSV-Datei, werden nach Themen farblich markiert und als interaktiver Katalog präsentiert.
 
 ## Voraussetzungen

@@ -199,54 +199,48 @@ export const useDataStore = defineStore('dataStore', {
                     return this.filter.every(f => {
                         const value = item[f.column] ?? '';
                         if (value === '') return false;
-                        
-                        // Use special matching logic for Wochentag
+
                         if (f.column === 'Wochentag') {
                             return this.matchesWochentagFilter(value, f.values);
                         }
-                        
+
                         return f.values.includes(value);
                     });
                 });
             }
 
-            // Apply search term across row text values (in combination with active filters)
-            const searchTokens = normalizeSearchText(this.searchTerm)
-                .split(/\s+/)
-                .filter(token => token.length > 0);
-
-            if (searchTokens.length > 0) {
+            // Apply search term
+            const term = this.searchTerm.trim();
+            if (term) {
+                const normalizedTerm = normalizeSearchText(term);
                 filteredData = filteredData.filter(item => {
-                    const searchableText = Object.values(item)
-                        .filter((value): value is string => Boolean(value))
-                        .map(value => normalizeSearchText(value))
-                        .join(' ');
-
-                    return searchTokens.every(token => searchableText.includes(token));
+                    const searchFields = ['Was', 'Wer', 'Wo', 'Rhythmus', 'Link'];
+                    return searchFields.some(field => {
+                        const value = item[field] ?? '';
+                        return normalizeSearchText(value).includes(normalizedTerm);
+                    });
                 });
             }
 
-            // Apply multi-level sorting
+            // Apply sort levels
             if (this.sortLevels.length > 0) {
                 filteredData = [...filteredData].sort((a, b) => {
                     for (const level of this.sortLevels) {
-                        let comparison = 0;
-
+                        let result = 0;
                         if (level.column === NEWEST_SORT_COLUMN) {
-                            const dateA = parseVerificationDate(a[level.column])?.getTime() ?? Number.NEGATIVE_INFINITY;
-                            const dateB = parseVerificationDate(b[level.column])?.getTime() ?? Number.NEGATIVE_INFINITY;
-
-                            if (dateA < dateB) comparison = -1;
-                            if (dateA > dateB) comparison = 1;
+                            const dateA = parseVerificationDate(a[level.column]);
+                            const dateB = parseVerificationDate(b[level.column]);
+                            if (dateA === null && dateB === null) result = 0;
+                            else if (dateA === null) result = 1;
+                            else if (dateB === null) result = -1;
+                            else result = dateA.getTime() - dateB.getTime();
                         } else {
                             const valA = (a[level.column] ?? '').toLowerCase();
                             const valB = (b[level.column] ?? '').toLowerCase();
-                            if (valA < valB) comparison = -1;
-                            if (valA > valB) comparison = 1;
+                            result = valA < valB ? -1 : valA > valB ? 1 : 0;
                         }
-
-                        if (comparison !== 0) {
-                            return level.direction === 'asc' ? comparison : -comparison;
+                        if (result !== 0) {
+                            return level.direction === 'asc' ? result : -result;
                         }
                     }
                     return 0;
@@ -445,13 +439,30 @@ export const useDataStore = defineStore('dataStore', {
         getCardColor(category: string | undefined): string {                  
             return getCategoryDefinition(category)?.color ?? '#fcd8d8';
         },
+
+        getCategoryName(category?: string | null): string | undefined {
+            return getCategoryDefinition(category)?.label ?? 'Neu';
+        },
         getCategoryIcon(category?: string | null): string | undefined {
             return getCategoryDefinition(category)?.icon ?? 'mdi-new-box';
         },
 
-        getSubCategoryIcon(category?: string | null): string | undefined {
-            return getSubCategoryDefinition(category)?.icon;
+        getSubCategoryName(subcategory?: string | null): string | undefined {
+            return getSubCategoryDefinition(subcategory)?.label;
         },
+        getSubCategoryIcon(subcategory?: string | null): string | undefined {
+            return getSubCategoryDefinition(subcategory)?.icon;
+        },
+
+
+        getIconText(item: any) {
+            return (item.Unterkategorie && !item.Unterkategorie.includes(";")) ? this.getSubCategoryName(item.Unterkategorie) : this.getCategoryName(item.Kategorie)
+        },
+
+        getIcon(item: any) {
+            return (item.Unterkategorie && !item.Unterkategorie.includes(";")) ? this.getSubCategoryIcon(item.Unterkategorie) : this.getCategoryIcon(item.Kategorie)
+        },
+
         setVerificationThresholdMonths(months: number) {
             this.verificationThresholdMonths = months;
         },
