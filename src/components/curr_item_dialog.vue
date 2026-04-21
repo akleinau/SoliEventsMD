@@ -16,7 +16,7 @@ const active = ref(true);
 
 type DataRow = Record<string, string | undefined>;
 const editableItem = ref(null as DataRow | null);
-const copyEditInfos = ref(null as String | null);
+const copyEditInfos = ref(null as string | null);
 const isEditing = ref(false);
 const isNew = ref(false);
 
@@ -51,7 +51,7 @@ const isVerificationStale = computed(() => {
 const verificationLabel = computed(() => {
   if (!item.value) {
     return null;
-  }
+  }  
   return dataStore.getVerificationLabel(item.value.Letzte_Ueberpruefung);
 });
 
@@ -117,7 +117,7 @@ const cancelEdit = () => {
   if (isNew.value) closeDialog();
 };
 
-const getFormattedDate = () => {
+const getFormattedDateToday = () => {
   const today = new Date();
   const day = String(today.getDate()).padStart(2, '0'); // Tag (DD)
   const month = String(today.getMonth() + 1).padStart(2, '0'); // Monat (MM, +1 weil Monate 0-indexiert sind)
@@ -146,7 +146,7 @@ const dataRowtoCsv = (data: DataRow | any) => {
 
 const saveEdit = () => {
   if (editableItem.value)
-  editableItem.value.Letzte_Ueberpruefung = getFormattedDate().toString();
+  editableItem.value.Letzte_Ueberpruefung = getFormattedDateToday().toString();
 
   // remove columns with sensitive data
   delete editableItem.value?.Kontakt;
