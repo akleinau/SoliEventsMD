@@ -23,16 +23,6 @@
 
         <br></br>
 
-        <h2>Wenn du diese Webseite besuchst</h2>
-
-        <div>
-            Diese Webseite wird über GitHub Pages bereitgestellt, einem Dienst der GitHub, Inc. (88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, USA).
-            Beim Aufruf dieser Website werden technische Verbindungsdaten (z. B. IP-Adresse, Browsertyp, Betriebssystem, Zeitpunkt des Zugriffs) durch GitHub verarbeitet, um die Auslieferung der Webseite zu ermöglichen und die Sicherheit der Systeme zu gewährleisten.
-            Diese Verarbeitung erfolgt in Verantwortung von GitHub. Weitere Informationen findest du in der Datenschutzerklärung von GitHub.
-        </div>
-
-        <br></br>
-
         <h2>Wenn du mit uns Kontakt aufnimmst</h2>
         
         <h3>Welche Daten wir verarbeiten</h3>
