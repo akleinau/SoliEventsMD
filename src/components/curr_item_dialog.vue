@@ -216,18 +216,18 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
             <div v-if="itemgroup.Kategorie != 'digitales'" v-for="timeslot in itemgroup.timeSlots" class="mb-1 col-container"> 
               <v-icon>mdi-calendar</v-icon>
               <div>
-                {{ dataStore.getFormattedDay(timeslot.Wochentag ?? '') }}, 
+                {{ timeslot.Wochentag }}, 
                 {{ timeslot.Rhythmus }},
                 {{ timeslot.Uhrzeit_Start }} Uhr bis {{ timeslot.Uhrzeit_Ende }} Uhr
               </div>
             </div>
-            <div v-for="timeslot in itemgroup.timeSlots" class="col-container">
+            <!--div v-for="timeslot in itemgroup.timeSlots" class="col-container">
               <v-icon>mdi-calendar</v-icon> 
               <div class="row-container">
-                <div>{{ dataStore.getFormattedDay(timeslot.Wochentag ?? '') }}, {{ timeslot.Rhythmus }}</div>
+                <div>{{ timeslot.Wochentag }}, {{ timeslot.Rhythmus }}</div>
                 <div>{{ timeslot.Uhrzeit_Start }} - {{ timeslot.Uhrzeit_Ende }}</div>
               </div>
-            </div>
+            </div-->
             <div v-if="itemgroup.Kommentar != ''" class="mb-1 col-container"> <v-icon>mdi-comment</v-icon> <div>{{ itemgroup.Kommentar }}</div></div>
             <div v-if="itemgroup.Kontakt != ''" class="mb-1 col-container"> <v-icon>mdi-email</v-icon> <div>{{ itemgroup.Kontakt }}</div></div>
             <div class="mt-5"> <a :href="itemgroup.Link" target="_blank"> {{ itemgroup.Link }} </a> </div>
@@ -357,7 +357,7 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
               <div class="row3-container">
                 <p class="col-container" style="width: 100%;">
                   <select v-model="timeslot.Wochentag" style="width: 100%;">
-                    <option v-for="option in sortedWochentage" :value="option.value" placeholder="timeslot.Wochentag">
+                    <option v-for="option in sortedWochentage" :value="option.value" :placeholder="timeslot.Wochentag">
                       {{ option.title }}
                     </option>
                   </select>
