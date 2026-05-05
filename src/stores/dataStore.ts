@@ -1,7 +1,14 @@
 import { defineStore } from "pinia";
 import { getCategoryDefinition, getSubCategoryDefinition } from "../constants/categoryConfig";
 
+export interface SortLevel {
+    column: string;
+    direction: 'asc' | 'desc';
+}
+
 const DEFAULT_VERIFICATION_THRESHOLD_MONTHS = 3;
+const MAX_SORT_LEVELS = 3;
+const NEWEST_SORT_COLUMN = 'Letzte_Ueberpruefung';
 
 const parseVerificationDate = (rawDate?: string | null): Date | null => {
     if (!rawDate) {
@@ -13,11 +20,6 @@ const parseVerificationDate = (rawDate?: string | null): Date | null => {
         return null;
     }
 
-    const parsed = Date.parse(trimmed);
-    if (!Number.isNaN(parsed)) {
-        return new Date(parsed);
-    }
-
     const dotSeparated = trimmed.split(".");
     if (dotSeparated.length === 3) {
         const [day, month, year] = dotSeparated.map(part => part.trim());
@@ -25,7 +27,8 @@ const parseVerificationDate = (rawDate?: string | null): Date | null => {
             const isoCandidate = `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
             const fallbackParsed = Date.parse(isoCandidate);
             if (!Number.isNaN(fallbackParsed)) {
-                return new Date(fallbackParsed);
+                const newDate = new Date(fallbackParsed)    
+                return newDate;
             }
         }
     }
@@ -44,6 +47,13 @@ const formatVerificationDate = (rawDate?: string | null): string | null => {
         month: "long",
         year: "numeric",
     });
+};
+
+const normalizeSearchText = (value: string): string => {
+    return value
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase();
 };
 
 export interface Filter {
@@ -83,6 +93,8 @@ export const useDataStore = defineStore('dataStore', {
       verificationThresholdMonths: DEFAULT_VERIFICATION_THRESHOLD_MONTHS,
       viewMode: 'cards' as string,
       heuteFilterActive: false,
+      searchTerm: '',
+      sortLevels: [] as SortLevel[],
   }),
     actions: {
         // Add actions here as needed
@@ -178,21 +190,18 @@ export const useDataStore = defineStore('dataStore', {
             }
             
             // Apply regular column filters
-            if (this.filter.length === 0) {
-                return filteredData;
-            }
-            return filteredData.filter(item => {
-                return this.filter.every(f => {
-                    const value = item[f.column] ?? '';
-                    if (value === '') return false;
-                    
-                    // Use special matching logic for Wochentag
-                    if (f.column === 'Wochentag') {
-                        return this.matchesWochentagFilter(value, f.values);
-                    }
-                    
-                    // ALT: Prüft nur, ob die Filterwerte den Datensatz-Wert enthalten
-                    //return f.values.includes(value);
+            if (this.filter.length > 0) {
+                filteredData = filteredData.filter(item => {
+                    return this.filter.every(f => {
+                        const value = item[f.column] ?? '';
+                        if (value === '') return false;
+
+                        if (f.column === 'Wochentag') {
+                            return this.matchesWochentagFilter(value, f.values);
+                        }
+
+                        // ALT: Prüft nur, ob die Filterwerte den Datensatz-Wert enthalten
+                        //return f.values.includes(value);
 
                     // NEU:
                     return f.values.some(filterValue => 
@@ -202,45 +211,9 @@ export const useDataStore = defineStore('dataStore', {
                         filterValue.includes(value)
                     );
                 });
-            });
-        },
-        get_grouped_data() {
-            const filtered = this.get_filtered_data();
-            const groups = {} as any;
-    
-            filtered.forEach(item => {
-                // Gruppierung nach Was + Wer (für Ihren Fall identisch)
-                const key = `${item.Was}|${item.Wer}`;
-                
-                if (!groups[key]) {
-                    groups[key] = {
-                    Was: item.Was,
-                    Wer: item.Wer,
-                    Kategorie: item.Kategorie,
-                    Unterkategorie: item.Unterkategorie,
-                    Wo: item.Wo,
-                    Koordinaten: item.Koordinaten,
-                    items: [],
-                    timeSlots: [],
-                    Link: item.Link,
-                    };
-                }
-                
-                groups[key].items.push(item);
-                groups[key].timeSlots.push({
-                    Wochentag: this.getFormattedDay(item.Wochentag ?? ''),
-                    Uhrzeit_Start: item.Uhrzeit_Start,
-                    Uhrzeit_Ende: item.Uhrzeit_Ende,
-                    // Optional: Rhythmus anzeigen
-                    Rhythmus: item.Rhythmus || ''
-                });
-            });
-            
-            // Sortiert zurückgeben (nach Wochentag)
-            return Object.values(groups).map(group => ({
-                ...group,
-                timeSlots: /** this.sortTimeSlots(**/group.timeSlots/**)**/
-            }));
+            }
+
+            return filteredData;
         },
         add_filter(column: string, values: string[]) {
             if (values.length === 0) {
@@ -284,7 +257,7 @@ export const useDataStore = defineStore('dataStore', {
                 //Kurzbeschreibung: "",
             };
         },
-        getEmptyItem() {
+        getEmptyItem() : DataRow {
             return this.empty_item;
         },
         // Helper to extract the day name from Wochentag (removes number prefix)
@@ -355,6 +328,45 @@ export const useDataStore = defineStore('dataStore', {
         },
         setHeuteFilter(active: boolean) {
             this.heuteFilterActive = active;
+        },
+        setSearchTerm(term: string) {
+            this.searchTerm = term;
+        },
+        toggleSortLevel(column: string) {
+            const idx = this.sortLevels.findIndex(s => s.column === column);
+            const isNewestSort = column === NEWEST_SORT_COLUMN;
+
+            if (idx === -1) {
+                // Keep sort priorities bounded: when a 4th column is added, drop the oldest one.
+                if (this.sortLevels.length >= MAX_SORT_LEVELS) {
+                    this.sortLevels.shift();
+                }
+
+                // Not selected → add as descending for "Neuste", otherwise ascending.
+                this.sortLevels.push({ column, direction: isNewestSort ? 'desc' : 'asc' });
+                return;
+            }
+
+            if (isNewestSort) {
+                if (this.sortLevels[idx].direction === 'desc') {
+                    // Descending (newest first) → switch to ascending
+                    this.sortLevels[idx].direction = 'asc';
+                } else {
+                    // Ascending → remove
+                    this.sortLevels.splice(idx, 1);
+                }
+            } else {
+                if (this.sortLevels[idx].direction === 'asc') {
+                    // Ascending → switch to descending
+                    this.sortLevels[idx].direction = 'desc';
+                } else {
+                    // Descending → remove
+                    this.sortLevels.splice(idx, 1);
+                }
+            }
+        },
+        clearSortLevels() {
+            this.sortLevels = [];
         },
         set_current_itemgroup(itemgroup: DataRow) {
             this.current_itemgroup = itemgroup;
@@ -450,11 +462,11 @@ export const useDataStore = defineStore('dataStore', {
         },
 
 
-        getIconText(item: any) {
+        getIconText(item: DataRow) {
             return (item.Unterkategorie && !item.Unterkategorie.includes(";")) ? this.getSubCategoryName(item.Unterkategorie) : this.getCategoryName(item.Kategorie)
         },
 
-        getIcon(item: any) {
+        getIcon(item: DataRow) {
             return (item.Unterkategorie && !item.Unterkategorie.includes(";")) ? this.getSubCategoryIcon(item.Unterkategorie) : this.getCategoryIcon(item.Kategorie)
         },
 

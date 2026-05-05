@@ -117,7 +117,7 @@ const cancelEdit = () => {
   if (isNew.value) closeDialog();
 };
 
-const getFormattedDate = () => {
+const getFormattedDateToday = () => {
   const today = new Date();
   const day = String(today.getDate()).padStart(2, '0'); // Tag (DD)
   const month = String(today.getMonth() + 1).padStart(2, '0'); // Monat (MM, +1 weil Monate 0-indexiert sind)
@@ -146,7 +146,7 @@ const dataRowtoCsv = (data: DataRow | any) => {
 
 const saveEdit = () => {
   if (editableItemGroup.value)
-  editableItemGroup.value.Letzte_Ueberpruefung = getFormattedDate().toString();
+  editableItemGroup.value.Letzte_Ueberpruefung = getFormattedDateToday().toString();
 
   // remove columns with sensitive data
   delete editableItemGroup.value?.Kontakt;
@@ -209,9 +209,18 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
       </v-card-title>
       <v-card-text>
         <v-row>
-          <v-col cols="12" :md="showWerbegrafik ? 7 : 12">
-            <div class="mb-3 text-subtitle-1 text-medium-emphasis">{{ itemgroup.Wer }}</div>
-            <div class="mb-1 col-container"> <v-icon>mdi-map-marker</v-icon> <div>{{ itemgroup.Wo }}</div></div>
+          <v-col v-if="itemgroup.Kurzbeschreibung != ''"class="mb-3 text-subtitle-1 text-medium-emphasis">{{ itemgroup.Kurzbeschreibung }}</v-col>
+          <v-col cols="12" :md="showWerbegrafik ? 7 : 12">            
+            <div class="mb-1 col-container"> <v-icon>mdi-account-question</v-icon> <div>{{ itemgroup.Wer }}</div></div>
+            <div v-if="itemgroup.Kategorie != 'digitales'" class="mb-1 col-container"> <v-icon>mdi-map-marker</v-icon> <div>{{ itemgroup.Wo }}</div></div>
+            <div v-if="itemgroup.Kategorie != 'digitales'" v-for="timeslot in itemgroup.timeSlots" class="mb-1 col-container"> 
+              <v-icon>mdi-calendar</v-icon>
+              <div>
+                {{ dataStore.getFormattedDay(timeslot.Wochentag ?? '') }}, 
+                {{ timeslot.Rhythmus }},
+                {{ timeslot.Uhrzeit_Start }} Uhr bis {{ timeslot.Uhrzeit_Ende }} Uhr
+              </div>
+            </div>
             <div v-for="timeslot in itemgroup.timeSlots" class="col-container">
               <v-icon>mdi-calendar</v-icon> 
               <div class="row-container">
@@ -219,7 +228,9 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
                 <div>{{ timeslot.Uhrzeit_Start }} - {{ timeslot.Uhrzeit_Ende }}</div>
               </div>
             </div>
-            <div class="mt-5"> <a :href="itemgroup.Link" target="_blank">{{ itemgroup.Link }}</a> </div>
+            <div v-if="itemgroup.Kommentar != ''" class="mb-1 col-container"> <v-icon>mdi-comment</v-icon> <div>{{ itemgroup.Kommentar }}</div></div>
+            <div v-if="itemgroup.Kontakt != ''" class="mb-1 col-container"> <v-icon>mdi-email</v-icon> <div>{{ itemgroup.Kontakt }}</div></div>
+            <div class="mt-5"> <a :href="itemgroup.Link" target="_blank"> {{ itemgroup.Link }} </a> </div>
           </v-col>
 
           <v-col v-if="showWerbegrafik" cols="12" md="5">
@@ -263,7 +274,12 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
       </v-card-text>
     </v-card>
     
-    
+    <!-- Bearbeitungsmodus (Edit) -->
+      <!-- Bearbeitungsmodus (Edit) -->
+        <!-- Bearbeitungsmodus (Edit) -->
+          <!-- Bearbeitungsmodus (Edit) -->
+        <!-- Bearbeitungsmodus (Edit) -->
+      <!-- Bearbeitungsmodus (Edit) -->
     <!-- Bearbeitungsmodus (Edit) -->
     <v-card v-if="editableItemGroup && isEditing"
       :style="{
@@ -316,22 +332,29 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
       </v-card-title>
       <v-card-text>
         <v-row>
+          <v-col class="text-subtitle-1 text-medium-emphasis">
+            <textarea v-model="editableItemGroup.Kurzbeschreibung" maxlength="240" placeholder="Kurzbeschreibung" type="text" :rows=" isMobile ? 3 : 2" /></v-col>
           <v-col cols="12" :md="showWerbegrafik ? 7 : 12">
-            <div class="mb-3"> <input class="text-subtitle-1 text-medium-emphasis" v-model="editableItemGroup.Wer" placeholder="Wer" type="text" /> </div>
-            <div class="mb-1 col-container">
+            <div class="mb-1 col-container"> 
+              <v-icon>mdi-account-question</v-icon>
+              <input v-model="editableItemGroup.Wer" placeholder="Wer" type="text" /> 
+            </div>
+            <div v-if="editableItemGroup.Kategorie != 'digitales'" class="mb-1 col-container">
               <v-icon>mdi-map-marker</v-icon> 
               <div class="row-container">
-                <div class="col-container">
-                  <textarea v-model="editableItemGroup.Wo" placeholder="Wo" type="text" :rows="isMobile ? '2' : '1'"/>
+                <p class="col-container">
+                  <textarea v-model="editableItemGroup.Wo" placeholder="Wo" type="text" :rows="isMobile ? '2' : '1'" />
                   ,
-                </div> 
+                </p> 
+                <p class="col-container">
                 <input v-model="editableItemGroup.Koordinaten" placeholder="Koordinaten" type="text" /> 
+                  .
+                </p> 
               </div>
             </div>
-
-            <div v-for="timeslot in editableItemGroup.timeSlots" class="mb-1 col-container">
+            <div v-if="editableItemGroup.Kategorie != 'digitales'" v-for="timeslot in editableItemGroup.timeSlots" class="mb-1 col-container">
               <v-icon>mdi-calendar</v-icon>
-              <div class="row-container">
+              <div class="row3-container">
                 <p class="col-container" style="width: 100%;">
                   <select v-model="timeslot.Wochentag" style="width: 100%;">
                     <option v-for="option in sortedWochentage" :value="option.value" placeholder="timeslot.Wochentag">
@@ -340,18 +363,21 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
                   </select>
                   ,
                 </p> 
-                <div class="col-container">       
-                <input v-model="timeslot.Rhythmus" placeholder="Rhythmus" type="text" /><p>,</p>
-                </div>
-                <div class="col-container">       
-                  <input v-model="timeslot.Uhrzeit_Start" placeholder="Uhrzeit Start (HH:MM)" type="text" /> 
-                  <p> - </p>
-                  <input v-model="timeslot.Uhrzeit_Ende" placeholder="Uhrzeit Ende (HH:MM / 'open end')" type="text" />
-                  <p> . </p>
+                <p class="col-container">
+                <input v-model="timeslot.Rhythmus" placeholder="Rhythmus" type="text" />
+                  ,
+                </p> 
+                <div class="col-container">
+                  <p class="col-container"><input v-model="timeslot.Uhrzeit_Start" placeholder="Start (HH:MM)" type="text" /> Uhr</p>
+                  <p>bis</p>
+                  <p class="col-container"><input v-model="timeslot.Uhrzeit_Ende" placeholder="Ende (HH:MM / 'open end')" type="text" /> Uhr.</p>
                 </div>
               </div>
             </div>
             
+            <div class="mb-1 col-container"> <v-icon>mdi-comment</v-icon> <input v-model="editableItemGroup.Kommentar" maxlength="120" placeholder="Kommentar/Hinweis" type="text" /> </div>
+            <div class="mb-1 col-container"> <v-icon>mdi-email</v-icon> <input v-model="editableItemGroup.Kontakt" maxlength="60" placeholder="Kontakt" type="text" /> </div>
+
             <div class="mt-5"> <textarea v-model="editableItemGroup.Link" placeholder="Link" type="text" :rows="isMobile ? '2' : '1'"/> </div>
           </v-col>
 
@@ -479,6 +505,14 @@ input, textarea {
   opacity: 0.85;
 }
 
+/* Mobile-Ansicht */
+@media (max-width: 767px) {
+  .dialog-title__icon {
+    width: 40px;
+    height: 40px;
+  }
+}
+
 .werbegrafik-image {
   border-radius: 8px;
   overflow: hidden;
@@ -497,6 +531,13 @@ input, textarea {
   flex: 1 1 0;
   column-gap: 5px;
 }
+.row3-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  flex-direction: row;
+  flex: 1 1 0;
+  column-gap: 5px;
+}
 
 /* Mobile-Ansicht ToDo: fix code or this section -> use "@media ..."" OR use "".XYZ--mobile" ! */
 @media (max-width: 767px) {
@@ -504,7 +545,7 @@ input, textarea {
   input, textarea {
     display: inline-block;
     width: 100%;
-    max-width: 95%;
+    max-width: 100%;
   }
 
   .col-container {
@@ -512,14 +553,13 @@ input, textarea {
     flex-direction: row;
     width: 100%;
   }
-  .row-container {
+  .row-container, .row3-container {
     display: flex;
     flex-direction: column;
     width: 100%;
     column-gap: 5px;
   }
 }
-
 
 .edit-info-container {
   column-gap: 10px;
