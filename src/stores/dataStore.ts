@@ -216,6 +216,44 @@ export const useDataStore = defineStore('dataStore', {
 
             return filteredData;
         },
+        get_grouped_data() {
+            const filtered = this.get_filtered_data();
+            const groups = {} as any;
+    
+            filtered.forEach(item => {
+                // Gruppierung nach Was + Wer (für Ihren Fall identisch)
+                const key = `${item.Was}|${item.Wer}`;
+                
+                if (!groups[key]) {
+                    groups[key] = {
+                    Was: item.Was,
+                    Wer: item.Wer,
+                    Kategorie: item.Kategorie,
+                    Unterkategorie: item.Unterkategorie,
+                    Wo: item.Wo,
+                    Koordinaten: item.Koordinaten,
+                    items: [],
+                    timeSlots: [],
+                    Link: item.Link,
+                    };
+                }
+                
+                groups[key].items.push(item);
+                groups[key].timeSlots.push({
+                    Wochentag: this.getFormattedDay(item.Wochentag ?? ''),
+                    Uhrzeit_Start: item.Uhrzeit_Start,
+                    Uhrzeit_Ende: item.Uhrzeit_Ende,
+                    // Optional: Rhythmus anzeigen
+                    Rhythmus: item.Rhythmus || ''
+                });
+            });
+            
+            // Sortiert zurückgeben (nach Wochentag)
+            return Object.values(groups).map(group => ({
+                ...group,
+                timeSlots: /** this.sortTimeSlots(**/group.timeSlots/**)**/
+            }));
+        },
         add_filter(column: string, values: string[]) {
             if (values.length === 0) {
                 this.clear_filter(column);
