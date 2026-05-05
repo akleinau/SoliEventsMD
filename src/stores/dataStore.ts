@@ -272,6 +272,8 @@ export const useDataStore = defineStore('dataStore', {
                     Koordinaten: item.Koordinaten,
                     items: [],
                     timeSlots: [],
+                    Kommentar: item.Kommentar,
+                    Kontakt: item.Kontakt,
                     Link: item.Link,
                     };
                 }
