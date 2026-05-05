@@ -4,13 +4,19 @@ import { computed, onMounted, ref, watch } from "vue";
 import { useDataStore } from "../stores/dataStore.ts";
 import { MAIN_CATEGORIES, SUB_CATEGORIES } from "../constants/categoryConfig";
 
+const props = withDefaults(defineProps<{
+  attachTarget?: string;
+}>(), {
+  attachTarget: '.datatable-wrapper',
+});
+
 const dataStore = useDataStore()
 
 const active = ref(true);
 
 type DataRow = Record<string, string | undefined>;
 const editableItem = ref(null as DataRow | null);
-const copyEditInfos = ref(null as String | null);
+const copyEditInfos = ref(null as string | null);
 const isEditing = ref(false);
 const isNew = ref(false);
 
@@ -45,7 +51,7 @@ const isVerificationStale = computed(() => {
 const verificationLabel = computed(() => {
   if (!item.value) {
     return null;
-  }
+  }  
   return dataStore.getVerificationLabel(item.value.Letzte_Ueberpruefung);
 });
 
@@ -111,7 +117,7 @@ const cancelEdit = () => {
   if (isNew.value) closeDialog();
 };
 
-const getFormattedDate = () => {
+const getFormattedDateToday = () => {
   const today = new Date();
   const day = String(today.getDate()).padStart(2, '0'); // Tag (DD)
   const month = String(today.getMonth() + 1).padStart(2, '0'); // Monat (MM, +1 weil Monate 0-indexiert sind)
@@ -140,7 +146,7 @@ const dataRowtoCsv = (data: DataRow | any) => {
 
 const saveEdit = () => {
   if (editableItem.value)
-  editableItem.value.Letzte_Ueberpruefung = getFormattedDate().toString();
+  editableItem.value.Letzte_Ueberpruefung = getFormattedDateToday().toString();
 
   // remove columns with sensitive data
   delete editableItem.value?.Kontakt;
@@ -180,7 +186,7 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
   <v-dialog 
     v-model="active" 
     class="dialog-container" 
-    :attach="'.datatable-wrapper'" 
+    :attach="props.attachTarget" 
     :contained="true" 
     :scrim="false"
     :persistent="true"
@@ -194,8 +200,12 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
         'border': '5px solid color-mix(in oklch, ' + dataStore.getCardColor(item.Kategorie) + ', black 20%)'
       }">    
       <v-card-title class="dialog-title">
-        <span style="font-weight: bold">{{ item.Was }}</span>
-        <v-icon size="x-large" color="black" class="dialog-title__icon">{{ item.Unterkategorie ? dataStore.getSubCategoryIcon(item.Unterkategorie) : dataStore.getCategoryIcon(item.Kategorie) }}</v-icon>        
+        <span>{{ item.Was }}</span>
+        <v-tooltip :text="dataStore.getIconText(item)" location="top" open-on-click>
+          <template v-slot:activator="{ props }">
+              <v-icon v-bind="props" size="x-large" color="black" class="dialog-title__icon">{{ dataStore.getIcon(item) }}</v-icon>
+          </template>
+        </v-tooltip>        
       </v-card-title>
       <v-card-text>
         <v-row>
@@ -285,7 +295,11 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
                       {{ option.label }}
                     </option>
                   </select>
-                  <v-icon size="x-large" color="black" class="dialog-title__icon">{{ dataStore.getSubCategoryIcon(editableItem.Unterkategorie) }}</v-icon>
+                  <v-tooltip :text="dataStore.getSubCategoryName(editableItem.Unterkategorie ?? '')" location="top" open-on-click>
+                    <template v-slot:activator="{ props }">
+                        <v-icon v-bind="props" size="x-large" color="black" class="dialog-title__icon">{{ dataStore.getSubCategoryIcon(editableItem.Unterkategorie) }}</v-icon>
+                    </template>
+                  </v-tooltip>
                 </div>
                 <div>Kategorie: 
                   <select v-model="editableItem.Kategorie">
@@ -293,7 +307,11 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
                       {{ option.label }}
                     </option>
                   </select>
-                  <v-icon size="x-large" color="black" class="dialog-title__icon">{{ dataStore.getCategoryIcon(editableItem.Kategorie) }}</v-icon>
+                  <v-tooltip :text="dataStore.getCategoryName(editableItem.Kategorie ?? '')" location="top" open-on-click>
+                    <template v-slot:activator="{ props }">
+                        <v-icon v-bind="props" size="x-large" color="black" class="dialog-title__icon">{{ dataStore.getCategoryIcon(editableItem.Kategorie) }}</v-icon>
+                    </template>
+                  </v-tooltip>
                 </div>
               </v-row>
             </v-card-text>

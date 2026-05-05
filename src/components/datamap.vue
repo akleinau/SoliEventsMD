@@ -227,6 +227,18 @@ watch(() => props.items, () => {
   updateMarkers();
 });
 
+watch(() => [props.isMapOpen, props.isMobile], async ([isMapOpen, isMobile]) => {
+  if (!map.value || !isMapOpen) return;
+
+  // Leaflet needs a resize signal after layout switches to fullscreen.
+  await nextTick();
+  map.value.invalidateSize();
+
+  if (isMobile) {
+    map.value.invalidateSize();
+  }
+});
+
 // Lebenszyklus-Hooks
 onMounted(() => {
   nextTick(() => {
