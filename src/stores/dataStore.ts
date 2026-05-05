@@ -76,8 +76,8 @@ export const useDataStore = defineStore('dataStore', {
           ],
       filter: [] as Filter[],
       empty_item: null as DataRow | null,
-      current_item: null as DataRow | null,
-      focused_item: null as DataRow | null,
+      current_itemgroup: null as DataRow | null,
+      focused_itemgroup: null as DataRow | null,
       isMobile: false,
       isMapVisible: true,
       verificationThresholdMonths: DEFAULT_VERIFICATION_THRESHOLD_MONTHS,
@@ -217,9 +217,12 @@ export const useDataStore = defineStore('dataStore', {
                     Was: item.Was,
                     Wer: item.Wer,
                     Kategorie: item.Kategorie,
+                    Unterkategorie: item.Unterkategorie,
                     Wo: item.Wo,
+                    Koordinaten: item.Koordinaten,
                     items: [],
-                    timeSlots: []
+                    timeSlots: [],
+                    Link: item.Link,
                     };
                 }
                 
@@ -353,17 +356,17 @@ export const useDataStore = defineStore('dataStore', {
         setHeuteFilter(active: boolean) {
             this.heuteFilterActive = active;
         },
-        set_current_item(item: DataRow) {
-            this.current_item = item;
+        set_current_itemgroup(itemgroup: DataRow) {
+            this.current_itemgroup = itemgroup;
         },
-        clear_current_item() {
-            this.current_item = null;
+        clear_current_itemgroup() {
+            this.current_itemgroup = null;
         },
-        set_focused_item(item: DataRow | null) {
-            this.focused_item = item;
+        set_focused_itemgroup(itemgroup: DataRow | null) {
+            this.focused_itemgroup = itemgroup;
         },
-        clear_focused_item() {
-            this.focused_item = null;
+        clear_focused_itemgroup() {
+            this.focused_itemgroup = null;
         },
         setMapVisible(visible: boolean) {
             this.isMapVisible = visible;

@@ -10,11 +10,11 @@ const emptyItem = computed(() => {
 });
   
 const emit = defineEmits<{
-  (e: 'item-clicked', item: any): void
+  (e: 'itemgroup-clicked', itemgroup: any): void
 }>()
 
-const clicked = (item: any) => {
-  emit('item-clicked', item);
+const clicked = (itemgroup: any) => {
+  emit('itemgroup-clicked', itemgroup);
 }
 
 </script>
@@ -32,19 +32,19 @@ const clicked = (item: any) => {
           </tr>
         </thead>
         <tbody>
-          <tr v-for="item in dataStore.get_filtered_data()" 
-            link @click="clicked(item)"
-            :style="{ 'cursor': 'pointer', 'background-color': dataStore.getCardColor(item.Kategorie ?? '') }">
+          <tr v-for="itemgroup in dataStore.get_filtered_data()" 
+            link @click="clicked(itemgroup)"
+            :style="{ 'cursor': 'pointer', 'background-color': dataStore.getCardColor(itemgroup.Kategorie ?? '') }">
             <td>
-              <v-tooltip :text="dataStore.getIconText(item)" location="top" open-on-click>
+              <v-tooltip :text="dataStore.getIconText(itemgroup)" location="top" open-on-click>
                 <template v-slot:activator="{ props }">
-                  <v-icon v-bind="props" size="medium" class="pr-2" color="black" >{{ dataStore.getIcon(item) }}</v-icon>
+                  <v-icon v-bind="props" size="medium" class="pr-2" color="black" >{{ dataStore.getIcon(itemgroup) }}</v-icon>
                 </template>
               </v-tooltip>
-              {{ item.Was }}
+              {{ itemgroup.Was }}
             </td>
-            <td>{{ item.Wer }}</td>
-            <td>{{ item.Wo }}</td>
+            <td>{{ itemgroup.Wer }}</td>
+            <td>{{ itemgroup.Wo }}</td>
             <td>{{ dataStore.getFormattedDay(item.Wochentag ?? '') }}</td>
             <td>{{ item.Uhrzeit_Start }} - {{ item.Uhrzeit_Ende }}</td>
           </tr>

@@ -36,7 +36,7 @@ const listTimeSlots = (timeSlots: any) => {
   }
 
   if (weekdays.every(day => list.includes(day))) {
-    // Wir entfernen nur die Wochentage, lassen aber evtl. Sa/So stehen
+    // ggf. die Wochentage entfernen, aber Sa/So stehen lassen, sofern vorhanden
     const filtered = list.filter(day => !weekdays.includes(day));
     list = [...filtered, ...(list.includes('wochentags') ? [] : ['wochentags'])];
   }
@@ -54,11 +54,11 @@ const listTimeSlots = (timeSlots: any) => {
 };
 
 const emit = defineEmits<{
-  (e: 'item-clicked', item: any): void
+  (e: 'itemgroup-clicked', itemgroup: any): void
 }>()
 
-const clicked = (item: any) => {
-  emit('item-clicked', item);
+const clicked = (itemgroup: any) => {
+  emit('itemgroup-clicked', itemgroup);
 }
 
 </script>
@@ -71,7 +71,7 @@ const clicked = (item: any) => {
         width="350"
         max-height="180"
         :color="dataStore.getCardColor(itemgroup.Kategorie ?? '')"
-        link @click="clicked(itemgroup.items[0])">
+        link @click="clicked(itemgroup)">
         <v-card-title class="category-card__title">{{ itemgroup.Was }}</v-card-title>
         <div class="category-card__icon" v-if="dataStore.getCategoryIcon(itemgroup.Kategorie)">
           <v-tooltip :text="dataStore.getIconText(itemgroup)" location="top" open-on-click>
