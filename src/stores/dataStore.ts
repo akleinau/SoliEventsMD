@@ -203,13 +203,14 @@ export const useDataStore = defineStore('dataStore', {
                         // ALT: Prüft nur, ob die Filterwerte den Datensatz-Wert enthalten
                         //return f.values.includes(value);
 
-                    // NEU:
-                    return f.values.some(filterValue => 
-                        //Prüfung 1: Datensatz enthält Filterwert?
-                        value.includes(filterValue) || 
-                        //Prüfung 2: Filterwert enthält Datensatz-Wert?
-                        filterValue.includes(value)
-                    );
+                        // NEU:
+                        return f.values.some(filterValue => 
+                            //Prüfung 1: Datensatz enthält Filterwert?
+                            value.includes(filterValue) || 
+                            //Prüfung 2: Filterwert enthält Datensatz-Wert?
+                            filterValue.includes(value)
+                        )
+                    });
                 });
             }
 
@@ -257,7 +258,7 @@ export const useDataStore = defineStore('dataStore', {
                 //Kurzbeschreibung: "",
             };
         },
-        getEmptyItem() : DataRow {
+        getEmptyItem() : DataRow | null {
             return this.empty_item;
         },
         // Helper to extract the day name from Wochentag (removes number prefix)

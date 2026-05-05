@@ -80,13 +80,13 @@ const clicked = (itemgroup: any) => {
             </template>
           </v-tooltip>
         </div>
-        <v-card-subtitle>{{ item.Wer }}</v-card-subtitle>
-        <v-card-text v-if="item.Kategorie != 'digitales'">
-          <p class="mb-1"> <v-icon>mdi-map-marker</v-icon>  {{ item.Wo }}</p>
-          <p class="mb-1"> <v-icon>mdi-calendar</v-icon> {{ dataStore.getFormattedDay(item.Wochentag ?? '')}}, {{ item.Uhrzeit_Start }} - {{ item.Uhrzeit_Ende }}</p>
+        <v-card-subtitle>{{ itemgroup.Wer }}</v-card-subtitle>
+        <v-card-text v-if="itemgroup.Kategorie != 'digitales'">
+          <p class="mb-1"> <v-icon>mdi-map-marker</v-icon> {{ itemgroup.Wo }}</p>
+          <div class="mb-1 opening-hours"> <v-icon>mdi-calendar</v-icon> {{ listTimeSlots(itemgroup.timeSlots) }}</div>
         </v-card-text>
-        <v-card-text v-if="item.Kategorie == 'digitales'">
-          <p class="mb-1"> <v-icon>mdi-web</v-icon>  {{ item.Link }}</p>
+        <v-card-text v-if="itemgroup.Kategorie == 'digitales'">
+          <p class="mb-1"> <v-icon>mdi-web</v-icon>  {{ itemgroup.Link }}</p>
         </v-card-text>
     </v-card>
 
