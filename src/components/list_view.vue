@@ -28,11 +28,11 @@ const clicked = (itemgroup: any) => {
             <th>Wer</th>
             <th>Wo</th>
             <th>Wochentag</th>
-            <th>Uhrzeit</th>
+            <th>Uhrzeit(en)</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="itemgroup in dataStore.get_filtered_data()" 
+          <tr v-for="itemgroup in dataStore.get_grouped_data()" 
             link @click="clicked(itemgroup)"
             :style="{ 'cursor': 'pointer', 'background-color': dataStore.getCardColor(itemgroup.Kategorie ?? '') }">
             <td>
@@ -44,9 +44,14 @@ const clicked = (itemgroup: any) => {
               {{ itemgroup.Was }}
             </td>
             <td>{{ itemgroup.Wer }}</td>
-            <td>{{ itemgroup.Wo }}</td>
-            <td>{{ dataStore.getFormattedDay(item.Wochentag ?? '') }}</td>
-            <td>{{ item.Uhrzeit_Start }} - {{ item.Uhrzeit_Ende }}</td>
+            <td v-if="itemgroup.Kategorie != 'digitales'">{{ itemgroup.Wo }}</td>
+            <td v-if="itemgroup.Kategorie != 'digitales'">
+              <tr  v-for="timeslot in itemgroup.timeSlots">{{ dataStore.getFormattedDay(timeslot.Wochentag ?? '') }}</tr>
+            </td>
+            <td v-if="itemgroup.Kategorie != 'digitales'">
+              <tr  v-for="timeslot in itemgroup.timeSlots">{{ timeslot.Uhrzeit_Start }} - {{ timeslot.Uhrzeit_Ende }}</tr>
+            </td>
+            <td v-if="itemgroup.Kategorie == 'digitales'" colspan="3">{{ itemgroup.Link }}</td>
           </tr>
           <!-- Row für Neues Item (neues Angebot anlegen) -->
           <tr

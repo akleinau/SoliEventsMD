@@ -19,8 +19,10 @@ const listTimeSlots = (timeSlots: any) => {
     for (var part of parts) {      
       // trim to remove a leftover space after a comma (possible after splitting)
       const trimmed = part.trim();
-      if (!list.includes(trimmed)){
-        list.push(trimmed);
+      // get nice Wochentag format without numbers in front
+      const formatted = dataStore.getFormattedDay(trimmed ?? '')
+      if (!list.includes(formatted)){
+        list.push(formatted);
       }
     }
   }

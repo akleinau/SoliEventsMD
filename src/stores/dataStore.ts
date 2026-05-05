@@ -280,7 +280,7 @@ export const useDataStore = defineStore('dataStore', {
                 
                 groups[key].items.push(item);
                 groups[key].timeSlots.push({
-                    Wochentag: this.getFormattedDay(item.Wochentag ?? ''),
+                    Wochentag: item.Wochentag,
                     Uhrzeit_Start: item.Uhrzeit_Start,
                     Uhrzeit_Ende: item.Uhrzeit_Ende,
                     // Optional: Rhythmus anzeigen
@@ -541,12 +541,12 @@ export const useDataStore = defineStore('dataStore', {
         },
 
 
-        getIconText(item: DataRow | null) {
-            return (item?.Unterkategorie && !item?.Unterkategorie.includes(";")) ? this.getSubCategoryName(item?.Unterkategorie) : this.getCategoryName(item?.Kategorie)
+        getIconText(item: DataRow) {
+            return (item.Unterkategorie && !item.Unterkategorie.includes(";")) ? this.getSubCategoryName(item.Unterkategorie) : this.getCategoryName(item.Kategorie)
         },
 
-        getIcon(item: DataRow | null) {
-            return (item?.Unterkategorie && !item?.Unterkategorie.includes(";")) ? this.getSubCategoryIcon(item?.Unterkategorie) : this.getCategoryIcon(item?.Kategorie)
+        getIcon(item: DataRow) {
+            return (item.Unterkategorie && !item.Unterkategorie.includes(";")) ? this.getSubCategoryIcon(item.Unterkategorie) : this.getCategoryIcon(item.Kategorie)
         },
 
         setVerificationThresholdMonths(months: number) {

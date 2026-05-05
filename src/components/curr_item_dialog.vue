@@ -205,7 +205,7 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
           <template v-slot:activator="{ props }">
               <v-icon v-bind="props" size="x-large" color="black" class="dialog-title__icon">{{ dataStore.getIcon(itemgroup) }}</v-icon>
           </template>
-        </v-tooltip>        
+        </v-tooltip>         
       </v-card-title>
       <v-card-text>
         <v-row>
@@ -216,7 +216,7 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
             <div v-if="itemgroup.Kategorie != 'digitales'" v-for="timeslot in itemgroup.timeSlots" class="mb-1 col-container"> 
               <v-icon>mdi-calendar</v-icon>
               <div>
-                {{ timeslot.Wochentag }}, 
+                {{ dataStore.getFormattedDay(timeslot.Wochentag ?? '') }}, 
                 {{ timeslot.Rhythmus }},
                 {{ timeslot.Uhrzeit_Start }} Uhr bis {{ timeslot.Uhrzeit_Ende }} Uhr
               </div>
@@ -352,6 +352,14 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
                 </p> 
               </div>
             </div>
+
+            <!--
+                  <select v-model="editableItem.Wochentag" style="width: 100%;">
+                    <option v-for="option in sortedWochentage" :value="option.value" :placeholder="editableItem.Wochentag">
+                      {{ option.title }}
+                    </option>
+                  </select>
+            -->
             <div v-if="editableItemGroup.Kategorie != 'digitales'" v-for="timeslot in editableItemGroup.timeSlots" class="mb-1 col-container">
               <v-icon>mdi-calendar</v-icon>
               <div class="row3-container">
