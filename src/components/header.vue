@@ -7,11 +7,11 @@
 </script>
 
 <template>
-    <div class="header-container text-center">
-
-      <div class="title-container">
-        <h1><router-link to="/alles">Magdeburg teilt!</router-link></h1>
-      </div>
+    <div class="header-container">
+      <div class="header-top">
+        <div class="title-container">
+          <h2><router-link to="/alles">Magdeburg teilt!</router-link></h2>
+        </div>
 
       <div class="row-container">
         <div class="categories-container mb-2 mt-2">
@@ -22,6 +22,9 @@
           <About_dialog />
           <Translation_dialog />
         </div>
+        <div class="categories-container">
+          <Category_menu />
+        </div>
       </div>
 
     </div>
@@ -31,6 +34,8 @@
 <style scoped>
 
   .header-container {
+      display: flex;
+      flex-direction: column;
       display: grid;
       grid-template-columns: auto 100fr auto;
       position: sticky;
@@ -41,6 +46,34 @@
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional: Schatten für bessere Sichtbarkeit */
   }
 
+  .header-top {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+      align-items: center;
+      column-gap: 12px;
+      width: 100%;
+  }
+
+    .header-top::after {
+      content: "";
+    }
+
+  .title-container {
+      align-content: center;
+      padding: 0;
+      color: #ec4d0b;
+      grid-column: 1;
+      justify-self: start;
+      white-space: nowrap;
+      padding-left: 25px;
+  }
+
+  .title-container h2 {
+      margin: 0;
+      font-size: 1.5rem;
+      line-height: 1.15;
+      font-weight: 700;
+      text-align: left;
   .title-container {
     align-content: center;
     justify-self: start;
@@ -70,16 +103,22 @@
     flex: 1;
     align-content: center;
     color: #ec4d0b;
+      width: auto;
+      margin: 0;
+      grid-column: 2;
+      justify-self: center;
+      padding-left: 0;
   }
 
   a {
       color: inherit;
+      text-decoration: none;
   }
 
   /* Desktop-Ansicht */
   @media (min-width: 768px) {
       .header-container {
-          flex-direction: row;
+          flex-direction: column;
       }
   }
 
@@ -103,6 +142,19 @@
       .row-container {
         grid-template-columns: 1fr auto;
         gap: 12px;
+      .header-top {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+          gap: 4px;
+      }
+
+      .categories-container {
+        width: 100%;
+      }
+
+      .title-container h2 {
+          font-size: 1.2rem;
       }
   }
 
