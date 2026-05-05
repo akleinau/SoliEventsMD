@@ -85,9 +85,9 @@ export const useDataStore = defineStore('dataStore', {
             { title: 'Kommentar', key: 'Kommentar' },
           ],
       filter: [] as Filter[],
-      empty_item: null as DataRow | null,
-      current_itemgroup: null as DataRow | null,
-      focused_itemgroup: null as DataRow | null,
+      empty_item: {} as DataRow | null,
+      current_itemgroup: {} as DataRow | null,
+      focused_itemgroup: {} as DataRow | null,
       isMobile: false,
       isMapVisible: true,
       verificationThresholdMonths: DEFAULT_VERIFICATION_THRESHOLD_MONTHS,
@@ -211,6 +211,44 @@ export const useDataStore = defineStore('dataStore', {
                             filterValue.includes(value)
                         )
                     });
+                });
+            }
+
+            // Apply search term
+            const term = this.searchTerm.trim();
+            if (term) {
+                const normalizedTerm = normalizeSearchText(term);
+                filteredData = filteredData.filter(item => {
+                    const searchFields = ['Was', 'Wer', 'Wo', 'Rhythmus', 'Link'];
+                    return searchFields.some(field => {
+                        const value = item[field] ?? '';
+                        return normalizeSearchText(value).includes(normalizedTerm);
+                    });
+                });
+            }
+
+            // Apply sort levels
+            if (this.sortLevels.length > 0) {
+                filteredData = [...filteredData].sort((a, b) => {
+                    for (const level of this.sortLevels) {
+                        let result = 0;
+                        if (level.column === NEWEST_SORT_COLUMN) {
+                            const dateA = parseVerificationDate(a[level.column]);
+                            const dateB = parseVerificationDate(b[level.column]);
+                            if (dateA === null && dateB === null) result = 0;
+                            else if (dateA === null) result = 1;
+                            else if (dateB === null) result = -1;
+                            else result = dateA.getTime() - dateB.getTime();
+                        } else {
+                            const valA = (a[level.column] ?? '').toLowerCase();
+                            const valB = (b[level.column] ?? '').toLowerCase();
+                            result = valA < valB ? -1 : valA > valB ? 1 : 0;
+                        }
+                        if (result !== 0) {
+                            return level.direction === 'asc' ? result : -result;
+                        }
+                    }
+                    return 0;
                 });
             }
 
@@ -501,12 +539,12 @@ export const useDataStore = defineStore('dataStore', {
         },
 
 
-        getIconText(item: DataRow) {
-            return (item.Unterkategorie && !item.Unterkategorie.includes(";")) ? this.getSubCategoryName(item.Unterkategorie) : this.getCategoryName(item.Kategorie)
+        getIconText(item: DataRow | null) {
+            return (item?.Unterkategorie && !item?.Unterkategorie.includes(";")) ? this.getSubCategoryName(item?.Unterkategorie) : this.getCategoryName(item?.Kategorie)
         },
 
-        getIcon(item: DataRow) {
-            return (item.Unterkategorie && !item.Unterkategorie.includes(";")) ? this.getSubCategoryIcon(item.Unterkategorie) : this.getCategoryIcon(item.Kategorie)
+        getIcon(item: DataRow | null) {
+            return (item?.Unterkategorie && !item?.Unterkategorie.includes(";")) ? this.getSubCategoryIcon(item?.Unterkategorie) : this.getCategoryIcon(item?.Kategorie)
         },
 
         setVerificationThresholdMonths(months: number) {
