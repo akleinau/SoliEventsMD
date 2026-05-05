@@ -85,9 +85,9 @@ export const useDataStore = defineStore('dataStore', {
             { title: 'Kommentar', key: 'Kommentar' },
           ],
       filter: [] as Filter[],
-      empty_item: {} as DataRow | null,
-      current_itemgroup: {} as DataRow | null,
-      focused_itemgroup: {} as DataRow | null,
+      empty_item: null as DataRow | null,
+      current_itemgroup: null as DataRow | null,
+      focused_itemgroup: null as DataRow | null,
       isMobile: false,
       isMapVisible: true,
       verificationThresholdMonths: DEFAULT_VERIFICATION_THRESHOLD_MONTHS,
@@ -541,12 +541,12 @@ export const useDataStore = defineStore('dataStore', {
         },
 
 
-        getIconText(item: DataRow) {
-            return (item.Unterkategorie && !item.Unterkategorie.includes(";")) ? this.getSubCategoryName(item.Unterkategorie) : this.getCategoryName(item.Kategorie)
+        getIconText(item: DataRow | null) {
+            return (item?.Unterkategorie && !item?.Unterkategorie.includes(";")) ? this.getSubCategoryName(item?.Unterkategorie) : this.getCategoryName(item?.Kategorie)
         },
 
-        getIcon(item: DataRow) {
-            return (item.Unterkategorie && !item.Unterkategorie.includes(";")) ? this.getSubCategoryIcon(item.Unterkategorie) : this.getCategoryIcon(item.Kategorie)
+        getIcon(item: DataRow | null) {
+            return (item?.Unterkategorie && !item?.Unterkategorie.includes(";")) ? this.getSubCategoryIcon(item?.Unterkategorie) : this.getCategoryIcon(item?.Kategorie)
         },
 
         setVerificationThresholdMonths(months: number) {
