@@ -212,8 +212,8 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
           <v-col v-if="item.Kurzbeschreibung != ''"class="mb-3 text-subtitle-1 text-medium-emphasis">{{ item.Kurzbeschreibung }}</v-col>
           <v-col cols="12" :md="showWerbegrafik ? 7 : 12">            
             <div class="mb-1 col-container"> <v-icon>mdi-account-question</v-icon> <div>{{ item.Wer }}</div></div>
-            <div class="mb-1 col-container"> <v-icon>mdi-map-marker</v-icon> <div>{{ item.Wo }}</div></div>
-            <div class="mb-1 col-container"> 
+            <div v-if="item.Kategorie != 'digitales'" class="mb-1 col-container"> <v-icon>mdi-map-marker</v-icon> <div>{{ item.Wo }}</div></div>
+            <div v-if="item.Kategorie != 'digitales'" class="mb-1 col-container"> 
               <v-icon>mdi-calendar</v-icon>
               <div>
                 {{ dataStore.getFormattedDay(item.Wochentag ?? '') }}, 
@@ -223,7 +223,7 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
             </div>
             <div v-if="item.Kommentar != ''" class="mb-1 col-container"> <v-icon>mdi-comment</v-icon> <div>{{ item.Kommentar }}</div></div>
             <div v-if="item.Kontakt != ''" class="mb-1 col-container"> <v-icon>mdi-email</v-icon> <div>{{ item.Kontakt }}</div></div>
-            <div class="mt-5"> {{ item.Link }} </div>
+            <div class="mt-5"> <a :href="item.Link" target="_blank"> {{ item.Link }} </a> </div>
           </v-col>
 
           <v-col v-if="showWerbegrafik" cols="12" md="5">
@@ -267,7 +267,12 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
       </v-card-text>
     </v-card>
     
-    
+    <!-- Bearbeitungsmodus (Edit) -->
+      <!-- Bearbeitungsmodus (Edit) -->
+        <!-- Bearbeitungsmodus (Edit) -->
+          <!-- Bearbeitungsmodus (Edit) -->
+        <!-- Bearbeitungsmodus (Edit) -->
+      <!-- Bearbeitungsmodus (Edit) -->
     <!-- Bearbeitungsmodus (Edit) -->
     <v-card v-if="editableItem && isEditing"
       :style="{
@@ -282,7 +287,7 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
           <v-row>
             <v-card-text>
               <v-row class="align-center justify-end">
-                <div class="d-flex mr-5">Inaktiv: 
+                <div class="d-flex mr-2">Inaktiv: 
                     <input v-model="editableItem.inaktiv"
                       type="checkbox"
                       true-value="inaktiv"
@@ -320,24 +325,27 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
       </v-card-title>
       <v-card-text>
         <v-row>
-          <v-col class="mb-3 text-subtitle-1 text-medium-emphasis">
+          <v-col class="text-subtitle-1 text-medium-emphasis">
             <textarea v-model="editableItem.Kurzbeschreibung" maxlength="240" placeholder="Kurzbeschreibung" type="text" :rows=" isMobile ? 3 : 2" /></v-col>
           <v-col cols="12" :md="showWerbegrafik ? 7 : 12">
             <div class="mb-1 col-container"> 
               <v-icon>mdi-account-question</v-icon>
               <input v-model="editableItem.Wer" placeholder="Wer" type="text" /> 
             </div>
-            <div class="mb-1 col-container">
+            <div v-if="editableItem.Kategorie != 'digitales'" class="mb-1 col-container">
               <v-icon>mdi-map-marker</v-icon> 
               <div class="row-container">
                 <p class="col-container">
-                  <input v-model="editableItem.Wo" placeholder="Wo" type="text" />
+                  <textarea v-model="editableItem.Wo" placeholder="Wo" type="text" :rows="isMobile ? '2' : '1'" />
                   ,
                 </p> 
+                <p class="col-container">
                 <input v-model="editableItem.Koordinaten" placeholder="Koordinaten" type="text" /> 
+                  .
+                </p> 
               </div>
             </div>
-            <div class="mb-1 col-container">
+            <div v-if="editableItem.Kategorie != 'digitales'" class="mb-1 col-container">
               <v-icon>mdi-calendar</v-icon>
               <div class="row3-container">
                 <p class="col-container" style="width: 100%;">
@@ -355,7 +363,7 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
                 <div class="col-container">
                   <p class="col-container"><input v-model="editableItem.Uhrzeit_Start" placeholder="Start (HH:MM)" type="text" /> Uhr</p>
                   <p>bis</p>
-                  <p class="col-container"><input v-model="editableItem.Uhrzeit_Ende" placeholder="Ende (HH:MM / 'open end')" type="text" /> Uhr</p>
+                  <p class="col-container"><input v-model="editableItem.Uhrzeit_Ende" placeholder="Ende (HH:MM / 'open end')" type="text" /> Uhr.</p>
                 </div>
               </div>
             </div>
@@ -493,11 +501,8 @@ input, textarea {
 /* Mobile-Ansicht */
 @media (max-width: 767px) {
   .dialog-title__icon {
-    width: 28px;
-    height: 28px;
-    flex-shrink: 0;
-    opacity: 0.85;
-    margin-bottom: 5px;
+    width: 40px;
+    height: 40px;
   }
 }
 
@@ -533,7 +538,7 @@ input, textarea {
   input, textarea {
     display: inline-block;
     width: 100%;
-    max-width: 95%;
+    max-width: 100%;
   }
 
   .col-container {
