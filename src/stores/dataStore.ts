@@ -20,11 +20,6 @@ const parseVerificationDate = (rawDate?: string | null): Date | null => {
         return null;
     }
 
-    const parsed = Date.parse(trimmed);
-    if (!Number.isNaN(parsed)) {
-        return new Date(parsed);
-    }
-
     const dotSeparated = trimmed.split(".");
     if (dotSeparated.length === 3) {
         const [day, month, year] = dotSeparated.map(part => part.trim());
@@ -32,7 +27,8 @@ const parseVerificationDate = (rawDate?: string | null): Date | null => {
             const isoCandidate = `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
             const fallbackParsed = Date.parse(isoCandidate);
             if (!Number.isNaN(fallbackParsed)) {
-                return new Date(fallbackParsed);
+                const newDate = new Date(fallbackParsed)    
+                return newDate;
             }
         }
     }
@@ -89,9 +85,9 @@ export const useDataStore = defineStore('dataStore', {
             { title: 'Kommentar', key: 'Kommentar' },
           ],
       filter: [] as Filter[],
-      empty_item: null as DataRow | null,
-      current_item: null as DataRow | null,
-      focused_item: null as DataRow | null,
+      empty_item: {} as DataRow,
+      current_item: {} as DataRow | null,
+      focused_item: {} as DataRow | null,
       isMobile: false,
       isMapVisible: true,
       verificationThresholdMonths: DEFAULT_VERIFICATION_THRESHOLD_MONTHS,
@@ -291,7 +287,7 @@ export const useDataStore = defineStore('dataStore', {
                 //Kurzbeschreibung: "",
             };
         },
-        getEmptyItem() {
+        getEmptyItem() : DataRow {
             return this.empty_item;
         },
         // Helper to extract the day name from Wochentag (removes number prefix)
@@ -455,11 +451,11 @@ export const useDataStore = defineStore('dataStore', {
         },
 
 
-        getIconText(item: any) {
+        getIconText(item: DataRow) {
             return (item.Unterkategorie && !item.Unterkategorie.includes(";")) ? this.getSubCategoryName(item.Unterkategorie) : this.getCategoryName(item.Kategorie)
         },
 
-        getIcon(item: any) {
+        getIcon(item: DataRow) {
             return (item.Unterkategorie && !item.Unterkategorie.includes(";")) ? this.getSubCategoryIcon(item.Unterkategorie) : this.getCategoryIcon(item.Kategorie)
         },
 
