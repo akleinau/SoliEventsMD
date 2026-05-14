@@ -10,11 +10,11 @@ const emptyItem = computed(() => {
 });
   
 const emit = defineEmits<{
-  (e: 'item-clicked', item: any): void
+  (e: 'itemgroup-clicked', itemgroup: any): void
 }>()
 
-const clicked = (item: any) => {
-  emit('item-clicked', item);
+const clicked = (itemgroup: any) => {
+  emit('itemgroup-clicked', itemgroup);
 }
 
 </script>
@@ -28,25 +28,30 @@ const clicked = (item: any) => {
             <th>Wer</th>
             <th>Wo</th>
             <th>Wochentag</th>
-            <th>Uhrzeit</th>
+            <th>Uhrzeit(en)</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="item in dataStore.get_filtered_data()" 
-            link @click="clicked(item)"
-            :style="{ 'cursor': 'pointer', 'background-color': dataStore.getCardColor(item.Kategorie ?? '') }">
+          <tr v-for="itemgroup in dataStore.get_grouped_data()" 
+            link @click="clicked(itemgroup)"
+            :style="{ 'cursor': 'pointer', 'background-color': dataStore.getCardColor(itemgroup.Kategorie ?? '') }">
             <td>
-              <v-tooltip :text="dataStore.getIconText(item)" location="top" open-on-click>
+              <v-tooltip :text="dataStore.getIconText(itemgroup)" location="top" open-on-click>
                 <template v-slot:activator="{ props }">
-                  <v-icon v-bind="props" size="medium" class="pr-2" color="black" >{{ dataStore.getIcon(item) }}</v-icon>
+                  <v-icon v-bind="props" size="medium" class="pr-2" color="black" >{{ dataStore.getIcon(itemgroup) }}</v-icon>
                 </template>
               </v-tooltip>
-              {{ item.Was }}
+              {{ itemgroup.Was }}
             </td>
-            <td>{{ item.Wer }}</td>
-            <td>{{ item.Wo }}</td>
-            <td>{{ dataStore.getFormattedDay(item.Wochentag ?? '') }}</td>
-            <td>{{ item.Uhrzeit_Start }} - {{ item.Uhrzeit_Ende }}</td>
+            <td>{{ itemgroup.Wer }}</td>
+            <td v-if="itemgroup.Kategorie != 'digitales'">{{ itemgroup.Wo }}</td>
+            <td v-if="itemgroup.Kategorie != 'digitales'">
+              <tr  v-for="timeslot in itemgroup.timeSlots">{{ dataStore.getFormattedDay(timeslot.Wochentag ?? '') }}</tr>
+            </td>
+            <td v-if="itemgroup.Kategorie != 'digitales'">
+              <tr  v-for="timeslot in itemgroup.timeSlots">{{ timeslot.Uhrzeit_Start }} - {{ timeslot.Uhrzeit_Ende }}</tr>
+            </td>
+            <td v-if="itemgroup.Kategorie == 'digitales'" colspan="3">{{ itemgroup.Link }}</td>
           </tr>
           <!-- Row für Neues Item (neues Angebot anlegen) -->
           <tr

@@ -13,12 +13,12 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  (e: 'item-clicked', item: any): void
+  (e: 'itemgroup-clicked', itemgroup: any): void
 }>()
 
-const clicked = (item: any) => {
-  dataStore.set_current_item(item)
-  emit('item-clicked', item)
+const clicked = (itemgroup: any) => {
+  dataStore.set_current_itemgroup(itemgroup)
+  emit('itemgroup-clicked', itemgroup)
 }
 
 </script>
@@ -28,12 +28,12 @@ const clicked = (item: any) => {
 
     <!-- Kachelansicht -->
     <div v-if="viewMode === 'cards'" class="cards-container d-flex flex-wrap pa-2" style="background: white">
-      <Cards_view @item-clicked="clicked" />
+      <Cards_view @itemgroup-clicked="clicked" />
     </div>
 
     <!-- Listenansicht (Tabelle) -->
     <div v-else class="list-container pa-2" style="background: white">
-      <List_view @item-clicked="clicked" />
+      <List_view @itemgroup-clicked="clicked" />
     </div>
       
       <Scroll_up_button />

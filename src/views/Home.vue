@@ -24,17 +24,17 @@ const toggleMap = () => {
 };
 
 // Event-Handler für Klicks auf Items
-const handleItemClick = (item: any) => {
+const handleItemClick = (itemgroup: any) => {
   // Only focus on map if map is visible
   if (dataStore.isMapVisible && datamap.value) {
-    dataStore.set_focused_item(item);
+    dataStore.set_focused_itemgroup(itemgroup);
   }
 };
 
 // Close the detail dialog
 const closeDialog = () => {
-  dataStore.clear_current_item();
-  dataStore.clear_focused_item();
+  dataStore.clear_current_itemgroup();
+  dataStore.clear_focused_itemgroup();
 };
 
 // Track mouse position to distinguish click from pan/scroll
@@ -134,7 +134,7 @@ onBeforeUnmount(() => {
 
         <!-- Overlay to capture clicks when dialog is open -->
         <div 
-          v-if="dataStore.current_item !== null"
+          v-if="dataStore.current_itemgroup !== null"
           class="dialog-backdrop"
           :class="{ 'dialog-backdrop--fullscreen': isMobile && isMapOpen }"
           @mousedown="onBackdropMouseDown"
@@ -144,7 +144,7 @@ onBeforeUnmount(() => {
         <!-- Item dialog is attached to content container so it also works above map fullscreen -->
         <Curr_item_dialog
           class="mt-5"
-          v-if="dataStore.current_item !== null"
+          v-if="dataStore.current_itemgroup !== null"
           attachTarget=".content-container"
         />
     </div>

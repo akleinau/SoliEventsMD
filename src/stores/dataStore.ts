@@ -85,9 +85,9 @@ export const useDataStore = defineStore('dataStore', {
             { title: 'Kommentar', key: 'Kommentar' },
           ],
       filter: [] as Filter[],
-      empty_item: {} as DataRow,
-      current_item: {} as DataRow | null,
-      focused_item: {} as DataRow | null,
+      empty_item: null as DataRow | null,
+      current_itemgroup: null as DataRow | null,
+      focused_itemgroup: null as DataRow | null,
       isMobile: false,
       isMapVisible: true,
       verificationThresholdMonths: DEFAULT_VERIFICATION_THRESHOLD_MONTHS,
@@ -200,7 +200,16 @@ export const useDataStore = defineStore('dataStore', {
                             return this.matchesWochentagFilter(value, f.values);
                         }
 
-                        return f.values.includes(value);
+                        // ALT: Prüft nur, ob die Filterwerte den Datensatz-Wert enthalten
+                        //return f.values.includes(value);
+
+                        // NEU:
+                        return f.values.some(filterValue => 
+                            //Prüfung 1: Datensatz enthält Filterwert?
+                            value.includes(filterValue) || 
+                            //Prüfung 2: Filterwert enthält Datensatz-Wert?
+                            filterValue.includes(value)
+                        )
                     });
                 });
             }
@@ -245,6 +254,46 @@ export const useDataStore = defineStore('dataStore', {
 
             return filteredData;
         },
+        get_grouped_data() {
+            const filtered = this.get_filtered_data();
+            const groups = {} as any;
+    
+            filtered.forEach(item => {
+                // Gruppierung nach Was + Wer (für Ihren Fall identisch)
+                const key = `${item.Was}|${item.Wer}`;
+                
+                if (!groups[key]) {
+                    groups[key] = {
+                    Was: item.Was,
+                    Wer: item.Wer,
+                    Kategorie: item.Kategorie,
+                    Unterkategorie: item.Unterkategorie,
+                    Wo: item.Wo,
+                    Koordinaten: item.Koordinaten,
+                    items: [],
+                    timeSlots: [],
+                    Kommentar: item.Kommentar,
+                    Kontakt: item.Kontakt,
+                    Link: item.Link,
+                    };
+                }
+                
+                groups[key].items.push(item);
+                groups[key].timeSlots.push({
+                    Wochentag: item.Wochentag,
+                    Uhrzeit_Start: item.Uhrzeit_Start,
+                    Uhrzeit_Ende: item.Uhrzeit_Ende,
+                    // Optional: Rhythmus anzeigen
+                    Rhythmus: item.Rhythmus || ''
+                });
+            });
+            
+            // Sortiert zurückgeben (nach Wochentag)
+            return Object.values(groups).map(group => ({
+                ...group,
+                timeSlots: /** this.sortTimeSlots(**/group.timeSlots/**)**/
+            }));
+        },
         add_filter(column: string, values: string[]) {
             if (values.length === 0) {
                 this.clear_filter(column);
@@ -287,7 +336,7 @@ export const useDataStore = defineStore('dataStore', {
                 //Kurzbeschreibung: "",
             };
         },
-        getEmptyItem() : DataRow {
+        getEmptyItem() : DataRow | null {
             return this.empty_item;
         },
         // Helper to extract the day name from Wochentag (removes number prefix)
@@ -398,17 +447,17 @@ export const useDataStore = defineStore('dataStore', {
         clearSortLevels() {
             this.sortLevels = [];
         },
-        set_current_item(item: DataRow) {
-            this.current_item = item;
+        set_current_itemgroup(itemgroup: DataRow) {
+            this.current_itemgroup = itemgroup;
         },
-        clear_current_item() {
-            this.current_item = null;
+        clear_current_itemgroup() {
+            this.current_itemgroup = null;
         },
-        set_focused_item(item: DataRow | null) {
-            this.focused_item = item;
+        set_focused_itemgroup(itemgroup: DataRow | null) {
+            this.focused_itemgroup = itemgroup;
         },
-        clear_focused_item() {
-            this.focused_item = null;
+        clear_focused_itemgroup() {
+            this.focused_itemgroup = null;
         },
         setMapVisible(visible: boolean) {
             this.isMapVisible = visible;
@@ -427,10 +476,51 @@ export const useDataStore = defineStore('dataStore', {
         getViewMode() : string {
             return this.viewMode;
         },
+        shortFormattedDays(days: string[]) : string[]{
+            // Liste der Wochentage (normalisiert für den Vergleich)
+            const weekdayNames = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
+            return days.map(day => {
+                // Prüfen, ob der gesamte String ein Wochentag ist
+                const isWeekday = weekdayNames.includes(day);
+                if (isWeekday) {
+                    // Nur die ersten 2 Zeichen behalten
+                    return day.slice(0, 2);
+                }
+                // Wenn es kein einzelner Wochentag ist, bleibt der String unverändert (oder kann leer zurückgegeben werden)
+                return day;
+            });
+        },
+        sortFormattedDays(days: string[]) {
+            const dayOrder = {
+            'Montag': 1, 'Dienstag': 2, 'Mittwoch': 3, 'Donnerstag': 4,
+            'Freitag': 5, 'Samstag': 6, 'Sonntag': 7
+            };
+            
+            return days.sort((a, b) => {
+                return (dayOrder[a] || 99) - (dayOrder[b] || 99);
+            });
+        },
         getFormattedDay(day: string) : string {
-            const firstSpaceIndex = day.indexOf(' ');
+            /**const firstSpaceIndex = day.indexOf(' ');
             const title = firstSpaceIndex === -1 ? day : day.substring(firstSpaceIndex + 1);
-            return title;
+            return title;**/
+
+            // 1. Aufteilen nach Semikolon oder Komma (optional mit Leerzeichen trimmen)
+            // Wir nutzen eine Regex, um sowohl ";" als auch "," als Trenner zu erkennen
+            const parts = day.split(/[;,]/);
+
+            // 2. Jeden Teil bereinigen
+            const cleanParts = parts.map(part => {
+                const trimmed = part.trim();
+                if (!trimmed) return null; // Leere Teile entfernen
+
+                const spaceIndex = trimmed.indexOf(' ');
+                // Wenn ein Leerzeichen da ist, nimm den Text danach, sonst den ganzen String
+                return spaceIndex !== -1 ? trimmed.substring(spaceIndex + 1) : trimmed;
+            });
+
+            // 3. Filtern (null entfernen) und wieder mit Komma und Leerzeichen verbinden
+            return cleanParts.filter(p => p !== null).join(', ');
         },
         getCardColor(category: string | undefined): string {                  
             return getCategoryDefinition(category)?.color ?? '#fcd8d8';
@@ -451,12 +541,12 @@ export const useDataStore = defineStore('dataStore', {
         },
 
 
-        getIconText(item: DataRow) {
-            return (item.Unterkategorie && !item.Unterkategorie.includes(";")) ? this.getSubCategoryName(item.Unterkategorie) : this.getCategoryName(item.Kategorie)
+        getIconText(item: DataRow | null) {
+            return (item?.Unterkategorie && !item?.Unterkategorie.includes(";")) ? this.getSubCategoryName(item?.Unterkategorie) : this.getCategoryName(item?.Kategorie)
         },
 
-        getIcon(item: DataRow) {
-            return (item.Unterkategorie && !item.Unterkategorie.includes(";")) ? this.getSubCategoryIcon(item.Unterkategorie) : this.getCategoryIcon(item.Kategorie)
+        getIcon(item: DataRow | null) {
+            return (item?.Unterkategorie && !item?.Unterkategorie.includes(";")) ? this.getSubCategoryIcon(item?.Unterkategorie) : this.getCategoryIcon(item?.Kategorie)
         },
 
         setVerificationThresholdMonths(months: number) {

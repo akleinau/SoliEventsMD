@@ -51,9 +51,15 @@ export const SUB_CATEGORY_CONFIG: Record<string, CategoryDefinition> = {
     color: '#eae2fd',
     icon: 'mdi-bicycle-cargo',
   },
-  essen: {
-    label: 'essen',
-    path: 'essen',
+  essenausgabe: {
+    label: 'Essenausgabe',
+    path: 'essenausgabe',
+    color: '#ffebd9',
+    icon: 'mdi-pot-mix',
+  },
+  futtern: {
+    label: 'Futtern',
+    path: 'futtern',
     color: '#ffebd9',
     icon: 'mdi-silverware-fork-knife',
   },
