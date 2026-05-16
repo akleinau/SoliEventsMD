@@ -260,7 +260,7 @@ export const useDataStore = defineStore('dataStore', {
     
             filtered.forEach(item => {
                 // Gruppierung nach Was + Wer (für Ihren Fall identisch)
-                const key = `${item.Was}|${item.Wer}`;
+                const key = `${item.Was}|${item.Wer}|${item.Wo}`;
                 
                 if (!groups[key]) {
                     groups[key] = {
