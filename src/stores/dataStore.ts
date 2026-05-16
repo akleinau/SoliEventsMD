@@ -260,31 +260,37 @@ export const useDataStore = defineStore('dataStore', {
     
             filtered.forEach(item => {
                 // Gruppierung nach Was + Wer (für Ihren Fall identisch)
-                const key = `${item.Was}|${item.Wer}`;
+                const key = `${item.Was}|${item.Wer}|${item.Wo}`;
                 
                 if (!groups[key]) {
                     groups[key] = {
                     Was: item.Was,
-                    Wer: item.Wer,
                     Kategorie: item.Kategorie,
                     Unterkategorie: item.Unterkategorie,
+                    Nutzung: item.Nutzung,
+                    timeSlots: [],
                     Wo: item.Wo,
                     Koordinaten: item.Koordinaten,
-                    items: [],
-                    timeSlots: [],
+                    Wer: item.Wer,
+                    Link: item.Link,
+                    Werbegrafik: item.Werbegrafik,
+                    inaktiv: item.inaktiv, // ggf. als Wert für timeSlot und nicht als allgemeiner?
+                    Letzte_Ueberpruefung: item.Letzte_Ueberpruefung,
                     Kommentar: item.Kommentar,
                     Kontakt: item.Kontakt,
-                    Link: item.Link,
+                    Kurzbeschreibung: item.Kurzbeschreibung,
+                    // ist_Kopie: item.ist_Kopie, // ggf. als Wert für timeSlot und nicht als allgemeiner?
+                    items: [],
                     };
                 }
                 
                 groups[key].items.push(item);
                 groups[key].timeSlots.push({
                     Wochentag: item.Wochentag,
+                    // Optional: Rhythmus anzeigen
+                    Rhythmus: item.Rhythmus || '',
                     Uhrzeit_Start: item.Uhrzeit_Start,
                     Uhrzeit_Ende: item.Uhrzeit_Ende,
-                    // Optional: Rhythmus anzeigen
-                    Rhythmus: item.Rhythmus || ''
                 });
             });
             
