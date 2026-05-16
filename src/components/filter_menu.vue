@@ -71,10 +71,13 @@ const onWochentagFilterChange = (newFilter: string[]) => {
 
 // --- Sort categories (tri-state cycling) ---
 const sortCategories = [
-  { key: 'Letzte_Ueberpruefung', label: 'Neuste' },
-  { key: 'Was', label: 'Name' },
-  { key: 'Wer', label: 'Veranstalter' },
+  { key: 'Letzte_Ueberpruefung', label: '* Neuste *' },
+  { key: 'Was', label: 'Angebotsname' },
+  { key: 'Kategorie', label: 'Kategorie' },
+  //{ key: 'Nutzung', label: 'Nutzung' },
   { key: 'Wo', label: 'Ort' },
+  //{ key: 'Unterkategorie', label: 'Unterkategorie' },
+  { key: 'Wer', label: 'Veranstalter*in' },
   { key: 'Wochentag', label: 'Wochentag' },
 ];
 

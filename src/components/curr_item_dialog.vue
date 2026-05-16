@@ -216,9 +216,9 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
             <div v-if="itemgroup.Kategorie != 'digitales'" v-for="timeslot in itemgroup.timeSlots" class="mb-1 col-container"> 
               <v-icon>mdi-calendar</v-icon>
               <div>
-                {{ dataStore.getFormattedDay(timeslot.Wochentag ?? '') }}, 
-                {{ timeslot.Rhythmus }},
-                {{ timeslot.Uhrzeit_Start }} Uhr bis {{ timeslot.Uhrzeit_Ende }} Uhr
+                {{ dataStore.getFormattedDay((timeslot as any).Wochentag ?? '') }}, 
+                {{ (timeslot as any).Rhythmus }}
+                <span v-if="(timeslot as any).Uhrzeit_Start != ''">,{{ (timeslot as any).Uhrzeit_Start }} Uhr bis {{ (timeslot as any).Uhrzeit_Ende }} Uhr</span>
               </div>
             </div>
             <!--div v-for="timeslot in itemgroup.timeSlots" class="col-container">
@@ -364,21 +364,21 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
               <v-icon>mdi-calendar</v-icon>
               <div class="row3-container">
                 <p class="col-container" style="width: 100%;">
-                  <select v-model="timeslot.Wochentag" style="width: 100%;">
-                    <option v-for="option in sortedWochentage" :value="option.value" :placeholder="timeslot.Wochentag">
+                  <select v-model="(timeslot as any).Wochentag" style="width: 100%;">
+                    <option v-for="option in sortedWochentage" :value="option.value" :placeholder="(timeslot as any).Wochentag">
                       {{ option.title }}
                     </option>
                   </select>
                   ,
                 </p> 
                 <p class="col-container">
-                <input v-model="timeslot.Rhythmus" placeholder="Rhythmus" type="text" />
+                <input v-model="(timeslot as any).Rhythmus" placeholder="Rhythmus" type="text" />
                   ,
                 </p> 
                 <div class="col-container">
-                  <p class="col-container"><input v-model="timeslot.Uhrzeit_Start" placeholder="Start (HH:MM)" type="text" /> Uhr</p>
+                  <p class="col-container"><input v-model="(timeslot as any).Uhrzeit_Start" placeholder="Start (HH:MM)" type="text" /> Uhr</p>
                   <p>bis</p>
-                  <p class="col-container"><input v-model="timeslot.Uhrzeit_Ende" placeholder="Ende (HH:MM / 'open end')" type="text" /> Uhr.</p>
+                  <p class="col-container"><input v-model="(timeslot as any).Uhrzeit_Ende" placeholder="Ende (HH:MM / 'open end')" type="text" /> Uhr.</p>
                 </div>
               </div>
             </div>
