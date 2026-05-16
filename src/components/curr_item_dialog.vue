@@ -126,22 +126,55 @@ const getFormattedDateToday = () => {
 }
 
 const dataRowtoCsv = (data: DataRow | any) => {
-  const delimiter = ","
+  var grouped_csv = '';
+  const delimiter = ',';
   // Header (Spaltennamen) extrahieren
-  const headers = Object.keys(data).join(delimiter);
+  const headers = Object.keys(data.items[0]).join(delimiter);
+  grouped_csv += `${headers}\n`;
+  var first = true;
+  for(var timeslot of data.timeSlots) {
 
-  // Werte extrahieren und in Anführungszeichen setzen, falls nötig
-  const values = Object.values(data)
-    .map(value => {
-      if (typeof value === "string" && (value.includes(delimiter) || value.includes('"'))) {
-        return `"${value.replace(/"/g, '""')}"`; // Anführungszeichen escapen
+    var single_timeslot_data =
+      {
+        Was: data.Was,
+        Kategorie: data.Kategorie,
+        Unterkategorie: data.Unterkategorie,
+        Nutzung: data.Nutzung,
+        Wochentag: (timeslot as any).Wochentag,
+        Rhythmus: (timeslot as any).Rhythmus,
+        Uhrzeit_Start: (timeslot as any).Uhrzeit_Start,
+        Uhrzeit_Ende: (timeslot as any).Uhrzeit_Ende,
+        Wo: data.Wo,
+        Koordinaten: data.Koordinaten,
+        Wer: data.Wer,
+        Link: data.Link,
+        Werbegrafik: data.Werbegrafik,
+        inaktiv: data.inaktiv,
+        Letzte_Ueberpruefung: data.Letzte_Ueberpruefung,
+        Kommentar: data.Kommentar,
+        Kontakt: data.Kontakt,
+        blankTel: '',
+        Kurzbeschreibung: data.Kurzbeschreibung,
+        ist_Kopie: (!first) ? 'ja' : 'nein'
       }
-      return value;
-    })
-    .join(delimiter);
 
-  // CSV-Zeile zurückgeben
-  return `${headers}\n${values}`;
+    // wenn das erste group-Element erstellt wird, ist "ist_Kopie" = "nein"; für alle nachfolgenden wird "ja" hinterlegt
+    first = false;
+
+    // Werte extrahieren und in Anführungszeichen setzen, falls nötig
+    const values = Object.values(single_timeslot_data)
+      .map(value => {
+        if (typeof value === "string" && (value.includes(delimiter) || value.includes('"'))) {
+          return `"${value.replace(/"/g, '""')}"`; // Anführungszeichen escapen
+        }
+        return value;
+      })
+      .join(delimiter);
+
+    // CSV-Zeile zurückgeben
+    grouped_csv += `+\n${values}\n`;
+  }
+  return grouped_csv;
 }
 
 const saveEdit = () => {
@@ -149,14 +182,12 @@ const saveEdit = () => {
   editableItemGroup.value.Letzte_Ueberpruefung = getFormattedDateToday().toString();
 
   // remove columns with sensitive data
-  delete editableItemGroup.value?.Kontakt;
-  delete editableItemGroup.value?.Kommentar;
-  delete itemgroup.value?.Kontakt;
-  delete itemgroup.value?.Kommentar;
+  delete editableItemGroup.value?.Telefonnummer_intern;
+  delete itemgroup.value?.Telefonnummer_intern;
   
   const contentAsCsv = dataRowtoCsv(editableItemGroup?.value);
   const oldContentAsCsv = dataRowtoCsv(itemgroup?.value)
-  copyEditInfos.value = "Hallo,\nich möchte folgende Veränderung eines Soli-Angebots melden.\nLiebe Grüße,\nDEIN_NAME" + "\n\n# NEU:\n\n" + contentAsCsv + "\n\n# ALT:\n\n" + oldContentAsCsv;
+  copyEditInfos.value = "Hallo,\nich möchte folgende Veränderung eines Soli-Angebots melden.\nLiebe Grüße,\nDEIN_NAME" + "\n\n### NEU:\n\n" + contentAsCsv + "\n\n### ALT:\n\n" + oldContentAsCsv;
   openMailTo(copyEditInfos.value.toString());
 };
 
