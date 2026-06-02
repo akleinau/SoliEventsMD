@@ -6,6 +6,10 @@ import { ref, computed } from "vue";
 
 const dataStore = useDataStore();
 
+// --- Mobile: collapsible secondary filters ---
+const isMobile = computed(() => dataStore.isMobile);
+const expanded = ref(false);
+
 // --- Heute-Filter ---
 const heuteFilterActive = ref(false);
 const HEUTE_FILTER_VALUE = '__heute__';
@@ -134,6 +138,31 @@ const resetFilters = () => {
     <!-- ═══ Row 1: main controls ═══ -->
     <div class="control-bar__row">
 
+      <!-- Mobile: toggle to fold/unfold secondary filters -->
+      <v-btn
+        v-if="isMobile"
+        class="control-bar__btn control-bar__filter-toggle"
+        :class="{ 'control-bar__btn--active': activeFilterCount > 0 || dataStore.searchTerm.trim() !== '' }"
+        variant="outlined"
+        @click="expanded = !expanded"
+      >
+        <div class="control-bar__sort-icon">
+          <v-icon>mdi-filter-variant</v-icon>
+          <span
+            v-if="activeFilterCount > 0"
+            class="control-bar__sort-count"
+            aria-hidden="true"
+          >
+            {{ activeFilterCount }}
+          </span>
+        </div>
+        <span class="ml-1">Filter</span>
+        <v-icon size="small" class="ml-1">{{ expanded ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+      </v-btn>
+
+      <!-- Collapsible secondary filters (always shown on desktop) -->
+      <template v-if="!isMobile || expanded">
+
       <!-- Search -->
       <v-text-field
         class="control-bar__search"
@@ -247,6 +276,8 @@ const resetFilters = () => {
         <v-icon>mdi-close-circle-outline</v-icon>
       </v-btn>
 
+      </template>
+
       <!-- View mode toggle -->
       <v-btn-toggle
         class="control-bar__view-toggle"
@@ -338,6 +369,25 @@ const resetFilters = () => {
 .control-bar__btn--sort {
   position: relative;
   overflow: visible;
+}
+
+.control-bar__filter-toggle {
+  position: relative;
+  overflow: visible;
+}
+
+.control-bar__filter-toggle .control-bar__sort-icon {
+  position: relative;
+}
+
+.control-bar__filter-toggle .control-bar__sort-count {
+  top: -8px;
+  right: -8px;
+}
+
+.control-bar__btn--active {
+  border-color: #ec4d0b !important;
+  color: #ec4d0b;
 }
 
 .control-bar__view-toggle {

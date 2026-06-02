@@ -128,11 +128,23 @@ const apply_filter = () => {
 
   /* Mobile-Ansicht ToDo: fix code or this section -> use "@media ..."" OR use "".XYZ--mobile" ! */
   @media (max-width: 767px) {
-    .v-btn {          
+    .v-btn {
       min-width: 0 !important; /* allows the v-btn to be smaller  */
-      flex: 1 1 auto; 
+      flex: 1 1 auto;
       max-width: 40px !important; /* limits the button width, so all can appear next to each other on smaller mobile screen */
       margin: 3px; /* to avoid clicking the wrong item */
+    }
+
+    /* mobile: icon only, centered, no extra padding so it fills the small button */
+    .category-button {
+      padding: 5px !important;
+      column-gap: 0;
+      justify-content: center;
+    }
+
+    .category-button :deep(.v-icon) {
+      padding-left: 0 !important;
+      margin-right: 0 !important;
     }
   }
 

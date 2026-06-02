@@ -86,28 +86,36 @@ a {
 
 @media (max-width: 767px) {
   .header-top {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 4px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "title dialog"
+      "cats  cats";
+    align-items: center;
+    column-gap: 8px;
+    row-gap: 4px;
   }
 
   .title-container {
-    justify-self: center;
+    grid-area: title;
+    justify-self: start;
     padding-left: 0;
   }
 
   .title-container h2 {
     font-size: 1.2rem;
-    text-align: center;
+    text-align: left;
   }
 
   .categories-container {
+    grid-area: cats;
     width: 100%;
   }
 
   .dialog-container {
-    width: 100%;
+    grid-area: dialog;
+    justify-self: end;
+    width: auto;
   }
 }
 </style>
