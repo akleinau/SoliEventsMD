@@ -117,6 +117,20 @@ const cancelEdit = () => {
   if (isNew.value) closeDialog();
 };
 
+const addTimeSlot = () => {
+  if (!editableItemGroup.value) return;
+  const eg = editableItemGroup.value as any;
+  if (!Array.isArray(eg.timeSlots)) eg.timeSlots = [];
+  eg.timeSlots.push({ Wochentag: "", Rhythmus: "", Uhrzeit_Start: "", Uhrzeit_Ende: "" });
+};
+
+const removeTimeSlot = (index: number) => {
+  const eg = editableItemGroup.value as any;
+  if (Array.isArray(eg?.timeSlots) && eg.timeSlots.length > 1) {
+    eg.timeSlots.splice(index, 1);
+  }
+};
+
 const getFormattedDateToday = () => {
   const today = new Date();
   const day = String(today.getDate()).padStart(2, '0'); // Tag (DD)
@@ -128,11 +142,10 @@ const getFormattedDateToday = () => {
 const dataRowtoCsv = (data: DataRow | any) => {
   var grouped_csv = '';
   const delimiter = ',';
-  // Header (Spaltennamen) extrahieren
-  const headers = Object.keys(data.items[0]).join(delimiter);
-  grouped_csv += `${headers}\n`;
   var first = true;
-  for(var timeslot of data.timeSlots) {
+  // Fallback für neue (flache) Einträge ohne timeSlots/items: der Eintrag selbst ist der einzige Timeslot
+  const timeSlots = data.timeSlots ?? [data];
+  for(var timeslot of timeSlots) {
 
     var single_timeslot_data =
       {
@@ -157,6 +170,11 @@ const dataRowtoCsv = (data: DataRow | any) => {
         Kurzbeschreibung: data.Kurzbeschreibung,
         ist_Kopie: (!first) ? 'ja' : 'nein'
       }
+
+    // Header (Spaltennamen) einmalig aus dem ersten Datensatz extrahieren
+    if (first) {
+      grouped_csv += `${Object.keys(single_timeslot_data).join(delimiter)}\n`;
+    }
 
     // wenn das erste group-Element erstellt wird, ist "ist_Kopie" = "nein"; für alle nachfolgenden wird "ja" hinterlegt
     first = false;
@@ -186,8 +204,13 @@ const saveEdit = () => {
   delete itemgroup.value?.Telefonnummer_intern;
   
   const contentAsCsv = dataRowtoCsv(editableItemGroup?.value);
-  const oldContentAsCsv = dataRowtoCsv(itemgroup?.value)
-  copyEditInfos.value = "Hallo,\nich möchte folgende Veränderung eines Soli-Angebots melden.\nLiebe Grüße,\nDEIN_NAME" + "\n\n### NEU:\n\n" + contentAsCsv + "\n\n### ALT:\n\n" + oldContentAsCsv;
+  if (isNew.value) {
+    // Neuer Eintrag: keine alte Version vorhanden, daher nur NEU-Block
+    copyEditInfos.value = "Hallo,\nich möchte folgendes neue Soli-Angebot melden.\nLiebe Grüße,\nDEIN_NAME" + "\n\n### NEU:\n\n" + contentAsCsv;
+  } else {
+    const oldContentAsCsv = dataRowtoCsv(itemgroup?.value)
+    copyEditInfos.value = "Hallo,\nich möchte folgende Veränderung eines Soli-Angebots melden.\nLiebe Grüße,\nDEIN_NAME" + "\n\n### NEU:\n\n" + contentAsCsv + "\n\n### ALT:\n\n" + oldContentAsCsv;
+  }
   openMailTo(copyEditInfos.value.toString());
 };
 
@@ -391,29 +414,36 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
                     </option>
                   </select>
             -->
-            <div v-if="editableItemGroup.Kategorie != 'digitales'" v-for="timeslot in editableItemGroup.timeSlots" class="mb-1 col-container">
+            <div v-if="editableItemGroup.Kategorie != 'digitales'" v-for="(timeslot, index) in (editableItemGroup.timeSlots as any[])" :key="index" class="mb-1 col-container">
               <v-icon>mdi-calendar</v-icon>
-              <div class="row3-container">
-                <p class="col-container" style="width: 100%;">
-                  <select v-model="(timeslot as any).Wochentag" style="width: 100%;">
-                    <option v-for="option in sortedWochentage" :value="option.value" :placeholder="(timeslot as any).Wochentag">
-                      {{ option.title }}
-                    </option>
-                  </select>
-                  ,
-                </p> 
-                <p class="col-container">
-                <input v-model="(timeslot as any).Rhythmus" placeholder="Rhythmus" type="text" />
-                  ,
-                </p> 
-                <div class="col-container">
-                  <p class="col-container"><input v-model="(timeslot as any).Uhrzeit_Start" placeholder="Start (HH:MM)" type="text" /> Uhr</p>
-                  <p>bis</p>
-                  <p class="col-container"><input v-model="(timeslot as any).Uhrzeit_Ende" placeholder="Ende (HH:MM / 'open end')" type="text" /> Uhr.</p>
-                </div>
+              <div class="timeslot-row">
+                <select class="timeslot-day" v-model="(timeslot as any).Wochentag">
+                  <option v-for="option in sortedWochentage" :value="option.value" :placeholder="(timeslot as any).Wochentag">
+                    {{ option.title }}
+                  </option>
+                </select>
+                <input class="timeslot-rhythm" v-model="(timeslot as any).Rhythmus" placeholder="Rhythmus" type="text" />
+                <input class="timeslot-time" v-model="(timeslot as any).Uhrzeit_Start" placeholder="Start" type="text" />
+                <span>bis</span>
+                <input class="timeslot-time" v-model="(timeslot as any).Uhrzeit_Ende" placeholder="Ende" type="text" />
+                <span>Uhr</span>
+                <v-icon
+                  v-if="(editableItemGroup.timeSlots as any[]).length > 1"
+                  size="small"
+                  class="timeslot-remove"
+                  title="Zeit entfernen"
+                  @click="removeTimeSlot(index)"
+                >mdi-close-circle</v-icon>
               </div>
             </div>
-            
+            <div v-if="editableItemGroup.Kategorie != 'digitales'" class="mb-1 col-container">
+              <v-icon class="add-timeslot__placeholder-icon">mdi-calendar</v-icon>
+              <button type="button" class="add-timeslot" @click="addTimeSlot">
+                <v-icon size="small">mdi-plus-circle-outline</v-icon>
+                <span>weitere Zeit hinzufügen</span>
+              </button>
+            </div>
+
             <div class="mb-1 col-container"> <v-icon>mdi-comment</v-icon> <input v-model="editableItemGroup.Kommentar" maxlength="120" placeholder="Kommentar/Hinweis" type="text" /> </div>
             <div class="mb-1 col-container"> <v-icon>mdi-email</v-icon> <input v-model="editableItemGroup.Kontakt" maxlength="60" placeholder="Kontakt" type="text" /> </div>
 
@@ -577,6 +607,49 @@ input, textarea {
   flex: 1 1 0;
   column-gap: 5px;
 }
+.timeslot-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  flex: 1 1 0;
+  column-gap: 5px;
+  min-width: 0;
+}
+.timeslot-day {
+  flex: 0 1 190px;
+  min-width: 0;
+}
+.timeslot-rhythm {
+  flex: 1 1 0;
+  min-width: 0;
+}
+.timeslot-time {
+  flex: 0 0 70px;
+  min-width: 0;
+}
+.timeslot-remove {
+  flex: 0 0 auto;
+  cursor: pointer;
+}
+.add-timeslot__placeholder-icon {
+  visibility: hidden;
+}
+.add-timeslot {
+  display: inline-flex;
+  align-items: center;
+  column-gap: 5px;
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.06);
+  color: rgba(0, 0, 0, 0.7);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.add-timeslot:hover {
+  background: rgba(0, 0, 0, 0.12);
+}
 
 /* Mobile-Ansicht ToDo: fix code or this section -> use "@media ..."" OR use "".XYZ--mobile" ! */
 @media (max-width: 767px) {
@@ -597,6 +670,13 @@ input, textarea {
     flex-direction: column;
     width: 100%;
     column-gap: 5px;
+  }
+  .timeslot-row {
+    flex-wrap: wrap;
+    row-gap: 5px;
+  }
+  .timeslot-day, .timeslot-rhythm, .timeslot-time {
+    flex: 1 1 auto;
   }
 }
 
