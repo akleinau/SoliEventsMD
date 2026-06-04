@@ -339,8 +339,16 @@ export const useDataStore = defineStore('dataStore', {
                 Kommentar: "",
                 Kontakt: "",
                 //Telefonnummer: "",
-                //Kurzbeschreibung: "",
+                Kurzbeschreibung: "",
             };
+            // timeSlots als eigene Struktur anhängen, damit das Edit-Formular die
+            // Wochentag/Rhythmus/Uhrzeit-Felder rendert (v-for über timeSlots)
+            (this.empty_item as any).timeSlots = [{
+                Wochentag: "",
+                Rhythmus: "",
+                Uhrzeit_Start: "",
+                Uhrzeit_Ende: "",
+            }];
         },
         getEmptyItem() : DataRow | null {
             return this.empty_item;
