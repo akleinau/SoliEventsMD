@@ -263,16 +263,16 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
       </v-card-title>
       <v-card-text>
         <v-row>
-          <v-col v-if="itemgroup.Kurzbeschreibung != ''"class="mb-3 text-subtitle-1 text-medium-emphasis">{{ itemgroup.Kurzbeschreibung }}</v-col>
+          <v-col v-if="itemgroup.Kurzbeschreibung != ''" class="mb-3 text-subtitle-1 text-medium-emphasis">{{ itemgroup.Kurzbeschreibung }}</v-col>
           <v-col cols="12" :md="showWerbegrafik ? 7 : 12">            
             <div class="mb-1 col-container"> <v-icon>mdi-account-question</v-icon> <div>{{ itemgroup.Wer }}</div></div>
             <div v-if="itemgroup.Kategorie != 'digitales'" class="mb-1 col-container"> <v-icon>mdi-map-marker</v-icon> <div>{{ itemgroup.Wo }}</div></div>
             <div v-if="itemgroup.Kategorie != 'digitales'" v-for="timeslot in itemgroup.timeSlots" class="mb-1 col-container"> 
               <v-icon>mdi-calendar</v-icon>
               <div>
-                {{ dataStore.getFormattedDay((timeslot as any).Wochentag ?? '') }}, 
-                {{ (timeslot as any).Rhythmus }}
-                <span v-if="(timeslot as any).Uhrzeit_Start != ''">,{{ (timeslot as any).Uhrzeit_Start }} Uhr bis {{ (timeslot as any).Uhrzeit_Ende }} Uhr</span>
+                {{ (timeslot as any).Rhythmus }} |
+                {{ dataStore.getFormattedDay((timeslot as any).Wochentag ?? '') }}
+                <span v-if="(timeslot as any).Uhrzeit_Start != ''"> | {{ (timeslot as any).Uhrzeit_Start }} Uhr bis {{ (timeslot as any).Uhrzeit_Ende }} Uhr</span>
               </div>
             </div>
             <!--div v-for="timeslot in itemgroup.timeSlots" class="col-container">
