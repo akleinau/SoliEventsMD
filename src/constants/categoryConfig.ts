@@ -1,6 +1,14 @@
 export interface CategoryDefinition {
   label: string
   path: string
+  textcolor: string
+  color: string
+  icon: string // mdi-icons (automatisch über Vuetify)
+}
+
+export interface SubCategoryDefinition {
+  label: string
+  path: string
   color: string
   icon: string // mdi-icons (automatisch über Vuetify)
 }
@@ -9,30 +17,34 @@ export const CATEGORY_CONFIG: Record<string, CategoryDefinition> = {
   begegnung: {
     label: 'Begegnung',
     path: 'begegnung',
-    color: '#eae2fd',
+    textcolor: '#724b9b', // Hintergrundfarbe
+    color: '#e5dbeb', // Hintergrundfarbe
     icon: 'mdi-account-multiple-outline',
   },
   digitales: {
     label: 'Digitales',
     path: 'digitales',
-    color: '#dbebff',
+    textcolor: '#ecab06', // Hintergrundfarbe
+    color: '#fde7b4', // Hintergrundfarbe
     icon: 'mdi-laptop',
   },
   lebensmittel: {
     label: 'Lebensmittel',
     path: 'lebensmittel',
-    color: '#e1ffe1',
+    textcolor: '#eb6715', // Hintergrundfarbe
+    color: '#fad8c3', // Hintergrundfarbe
     icon: 'mdi-food-apple-outline',
   },
   ressourcen: {
     label: 'Ressourcen',
     path: 'ressourcen',
-    color: '#FFFACD',
+    textcolor: '#7da531', // Hintergrundfarbe
+    color: '#e3e8ca', // Hintergrundfarbe
     icon: 'mdi-recycle',
   },
 }
 
-export const SUB_CATEGORY_CONFIG: Record<string, CategoryDefinition> = {
+export const SUB_CATEGORY_CONFIG: Record<string, SubCategoryDefinition> = {
   aktion: {
     label: 'Aktion',
     path: 'aktion',

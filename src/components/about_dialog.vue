@@ -49,6 +49,10 @@
                     <br>
                     <p>Wenn du eine Frage hast, kannst du eine E-Mail schreiben an: <a href="mailto:kontakt@magdeburg-teilt.de">kontakt@magdeburg-teilt.de</a>
                     Oder nutze das <router-link to="/kontakt" @click="isActive.value = false">Kontaktformular</router-link>.</p>
+                    <br>
+                    <p><i>Viel Spaß beim Stöbern wünschen dir
+                        <br>
+                    Anna, Benni, Ina und Jonas :)</i></p>
                 </v-card-text>
             </v-card>
         </template>

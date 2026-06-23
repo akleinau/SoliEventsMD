@@ -72,9 +72,11 @@ const clicked = (itemgroup: any) => {
         class="ma-2 category-card" 
         width="350"
         max-height="180"
-        :color="dataStore.getCardColor(itemgroup.Kategorie ?? '')"
+        color="white"
         link @click="clicked(itemgroup)">
-        <v-card-title class="category-card__title">{{ itemgroup.Was }}</v-card-title>
+        <v-card-title class="category-card__title"
+          :style="{'background-color' : dataStore.getCardColor(itemgroup.Kategorie)}"
+        >{{ itemgroup.Was }}</v-card-title>
         <div class="category-card__icon" v-if="dataStore.getCategoryIcon(itemgroup.Kategorie)">
           <v-tooltip :text="dataStore.getIconText(itemgroup)" location="top" open-on-click>
             <template v-slot:activator="{ props }">
@@ -82,7 +84,7 @@ const clicked = (itemgroup: any) => {
             </template>
           </v-tooltip>
         </div>
-        <v-card-subtitle>{{ itemgroup.Wer }}</v-card-subtitle>
+        <v-card-subtitle :style="{'padding-top' : '5px'}">{{ itemgroup.Wer }}</v-card-subtitle>
         <v-card-text v-if="itemgroup.Kategorie != 'digitales'">
           <p class="mb-1"> <v-icon>mdi-map-marker</v-icon> {{ itemgroup.Wo }}</p>
           <div class="mb-1 opening-hours"> <v-icon>mdi-calendar</v-icon> {{ listTimeSlots(itemgroup.timeSlots) }}</div>

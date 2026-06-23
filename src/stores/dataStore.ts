@@ -539,6 +539,9 @@ export const useDataStore = defineStore('dataStore', {
         getCardColor(category: string | undefined): string {                  
             return getCategoryDefinition(category)?.color ?? '#fcd8d8';
         },
+        getCardTextColor(category: string | undefined): string {                  
+            return getCategoryDefinition(category)?.textcolor ?? '#3b3b3b';
+        },
 
         getCategoryName(category?: string | null): string | undefined {
             return getCategoryDefinition(category)?.label ?? 'Neu';
