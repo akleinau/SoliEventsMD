@@ -250,11 +250,13 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
     <!-- Anzeigemodus (View) -->
     <v-card v-if="itemgroup && !isEditing"
       :style="{
-        'background': dataStore.getCardColor(itemgroup.Kategorie), 
-        'border': '5px solid color-mix(in oklch, ' + dataStore.getCardColor(itemgroup.Kategorie) + ', black 20%)'
+        'background': '#f8f7f7'
       }">    
-      <v-card-title class="dialog-title">
-        <span>{{ itemgroup.Was }}</span>
+      <v-card-title class="dialog-title"
+        :style="{
+          'background': dataStore.getCardColor(itemgroup.Kategorie)
+        }">
+        <div>{{ dataStore.getCategoryName(itemgroup.Kategorie) }}</div>
         <v-tooltip :text="dataStore.getIconText(itemgroup)" location="top" open-on-click>
           <template v-slot:activator="{ props }">
               <v-icon v-bind="props" size="x-large" color="black" class="dialog-title__icon">{{ dataStore.getIcon(itemgroup) }}</v-icon>
@@ -263,7 +265,10 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
       </v-card-title>
       <v-card-text>
         <v-row>
-          <v-col v-if="itemgroup.Kurzbeschreibung != ''" class="mb-3 text-subtitle-1 text-medium-emphasis">{{ itemgroup.Kurzbeschreibung }}</v-col>
+          <v-col class="mb-3">
+            <h2>{{ itemgroup.Was }}</h2>
+            <div v-if="itemgroup.Kurzbeschreibung != ''" class="text-subtitle-1 text-medium-emphasis">{{ itemgroup.Kurzbeschreibung }}</div>
+          </v-col>
           <v-col cols="12" :md="showWerbegrafik ? 7 : 12">            
             <div class="mb-1 col-container"> <v-icon>mdi-account-question</v-icon> <div>{{ itemgroup.Wer }}</div></div>
             <div v-if="itemgroup.Kategorie != 'digitales'" class="mb-1 col-container"> <v-icon>mdi-map-marker</v-icon> <div>{{ itemgroup.Wo }}</div></div>
@@ -337,56 +342,57 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
     <!-- Bearbeitungsmodus (Edit) -->
     <v-card v-if="editableItemGroup && isEditing"
       :style="{
-        'background': dataStore.getCardColor(editableItemGroup.Kategorie), 
-        'border': '5px solid color-mix(in oklch, ' + dataStore.getCardColor(editableItemGroup.Kategorie) + ', black 20%)'
+        'background': '#f8f7f7'
       }">
-      <v-card-title class="dialog-title pb-0 pt-5">
-        <v-col class="pb-0">
-          <v-row>
-            <textarea v-model="editableItemGroup.Was" placeholder="Was" type="text" :rows="isMobile ? '2' : '1'" />
-          </v-row>
-          <v-row>
-            <v-card-text>
-              <v-row class="align-center justify-end">
-                <div class="d-flex mr-2">Inaktiv: 
-                    <input v-model="editableItemGroup.inaktiv"
-                      type="checkbox"
-                      true-value="inaktiv"
-                      false-value="aktiv"
-                      class="ml-1" />
-                </div>
-                <div>Unterkategorie: 
-                  <select v-model="editableItemGroup.Unterkategorie">
-                    <option v-for="option in SUB_CATEGORIES" :value="option.path" :placeholder="editableItemGroup.Unterkategorie">
-                      {{ option.label }}
-                    </option>
-                  </select>
-                  <v-tooltip :text="dataStore.getSubCategoryName(editableItemGroup.Unterkategorie ?? '')" location="top" open-on-click>
-                    <template v-slot:activator="{ props }">
-                        <v-icon v-bind="props" size="x-large" color="black" class="dialog-title__icon">{{ dataStore.getSubCategoryIcon(editableItemGroup.Unterkategorie) }}</v-icon>
-                    </template>
-                  </v-tooltip>
-                </div>
-                <div>Kategorie: 
-                  <select v-model="editableItemGroup.Kategorie">
-                    <option v-for="option in MAIN_CATEGORIES" :value="option.path" :placeholder="editableItemGroup.Kategorie">
-                      {{ option.label }}
-                    </option>
-                  </select>
-                  <v-tooltip :text="dataStore.getCategoryName(editableItemGroup.Kategorie ?? '')" location="top" open-on-click>
-                    <template v-slot:activator="{ props }">
-                        <v-icon v-bind="props" size="x-large" color="black" class="dialog-title__icon">{{ dataStore.getCategoryIcon(editableItemGroup.Kategorie) }}</v-icon>
-                    </template>
-                  </v-tooltip>
-                </div>
-              </v-row>
-            </v-card-text>
-          </v-row>
-        </v-col>
+      <v-card-title class="dialog-title"
+        :style="{
+          'background': dataStore.getCardColor(editableItemGroup.Kategorie)
+        }">
+        <v-col style="padding: 0px;">
+            <span style="color: grey;">Kategorie: </span>
+            <select v-model="editableItemGroup.Kategorie">
+              <option v-for="option in MAIN_CATEGORIES" :value="option.path" :placeholder="editableItemGroup.Kategorie">
+                {{ option.label }}
+              </option>
+            </select>
+            <v-tooltip :text="dataStore.getCategoryName(editableItemGroup.Kategorie ?? '')" location="top" open-on-click>
+              <template v-slot:activator="{ props }">
+                  <v-icon v-bind="props" size="x-large" color="black" class="dialog-title__icon">{{ dataStore.getCategoryIcon(editableItemGroup.Kategorie) }}</v-icon>
+              </template>
+            </v-tooltip>
+          </v-col>
+          <v-col>
+            <v-row class="align-center justify-end" style="padding: 0px;">
+              <div class="d-flex mr-2">
+                <span style="color: grey;">Inaktiv: </span>
+                  <input v-model="editableItemGroup.inaktiv"
+                    type="checkbox"
+                    true-value="inaktiv"
+                    false-value="aktiv"
+                    class="ml-1" />
+              </div>
+              <div style="width: 10px"></div>
+              <div>
+            <span style="color: grey;">Unterkategorie: </span>
+                <select v-model="editableItemGroup.Unterkategorie">
+                  <option v-for="option in SUB_CATEGORIES" :value="option.path" :placeholder="editableItemGroup.Unterkategorie">
+                    {{ option.label }}
+                  </option>
+                </select>
+                <v-tooltip :text="dataStore.getSubCategoryName(editableItemGroup.Unterkategorie ?? '')" location="top" open-on-click>
+                  <template v-slot:activator="{ props }">
+                      <v-icon v-bind="props" size="x-large" color="black" class="dialog-title__icon">{{ dataStore.getSubCategoryIcon(editableItemGroup.Unterkategorie) }}</v-icon>
+                  </template>
+                </v-tooltip>
+              </div>
+              
+            </v-row>
+          </v-col>
       </v-card-title>
       <v-card-text>
         <v-row>
           <v-col class="text-subtitle-1 text-medium-emphasis">
+            <h2><textarea v-model="editableItemGroup.Was" placeholder="Was" type="text" :rows="isMobile ? '2' : '1'" /></h2>
             <textarea v-model="editableItemGroup.Kurzbeschreibung" maxlength="240" placeholder="Kurzbeschreibung" type="text" :rows=" isMobile ? 3 : 2" /></v-col>
           <v-col cols="12" :md="showWerbegrafik ? 7 : 12">
             <div class="mb-1 col-container"> 
@@ -417,12 +423,12 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
             <div v-if="editableItemGroup.Kategorie != 'digitales'" v-for="(timeslot, index) in (editableItemGroup.timeSlots as any[])" :key="index" class="mb-1 col-container">
               <v-icon>mdi-calendar</v-icon>
               <div class="timeslot-row">
+                <input class="timeslot-rhythm" v-model="(timeslot as any).Rhythmus" placeholder="Rhythmus" type="text" />
                 <select class="timeslot-day" v-model="(timeslot as any).Wochentag">
                   <option v-for="option in sortedWochentage" :value="option.value" :placeholder="(timeslot as any).Wochentag">
                     {{ option.title }}
                   </option>
                 </select>
-                <input class="timeslot-rhythm" v-model="(timeslot as any).Rhythmus" placeholder="Rhythmus" type="text" />
                 <input class="timeslot-time" v-model="(timeslot as any).Uhrzeit_Start" placeholder="Start" type="text" />
                 <span>bis</span>
                 <input class="timeslot-time" v-model="(timeslot as any).Uhrzeit_Ende" placeholder="Ende" type="text" />
@@ -545,10 +551,10 @@ a {
 input, select, textarea {
   background-color: white;
   padding: 0px 1px;
-  border: 1px solid white;
+  border: 1px solid lightgrey;
   border-radius: 3px;
-  box-shadow:
-    3px 3px 5px rgba(0, 0, 0, 0.2), /* Schatten unten rechts */
+  /*box-shadow:
+    3px 3px 5px rgba(0, 0, 0, 0.2), /* Schatten unten rechts /
     -2px -2px 5px rgba(255, 255, 255, 0.8); /* "Licht" oben links */
 }
 
@@ -564,7 +570,7 @@ input, textarea {
   align-items: center;
   justify-content: space-between;
   column-gap: 16px;
-  padding: 15x 15px 0px 15px;
+  padding: 15x 15px 15px 15px;
 }
 
 .dialog-title__icon {

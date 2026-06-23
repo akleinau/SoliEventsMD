@@ -228,8 +228,8 @@ onBeforeUnmount(() => {
   top: 50%;
   transform: translateY(-50%);
   padding: 10px;
-  background-color: green;
-  color: white;
+  background-color: #3b3b3b;
+  color: #f8f7f7;
   border: none;
   cursor: pointer;
   z-index: 2;
@@ -246,10 +246,6 @@ onBeforeUnmount(() => {
   border-radius: 4px;
   writing-mode: horizontal-tb;
   text-orientation: initial;
-}
-
-.toggle-map-button--open {
-  background-color: orange;
 }
 
 /* Desktop-Ansicht */

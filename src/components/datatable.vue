@@ -27,12 +27,12 @@ const clicked = (itemgroup: any) => {
   <div class="data-container">
 
     <!-- Kachelansicht -->
-    <div v-if="viewMode === 'cards'" class="cards-container d-flex flex-wrap pa-2" style="background: white">
+    <div v-if="viewMode === 'cards'" class="cards-container d-flex flex-wrap pa-2">
       <Cards_view @itemgroup-clicked="clicked" />
     </div>
 
     <!-- Listenansicht (Tabelle) -->
-    <div v-else class="list-container pa-2" style="background: white">
+    <div v-else class="list-container pa-2">
       <List_view @itemgroup-clicked="clicked" />
     </div>
       

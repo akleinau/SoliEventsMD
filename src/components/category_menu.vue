@@ -10,7 +10,7 @@ const dataStore = useDataStore()
 type SelectionOption = CategoryDefinition & { path: string }
 
 const looking_for_options: SelectionOption[] = [
-  { label: 'Alles', path: 'alles', color: '#fcd8d8', icon: 'mdi-star' },
+  { label: 'Alles', path: 'alles', textcolor: '#3b3b3b', color: '#f8f7f7', icon: ''},
   ...MAIN_CATEGORIES,
 ]
 
@@ -73,7 +73,7 @@ const apply_filter = () => {
               <span v-if="!isMobile" class="category-button__label">{{ option.label }}</span>
               <v-tooltip :text="option.label" location="bottom" open-on-click>
                 <template v-slot:activator="{ props }">
-                    <v-icon v-bind="props" size="x-large" color="ec4d0b" class="pl-2 mr-2">{{ option.icon }}</v-icon>
+                    <v-icon v-if="option.icon != ''" v-bind="props" size="x-large" color="#3b3b3b" class="pl-2 mr-2">{{ option.icon }}</v-icon>
                 </template>
               </v-tooltip>
             </v-btn>

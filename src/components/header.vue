@@ -29,10 +29,10 @@ import Translation_dialog from "./translation_dialog.vue";
   flex-direction: column;
   position: sticky;
   top: 0;
-  background-color: white;
+  background-color: #f8f7f7;
   padding: 10px;
   z-index: 100;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  /*box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);*/
 }
 
 .header-top {
