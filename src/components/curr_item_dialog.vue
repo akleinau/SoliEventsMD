@@ -82,6 +82,22 @@ const showWerbegrafik = computed(() => {
   return werbegrafikPath.value && !werbegrafikError.value;
 });
 
+type CommentToken = { type: 'text' | 'link'; value: string }
+
+const linkifyComment = (text: string): CommentToken[] => {
+  const urlRegex = /(https?:\/\/[^\s]+)/g
+  const tokens: CommentToken[] = []
+  let lastIndex = 0
+  let match: RegExpExecArray | null
+  while ((match = urlRegex.exec(text)) !== null) {
+    if (match.index > lastIndex) tokens.push({ type: 'text', value: text.slice(lastIndex, match.index) })
+    tokens.push({ type: 'link', value: match[0] })
+    lastIndex = urlRegex.lastIndex
+  }
+  if (lastIndex < text.length) tokens.push({ type: 'text', value: text.slice(lastIndex) })
+  return tokens
+}
+
 const openMailTo = (content: string) => {  
   // E-Mail-Adresse und Betreff festlegen
   const email = "aenderung@magdeburg-teilt.de";
@@ -287,7 +303,12 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
                 <div>{{ timeslot.Uhrzeit_Start }} - {{ timeslot.Uhrzeit_Ende }}</div>
               </div>
             </div-->
-            <div v-if="itemgroup.Kommentar != ''" class="mb-1 col-container"> <v-icon>mdi-comment</v-icon> <div>{{ itemgroup.Kommentar }}</div></div>
+            <div v-if="itemgroup.Kommentar != ''" class="mb-1 col-container"> <v-icon>mdi-comment</v-icon> <div>
+              <template v-for="(tok, i) in linkifyComment(itemgroup.Kommentar ?? '')" :key="i">
+                <a v-if="tok.type === 'link'" :href="tok.value" target="_blank" rel="noopener noreferrer">{{ tok.value }}</a>
+                <template v-else>{{ tok.value }}</template>
+              </template>
+            </div></div>
             <div v-if="itemgroup.Kontakt != ''" class="mb-1 col-container"> <v-icon>mdi-email</v-icon> <div>{{ itemgroup.Kontakt }}</div></div>
             <div class="mt-5"> <a :href="itemgroup.Link" target="_blank"> {{ itemgroup.Link }} </a> </div>
           </v-col>
