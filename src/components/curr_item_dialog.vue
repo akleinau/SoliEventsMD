@@ -275,8 +275,7 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
             <div v-if="itemgroup.Kategorie != 'digitales'" v-for="timeslot in itemgroup.timeSlots" class="mb-1 col-container"> 
               <v-icon>mdi-calendar</v-icon>
               <div>
-                {{ (timeslot as any).Rhythmus }} |
-                {{ dataStore.getFormattedDay((timeslot as any).Wochentag ?? '') }}
+                {{ dataStore.getFormattedWhen((timeslot as any).Rhythmus ?? '', (timeslot as any).Wochentag ?? '') }}
                 <span v-if="(timeslot as any).Uhrzeit_Start != ''"> | {{ (timeslot as any).Uhrzeit_Start }} Uhr bis {{ (timeslot as any).Uhrzeit_Ende }} Uhr</span>
               </div>
             </div>
