@@ -11,7 +11,7 @@ const links = [
 </script>
 
 <template>
-    <v-footer class="d-flex align-center justify-center ga-2 flex-wrap flex-grow-1 py-3 myfooter" color="surface-light">
+    <v-footer class="d-flex align-center justify-center ga-2 flex-wrap flex-grow-1 py-3 myfooter">
 
         <div class="text-caption font-weight-regular opacity-60">
             Disclaimer: Die auf dieser Website bereitgestellten Informationen und Daten wurden mit größter Sorgfalt zusammengestellt. Dennoch übernehmen wir keine Gewähr für die Richtigkeit, Vollständigkeit oder Aktualität der Angaben.
@@ -32,7 +32,7 @@ const links = [
             <v-icon left class="mr-2">{{ link.icon }}</v-icon> {{ link.text }}
         </v-btn>
 
-        <div class="ma-1" style="color: #ec4d0b; text-align: end;">
+        <div class="ma-1" style="color: var(--color-green); text-align: end;">
             {{ new Date().getFullYear() }} — <strong>ein Projekt von Sharing in Magdeburg</strong>
         </div>
 

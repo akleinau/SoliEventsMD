@@ -36,7 +36,7 @@ const clicked = (itemgroup: any) => {
       <List_view @itemgroup-clicked="clicked" />
     </div>
       
-      <Scroll_up_button />
+    <Scroll_up_button />
     </div>
 </template>
 

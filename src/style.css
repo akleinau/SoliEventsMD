@@ -11,33 +11,6 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
-  /* USE COLOR DEFINITIONS LIKE THIS IN OTHER CSS-SECTIONS : 
-    color: var(--color-text-main);
-    background-color: var(--color-bg-primary);
-  */
-
-  /* brand color codes */
-  --color-green: #7da631;
-  --color-orange: #ec6712;
-  --color-yellow: #ecab06;
-  --color-purple: #724b9b;
-  /* brand background color codes */
-  --color-light-primary-green: #e3e8ca;
-  --color-light-orange: #fdd9c2;
-  --color-light-yellow: #fde7b4;
-  --color-light-purple: #ddd0ea;
-  /* brand background + text color codes */
-  --color-offwhite: #f8f7f7;
-  --color-anthrazit: #3b3b3b;
-
-  /* easier access to default colors using colorcodes from above */
-  --color-primary: #7da631;
-  --color-secondary: #ec6712;
-  --color-bg-primary: #e3e8ca;
-  --color-bg-secondary: #fdd9c2;
-  --color-text-main: #3b3b3b;
-  --color-text-muted: #666666;
 }
 
 a {

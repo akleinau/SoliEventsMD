@@ -268,7 +268,7 @@ defineExpose({
 
 .map-container {
   padding: 1rem; /* gleiche Größe wie im Container in databable.vue*/
-  border-left: 1px lightgrey solid;
+  border-left: 1px var(--color-anthrazit) solid;
   height: 100vh;
   overflow: hidden; /* Verhindert Überlappung */
 }
@@ -292,11 +292,11 @@ defineExpose({
 
 .map-marker-icon .mdi {
   font-size: 32px;
-  color: #000;
+  color: var(--color-icon-outline);
 }
 
 .highlighted-marker-icon .mdi {
-  filter: drop-shadow(0 0 4px rgba(255, 102, 0, 1)) drop-shadow(0 0 8px rgba(255, 102, 0, 0.8));
-  color: rgb(255, 102, 0);
+  filter: drop-shadow(0 0 4px var(--color-orange)) drop-shadow(0 0 8px rgba(var(--color-orange), 0.8));
+  color: var(--color-orange);
 }
 </style>

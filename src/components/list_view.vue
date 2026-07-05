@@ -42,7 +42,7 @@ const clicked = (itemgroup: any) => {
                 <template v-for="subcategoryName in dataStore.getSubCategoryNames(itemgroup.Unterkategorie)" :key="subcategoryName">
                   <v-tooltip :text="dataStore.getSubCategoryName(subcategoryName)" location="top" open-on-click>
                     <template v-slot:activator="{ props }">
-                      <v-icon class="category-list__icon" v-bind="props" size="x-large" color="black">
+                      <v-icon class="category-list__icon" v-bind="props" size="x-large">
                         {{ dataStore.getSubCategoryIcon(subcategoryName) }}
                       </v-icon>
                     </template>
@@ -78,7 +78,7 @@ const clicked = (itemgroup: any) => {
             <td>
               <v-tooltip :text="dataStore.getIconText(emptyItem)" location="top" open-on-click>
                 <template v-slot:activator="{ props }">
-                  <v-icon v-bind="props" size="medium" class="pr-2" color="black" >{{ dataStore.getIcon(emptyItem) }}</v-icon>
+                  <v-icon v-bind="props" size="medium" class="pr-2">{{ dataStore.getIcon(emptyItem) }}</v-icon>
                 </template>
               </v-tooltip>
             </td>

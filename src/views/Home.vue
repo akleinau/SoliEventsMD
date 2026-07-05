@@ -228,8 +228,8 @@ onBeforeUnmount(() => {
   top: 50%;
   transform: translateY(-50%);
   padding: 10px;
-  background-color: #3b3b3b;
-  color: #f8f7f7;
+  background-color: var(--color-anthrazit); 
+  color: var(--color-offwhite);
   border: none;
   cursor: pointer;
   z-index: 2;

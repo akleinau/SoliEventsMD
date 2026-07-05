@@ -29,10 +29,9 @@ import Translation_dialog from "./translation_dialog.vue";
   flex-direction: column;
   position: sticky;
   top: 0;
-  background-color: #f8f7f7;
+  background-color: var(--color-offwhite);
   padding: 10px;
   z-index: 100;
-  /*box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);*/
 }
 
 .header-top {
@@ -46,7 +45,7 @@ import Translation_dialog from "./translation_dialog.vue";
 .title-container {
   align-content: center;
   padding: 0;
-  color: var(--color-primary);
+  color: var(--color-green);
   grid-column: 1;
   justify-self: start;
   white-space: nowrap;
