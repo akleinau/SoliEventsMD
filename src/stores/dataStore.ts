@@ -536,6 +536,21 @@ export const useDataStore = defineStore('dataStore', {
             // 3. Filtern (null entfernen) und wieder mit Komma und Leerzeichen verbinden
             return cleanParts.filter(p => p !== null).join(', ');
         },
+        getFormattedWhen(rhythmus: string, day: string): string {
+            const formattedDay = this.getFormattedDay(day ?? '');
+            const rhythm = (rhythmus ?? '').trim();
+
+            if (!rhythm) return formattedDay;       // leerer Rhythmus → nur der Tag
+            if (!formattedDay) return rhythm;
+
+            // monatliche Rhythmen: den Tag in die Phrase einweben
+            // z.B. "jeden letzten im Monat" + "Freitag" → "jeden letzten Freitag im Monat"
+            if (/\bim Monat$/.test(rhythm)) {
+                return rhythm.replace(/\s*im Monat$/, ` ${formattedDay} im Monat`);
+            }
+
+            return `${rhythm} | ${formattedDay}`;
+        },
         getCardColor(category: string | undefined): string {                  
             return getCategoryDefinition(category)?.color ?? '#fcd8d8';
         },
