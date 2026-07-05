@@ -256,12 +256,20 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
         :style="{
           'background': dataStore.getCardColor(itemgroup.Kategorie)
         }">
-        <div>{{ dataStore.getCategoryName(itemgroup.Kategorie) }}</div>
-        <v-tooltip :text="dataStore.getIconText(itemgroup)" location="top" open-on-click>
-          <template v-slot:activator="{ props }">
-              <v-icon v-bind="props" size="x-large" color="black" class="dialog-title__icon">{{ dataStore.getIcon(itemgroup) }}</v-icon>
+        <div class="col-container">{{ dataStore.getCategoryName(itemgroup.Kategorie) }}</div>
+
+        <div class="col-container justify-end" style="display: flex; gap: 8px;">
+          <template v-for="subcategoryName in dataStore.getSubCategoryNames(itemgroup.Unterkategorie)" :key="subcategoryName">
+            <v-tooltip :text="dataStore.getSubCategoryName(subcategoryName)" location="top" open-on-click>
+              <template v-slot:activator="{ props }">
+                <v-icon v-bind="props" size="x-large" color="black" class="dialog-title__icon">
+                  {{ dataStore.getSubCategoryIcon(subcategoryName) }}
+                </v-icon>
+              </template>
+            </v-tooltip>
           </template>
-        </v-tooltip>         
+        </div>
+
       </v-card-title>
       <v-card-text>
         <v-row>
@@ -269,7 +277,10 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
             <h2>{{ itemgroup.Was }}</h2>
             <div v-if="itemgroup.Kurzbeschreibung != ''" class="text-subtitle-1 text-medium-emphasis">{{ itemgroup.Kurzbeschreibung }}</div>
           </v-col>
-          <v-col cols="12" :md="showWerbegrafik ? 7 : 12">            
+        </v-row>
+        
+        <v-row>
+          <v-col cols="12" :md="showWerbegrafik ? 8 : 12">            
             <div class="mb-1 col-container"> <v-icon>mdi-account-question</v-icon> <div>{{ itemgroup.Wer }}</div></div>
             <div v-if="itemgroup.Kategorie != 'digitales'" class="mb-1 col-container"> <v-icon>mdi-map-marker</v-icon> <div>{{ itemgroup.Wo }}</div></div>
             <div v-if="itemgroup.Kategorie != 'digitales'" v-for="timeslot in itemgroup.timeSlots" class="mb-1 col-container"> 
@@ -280,28 +291,22 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
                 <span v-if="(timeslot as any).Uhrzeit_Start != ''"> | {{ (timeslot as any).Uhrzeit_Start }} Uhr bis {{ (timeslot as any).Uhrzeit_Ende }} Uhr</span>
               </div>
             </div>
-            <!--div v-for="timeslot in itemgroup.timeSlots" class="col-container">
-              <v-icon>mdi-calendar</v-icon> 
-              <div class="row-container">
-                <div>{{ timeslot.Wochentag }}, {{ timeslot.Rhythmus }}</div>
-                <div>{{ timeslot.Uhrzeit_Start }} - {{ timeslot.Uhrzeit_Ende }}</div>
-              </div>
-            </div-->
+
             <div v-if="itemgroup.Kommentar != ''" class="mb-1 col-container"> <v-icon>mdi-comment</v-icon> <div>{{ itemgroup.Kommentar }}</div></div>
             <div v-if="itemgroup.Kontakt != ''" class="mb-1 col-container"> <v-icon>mdi-email</v-icon> <div>{{ itemgroup.Kontakt }}</div></div>
             <div class="mt-5"> <a :href="itemgroup.Link" target="_blank"> {{ itemgroup.Link }} </a> </div>
           </v-col>
 
-          <v-col v-if="showWerbegrafik" cols="12" md="5">
+          <v-col v-if="showWerbegrafik" cols="12" md="4">
             <v-img
                 :src="werbegrafikPath!"
                 class="werbegrafik-image"
-                max-height="300"
+                max-height="250"
                 contain
                 @error="handleWerbegrafikError"
             >
               <template v-slot:placeholder>
-                <v-row class="fill-height ma-0" align="center" justify="center">
+                <v-row class="fill-height ma-0 align-center justify-center">
                   <v-progress-circular indeterminate color="grey-lighten-5"></v-progress-circular>
                 </v-row>
               </template>
@@ -325,8 +330,10 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
             {{ verificationWarning ?? 'Achtung!' }}
           </v-alert>
           
-          <v-btn size="small" @click="toggleEdit">Bearbeiten</v-btn>   
-          <v-btn size="small" @click="closeDialog">Schließen</v-btn>        
+          <div class="edit-buttons">
+            <v-btn size="small" @click="toggleEdit">Bearbeiten</v-btn>   
+            <v-btn size="small" @click="closeDialog">Schließen</v-btn>        
+          </div>
           
         </v-row>
 
@@ -344,82 +351,75 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
       :style="{
         'background': '#f8f7f7'
       }">
-      <v-card-title class="dialog-title"
+      <v-card-title class="dialog-title" :class="isMobile ? 'dialog-title__edit' : 'dialog-title'"
         :style="{
           'background': dataStore.getCardColor(editableItemGroup.Kategorie)
         }">
-        <v-col style="padding: 0px;">
-            <span style="color: grey;">Kategorie: </span>
-            <select v-model="editableItemGroup.Kategorie">
-              <option v-for="option in MAIN_CATEGORIES" :value="option.path" :placeholder="editableItemGroup.Kategorie">
+        <div class="col-container align-center" style="padding: 0px;">
+          <span style="color: grey;">Kategorie: </span>
+          <select v-model="editableItemGroup.Kategorie">
+            <option v-for="option in MAIN_CATEGORIES" :value="option.path" :placeholder="editableItemGroup.Kategorie">
+              {{ option.label }}
+            </option>
+          </select>
+          <v-tooltip :text="dataStore.getCategoryName(editableItemGroup.Kategorie ?? '')" location="top" open-on-click>
+            <template v-slot:activator="{ props }">
+                <v-icon v-bind="props" size="x-large" color="black" class="dialog-title__icon">{{ dataStore.getCategoryIcon(editableItemGroup.Kategorie) }}</v-icon>
+            </template>
+          </v-tooltip>
+        </div>
+
+        <div class="col3-container justify-end" style="padding: 0px;">
+          <div class="row-container align-center">
+            <span style="color: grey;">Inaktiv: </span>
+              <input v-model="editableItemGroup.inaktiv"
+                type="checkbox"
+                true-value="inaktiv"
+                false-value="aktiv"
+                class="ml-1" />
+          </div>
+          <div style="width: 10px"></div>
+          <div class="row3-container">
+            <span style="color: grey;">Unterkategorie: </span>
+            <select v-model="editableItemGroup.Unterkategorie">
+              <option v-for="option in SUB_CATEGORIES" :value="option.path" :placeholder="editableItemGroup.Unterkategorie">
                 {{ option.label }}
               </option>
             </select>
-            <v-tooltip :text="dataStore.getCategoryName(editableItemGroup.Kategorie ?? '')" location="top" open-on-click>
+            <v-tooltip :text="dataStore.getSubCategoryName(editableItemGroup.Unterkategorie ?? '')" location="top" open-on-click>
               <template v-slot:activator="{ props }">
-                  <v-icon v-bind="props" size="x-large" color="black" class="dialog-title__icon">{{ dataStore.getCategoryIcon(editableItemGroup.Kategorie) }}</v-icon>
+                  <v-icon v-bind="props" size="x-large" color="black" class="dialog-title__icon">{{ dataStore.getSubCategoryIcon(editableItemGroup.Unterkategorie) }}</v-icon>
               </template>
             </v-tooltip>
-          </v-col>
-          <v-col>
-            <v-row class="align-center justify-end" style="padding: 0px;">
-              <div class="d-flex mr-2">
-                <span style="color: grey;">Inaktiv: </span>
-                  <input v-model="editableItemGroup.inaktiv"
-                    type="checkbox"
-                    true-value="inaktiv"
-                    false-value="aktiv"
-                    class="ml-1" />
-              </div>
-              <div style="width: 10px"></div>
-              <div>
-            <span style="color: grey;">Unterkategorie: </span>
-                <select v-model="editableItemGroup.Unterkategorie">
-                  <option v-for="option in SUB_CATEGORIES" :value="option.path" :placeholder="editableItemGroup.Unterkategorie">
-                    {{ option.label }}
-                  </option>
-                </select>
-                <v-tooltip :text="dataStore.getSubCategoryName(editableItemGroup.Unterkategorie ?? '')" location="top" open-on-click>
-                  <template v-slot:activator="{ props }">
-                      <v-icon v-bind="props" size="x-large" color="black" class="dialog-title__icon">{{ dataStore.getSubCategoryIcon(editableItemGroup.Unterkategorie) }}</v-icon>
-                  </template>
-                </v-tooltip>
-              </div>
-              
-            </v-row>
-          </v-col>
+          </div>
+          
+        </div>
       </v-card-title>
+
       <v-card-text>
         <v-row>
           <v-col class="text-subtitle-1 text-medium-emphasis">
             <h2><textarea v-model="editableItemGroup.Was" placeholder="Was" type="text" :rows="isMobile ? '2' : '1'" /></h2>
             <textarea v-model="editableItemGroup.Kurzbeschreibung" maxlength="240" placeholder="Kurzbeschreibung" type="text" :rows=" isMobile ? 3 : 2" /></v-col>
-          <v-col cols="12" :md="showWerbegrafik ? 7 : 12">
+        </v-row>
+        <v-row>
+          <v-col cols="12" :md="showWerbegrafik ? 8 : 12">
             <div class="mb-1 col-container"> 
               <v-icon>mdi-account-question</v-icon>
-              <input v-model="editableItemGroup.Wer" placeholder="Wer" type="text" /> 
+              <textarea v-model="editableItemGroup.Wer" placeholder="Wer" type="text" :rows="isMobile ? '2' : '1'" /> 
             </div>
             <div v-if="editableItemGroup.Kategorie != 'digitales'" class="mb-1 col-container">
               <v-icon>mdi-map-marker</v-icon> 
               <div class="row-container">
                 <p class="col-container">
                   <textarea v-model="editableItemGroup.Wo" placeholder="Wo" type="text" :rows="isMobile ? '2' : '1'" />
-                  ,
                 </p> 
                 <p class="col-container">
-                <input v-model="editableItemGroup.Koordinaten" placeholder="Koordinaten" type="text" /> 
-                  .
+                GPS: <input v-model="editableItemGroup.Koordinaten" placeholder="Koordinaten" type="text" /> 
                 </p> 
               </div>
             </div>
 
-            <!--
-                  <select v-model="editableItem.Wochentag" style="width: 100%;">
-                    <option v-for="option in sortedWochentage" :value="option.value" :placeholder="editableItem.Wochentag">
-                      {{ option.title }}
-                    </option>
-                  </select>
-            -->
             <div v-if="editableItemGroup.Kategorie != 'digitales'" v-for="(timeslot, index) in (editableItemGroup.timeSlots as any[])" :key="index" class="mb-1 col-container">
               <v-icon>mdi-calendar</v-icon>
               <div class="timeslot-row">
@@ -450,17 +450,17 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
               </button>
             </div>
 
-            <div class="mb-1 col-container"> <v-icon>mdi-comment</v-icon> <input v-model="editableItemGroup.Kommentar" maxlength="120" placeholder="Kommentar/Hinweis" type="text" /> </div>
-            <div class="mb-1 col-container"> <v-icon>mdi-email</v-icon> <input v-model="editableItemGroup.Kontakt" maxlength="60" placeholder="Kontakt" type="text" /> </div>
+            <div class="mb-1 col-container"> <v-icon>mdi-comment</v-icon> <textarea v-model="editableItemGroup.Kommentar" maxlength="120" placeholder="Kommentar/Hinweis" type="text" :rows="isMobile ? '2' : '2'"/> </div>
+            <div class="mb-1 col-container"> <v-icon>mdi-email</v-icon> <textarea v-model="editableItemGroup.Kontakt" maxlength="60" placeholder="Kontakt" type="text" :rows="isMobile ? '2' : '1'"/> </div>
 
             <div class="mt-5"> <textarea v-model="editableItemGroup.Link" placeholder="Link" type="text" :rows="isMobile ? '2' : '1'"/> </div>
           </v-col>
 
-          <v-col v-if="showWerbegrafik" cols="12" md="5">
+          <v-col v-if="showWerbegrafik" cols="12" md="4">
             <v-img
                 :src="werbegrafikPath!"
                 class="werbegrafik-image"
-                max-height="300"
+                max-height="250"
                 contain
                 @error="handleWerbegrafikError"
             >
@@ -470,6 +470,7 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
                 </v-row>
               </template>
             </v-img>
+            <p style="font-size: 11px"><i>Hinweis: Wenn das Bild ersetzt werden soll, bitte direkt über das <a href="https://cloud.magdeburg.jetzt/apps/forms/embed/sWAy75S2qAq5JeccorqTEQFq" target="_blank">Kontaktformular</a> hochladen.</i></p>
           </v-col>
         </v-row>
 
@@ -488,9 +489,10 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
           >
             {{ verificationWarning ?? 'Achtung!' }}
           </v-alert>
-
-          <v-btn size="small" @click="saveEdit">Änderung vorschlagen</v-btn>
-          <v-btn size="small" @click="cancelEdit">Abbrechen</v-btn>       
+          <div class="edit-buttons">
+            <v-btn size="small" @click="saveEdit">Änderung vorschlagen</v-btn>
+            <v-btn size="small" @click="cancelEdit">Abbrechen</v-btn>       
+          </div>
           
         </v-row>
         <v-row v-if="copyEditInfos != null">
@@ -582,6 +584,12 @@ input, textarea {
 
 /* Mobile-Ansicht */
 @media (max-width: 767px) {
+  
+  .dialog-title__edit {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+  
   .dialog-title__icon {
     width: 40px;
     height: 40px;
@@ -593,7 +601,7 @@ input, textarea {
   overflow: hidden;
 }
 
-.col-container {
+.col-container, .col3-container {
   display: flex;
   flex-direction: row;
   flex: 1 1 0;
@@ -612,6 +620,7 @@ input, textarea {
   flex-direction: row;
   flex: 1 1 0;
   column-gap: 5px;
+  align-items: center;
 }
 .timeslot-row {
   display: flex;
@@ -666,16 +675,12 @@ input, textarea {
     max-width: 100%;
   }
 
-  .col-container {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
+  .row-container, .col3-container {
+    display: grid;
   }
-  .row-container, .row3-container {
+  .row3-container {
     display: flex;
-    flex-direction: column;
-    width: 100%;
-    column-gap: 5px;
+    flex-wrap: wrap;
   }
   .timeslot-row {
     flex-wrap: wrap;
@@ -689,17 +694,25 @@ input, textarea {
 .edit-info-container {
   column-gap: 10px;
   align-items: center;
+  justify-content: space-between;
 }
 
 /* Mobile-Ansicht ToDo: fix code or this section -> use "@media ..."" OR use "".XYZ--mobile" ! */
 @media (max-width: 767px) {
   .edit-info-container {
     display: grid;
+    justify-content: stretch;
   }
 }
 
 .v-btn {
   margin: 3px 0px;
+}
+
+.edit-buttons {
+  display: grid;
+  grid-template-columns: auto auto;
+  column-gap: 10px;
 }
 
 .copyable-textarea-container {

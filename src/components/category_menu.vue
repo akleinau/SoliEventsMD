@@ -10,7 +10,9 @@ const dataStore = useDataStore()
 type SelectionOption = CategoryDefinition & { path: string }
 
 const looking_for_options: SelectionOption[] = [
-  { label: 'Alles', path: 'alles', textcolor: '#3b3b3b', color: '#f8f7f7', icon: ''},
+  { label: 'Alles', path: 'alles', textcolor: '#3b3b3b', color: '#f8f7f7', icon: 
+  'mdi-grid-large'},
+  //'mdi-format-text-variant'}, // Alternatives Icon: Buchstabe 'A'
   ...MAIN_CATEGORIES,
 ]
 
