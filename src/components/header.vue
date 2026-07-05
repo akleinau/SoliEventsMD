@@ -46,7 +46,7 @@ import Translation_dialog from "./translation_dialog.vue";
 .title-container {
   align-content: center;
   padding: 0;
-  color: #ec4d0b;
+  color: var(--color-primary);
   grid-column: 1;
   justify-self: start;
   white-space: nowrap;
@@ -74,7 +74,6 @@ import Translation_dialog from "./translation_dialog.vue";
   align-items: center;
   justify-content: flex-end;
   gap: 5px;
-  color: #ec4d0b;
   grid-column: 3;
   justify-self: end;
 }
