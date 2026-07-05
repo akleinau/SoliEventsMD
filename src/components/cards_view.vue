@@ -72,7 +72,7 @@ const clicked = (itemgroup: any) => {
         class="ma-2 category-card" 
         width="350"
         max-height="180"
-        color="white"
+        color="var(--color-white)"
         link @click="clicked(itemgroup)">
         <div class="category-card__header" :style="{'background-color' : dataStore.getCardColor(itemgroup.Kategorie)}">
           <v-card-title class="category-card__title"            
@@ -105,17 +105,25 @@ const clicked = (itemgroup: any) => {
         class="ma-2 category-card" 
         width="350"
         max-height="180"
-        :color="dataStore.getCardColor(emptyItem?.Kategorie ?? '')"
+        color="var(--color-white)"
         link @click="clicked(emptyItem)">
-        <div class="category-card__icon" v-if="dataStore.getCategoryIcon(emptyItem?.Kategorie)">
-          <v-tooltip :text="dataStore.getIconText(emptyItem)" location="top" open-on-click>
-            <template v-slot:activator="{ props }">
-                <v-icon v-bind="props" size="large" color="black">{{ dataStore.getIcon(emptyItem) }}</v-icon>
-            </template>
-          </v-tooltip>          
+        <div class="category-card__header" :style="{'background-color' : dataStore.getCardColor(emptyItem?.Kategorie)}">
+          <v-card-title class="category-card__title"            
+            >{{ emptyItem?.Was }}</v-card-title>
+
+          <div class="category-card__icons">
+            <div v-if="dataStore.getCategoryIcon(emptyItem?.Kategorie)">
+              <v-tooltip :text="dataStore.getIconText(emptyItem)" location="top" open-on-click>
+                <template v-slot:activator="{ props }">
+                  <v-icon class="category-card__icon" v-bind="props" size="x-large">
+                    {{ dataStore.getIcon(emptyItem) }}
+                  </v-icon>
+                </template>
+              </v-tooltip>          
+            </div>
+          </div>
         </div>
-        <v-card-title class="category-card__title">{{ emptyItem?.Was }}</v-card-title>
-        <v-card-subtitle>{{ emptyItem?.Wer }}</v-card-subtitle>
+        <v-card-subtitle :style="{'padding-top' : '5px'}">{{ emptyItem?.Wer }}</v-card-subtitle>
         <v-card-text>
           <p class="mb-1"> <v-icon>mdi-map-marker</v-icon>  {{ emptyItem?.Wo }}</p>
           <p class="mb-1"> <v-icon>mdi-calendar</v-icon> {{ dataStore.getFormattedDay(emptyItem?.Wochentag ?? '')}}</p>

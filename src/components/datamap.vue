@@ -299,4 +299,29 @@ defineExpose({
   filter: drop-shadow(0 0 4px var(--color-orange)) drop-shadow(0 0 8px rgba(var(--color-orange), 0.8));
   color: var(--color-orange);
 }
+
+/* TODO insert color codes for map marker cluster of different sizes here : */
+
+  /* Basis-Stile für statische Klassen *
+  .marker-cluster-small {
+    background-color: rgba(31, 120, 180, 0.6) !important;
+  }
+  .marker-cluster-small div {
+    background-color: rgba(31, 120, 180, 1) !important;
+  }
+
+  .marker-cluster-medium {
+    background-color: rgba(51, 160, 44, 0.6) !important;
+  }
+  .marker-cluster-medium div {
+    background-color: rgba(51, 160, 44, 1) !important;
+  }
+
+  .marker-cluster-large {
+    background-color: rgba(227, 26, 28, 0.6) !important;
+  }
+  .marker-cluster-large div{
+    background-color: rgba(227, 26, 28, 1) !important;
+  }
+  */
 </style>

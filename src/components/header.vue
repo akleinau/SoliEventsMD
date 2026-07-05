@@ -7,7 +7,13 @@ import Translation_dialog from "./translation_dialog.vue";
 <template>
   <div class="header-container">
     <div class="header-top">
-      <div class="title-container">
+      <div class="title-container">        
+        <v-img
+            src="src/assets/logo/Bildmarke_mit_Outlines_grün.svg"
+            class="logo"
+            height="60"
+            min-height="40"
+        />
         <h2><router-link to="/alles">Magdeburg teilt!</router-link></h2>
       </div>
 
@@ -43,18 +49,20 @@ import Translation_dialog from "./translation_dialog.vue";
 }
 
 .title-container {
-  align-content: center;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 8fr);
+  gap: 10px;
+  margin: 0px;
+  justify-content: left;
+  align-items: center;
   padding: 0;
   color: var(--color-green);
-  grid-column: 1;
-  justify-self: start;
   white-space: nowrap;
-  padding-left: 25px;
 }
 
 .title-container h2 {
   margin: 0;
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   line-height: 1.15;
   font-weight: 700;
   text-align: left;
@@ -95,13 +103,11 @@ a {
   }
 
   .title-container {
-    grid-area: title;
-    justify-self: start;
-    padding-left: 0;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 4fr);
   }
 
   .title-container h2 {
-    font-size: 1.2rem;
+    font-size: 1.4rem;
     text-align: left;
   }
 

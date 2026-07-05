@@ -552,7 +552,7 @@ export const useDataStore = defineStore('dataStore', {
             return `${rhythm} | ${formattedDay}`;
         },
         getCardColor(category: string | undefined): string {                  
-            return getCategoryDefinition(category)?.color ?? 'var(--color-offwhite)';
+            return getCategoryDefinition(category)?.color ?? 'var(--color-button-grey)';
         },
         getCardTextColor(category: string | undefined): string {                  
             return getCategoryDefinition(category)?.textcolor ?? 'var(--color-anthrazit)';
