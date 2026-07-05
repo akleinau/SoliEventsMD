@@ -571,7 +571,9 @@ export const useDataStore = defineStore('dataStore', {
         getSubCategoryIcon(subcategory?: string | null): string | undefined {
             return getSubCategoryDefinition(subcategory)?.icon;
         },
-
+        getSubCategoryNames(subcategories?: string) : string[] | undefined {
+            return subcategories?.split(';').map(s => s.trim());
+        },
 
         getIconText(item: DataRow | null) {
             return (item?.Unterkategorie && !item?.Unterkategorie.includes(";")) ? this.getSubCategoryName(item?.Unterkategorie) : this.getCategoryName(item?.Kategorie)

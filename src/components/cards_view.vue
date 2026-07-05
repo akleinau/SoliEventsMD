@@ -74,16 +74,23 @@ const clicked = (itemgroup: any) => {
         max-height="180"
         color="white"
         link @click="clicked(itemgroup)">
-        <v-card-title class="category-card__title"
-          :style="{'background-color' : dataStore.getCardColor(itemgroup.Kategorie)}"
-        >{{ itemgroup.Was }}</v-card-title>
-        <div class="category-card__icon" v-if="dataStore.getCategoryIcon(itemgroup.Kategorie)">
-          <v-tooltip :text="dataStore.getIconText(itemgroup)" location="top" open-on-click>
-            <template v-slot:activator="{ props }">
-                <v-icon v-bind="props" size="large" color="black">{{ dataStore.getIcon(itemgroup) }}</v-icon>
+        <div class="category-card__header" :style="{'background-color' : dataStore.getCardColor(itemgroup.Kategorie)}">
+          <v-card-title class="category-card__title"            
+          >{{ itemgroup.Was }}</v-card-title>
+
+          <div class="category-card__icons">
+            <template v-for="subcategoryName in dataStore.getSubCategoryNames(itemgroup.Unterkategorie)" :key="subcategoryName">
+              <v-tooltip :text="dataStore.getSubCategoryName(subcategoryName)" location="top" open-on-click>
+                <template v-slot:activator="{ props }">
+                  <v-icon class="category-card__icon" v-bind="props" size="x-large" color="black">
+                    {{ dataStore.getSubCategoryIcon(subcategoryName) }}
+                  </v-icon>
+                </template>
+              </v-tooltip>
             </template>
-          </v-tooltip>
+          </div>
         </div>
+
         <v-card-subtitle :style="{'padding-top' : '5px'}">{{ itemgroup.Wer }}</v-card-subtitle>
         <v-card-text v-if="itemgroup.Kategorie != 'digitales'">
           <p class="mb-1"> <v-icon>mdi-map-marker</v-icon> {{ itemgroup.Wo }}</p>
@@ -119,27 +126,31 @@ const clicked = (itemgroup: any) => {
 
 <style scoped>
 
-.v-icon {
-  color: #727272;
-}
-
-
 .category-card {
   position: relative;
   overflow: hidden;
 }
 
+.category-card__header {
+  display: grid;
+  grid-template-columns: auto auto;
+}
+
 .category-card__title {
-  padding-right: 64px;
+  padding-right: 20px;
   overflow-wrap: break-word;
 }
 
+.category-card__icons {
+  justify-self: end;
+}
+
 .category-card__icon {
-  position: absolute;
   top: 8px;
   right: 8px;
   width: 30px;
   height: 30px;
+  margin: 1px;
   opacity: 0.9;
 }
 
