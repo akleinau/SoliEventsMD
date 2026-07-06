@@ -10,9 +10,10 @@ const dataStore = useDataStore()
 type SelectionOption = CategoryDefinition & { path: string }
 
 const looking_for_options: SelectionOption[] = [
-  { label: 'Alles', path: 'alles', textcolor: '#3b3b3b', color: '#f8f7f7', icon: 
-  'mdi-grid-large'},
-  //'mdi-format-text-variant'}, // Alternatives Icon: Buchstabe 'A'
+  { label: 'Alles', path: 'alles', textcolor: 'var(--color-anthrazit)', color: 'var(--color-offwhite)', 
+  icon: 'mdi-grid-large', 
+  //icon: 'mdi-format-text-variant', // Alternatives Icon: Buchstabe 'A'
+  svg: ''},  
   ...MAIN_CATEGORIES,
 ]
 
@@ -73,9 +74,10 @@ const apply_filter = () => {
                 } as Record<string, string>"
                 @click="toggle">
               <span v-if="!isMobile" class="category-button__label">{{ option.label }}</span>
-              <v-tooltip :text="option.label" location="bottom" open-on-click>
+              <v-tooltip v-if="!(option.label == 'Alles' && !isMobile)" :text="option.label" location="bottom" open-on-click>
                 <template v-slot:activator="{ props }">
-                    <v-icon v-if="option.icon != ''" v-bind="props" size="x-large" color="#3b3b3b" class="pl-2 mr-2">{{ option.icon }}</v-icon>
+                    <img v-if="option.svg != ''" v-bind="props" class="category-button__icon" color="#3b3b3b" :src="option.svg"/>
+                    <v-icon v-else v-bind="props" class="category-button__icon" color="#3b3b3b" size="x-large">{{ option.icon }}</v-icon>
                 </template>
               </v-tooltip>
             </v-btn>
@@ -91,7 +93,7 @@ const apply_filter = () => {
     }
 
     .v-btn--active {
-      border: 2px solid black;
+      border: 2px solid var(--color-anthrazit);
     }
 
     .v-btn {
@@ -99,12 +101,9 @@ const apply_filter = () => {
     }
 
     .category-button {
-        position: relative;
-        overflow: hidden;
         display: inline-flex;
         align-items: center;
-        column-gap: 8px;
-        padding: 5px 10px;
+        padding: 20px 10px;
     }
 
     .category-button__label {
@@ -113,9 +112,8 @@ const apply_filter = () => {
     }
 
     .category-button__icon {
-        width: 28px;
         height: 28px;
-        opacity: 0.6;
+        padding-left: 5px;
         pointer-events: none;
     }
 

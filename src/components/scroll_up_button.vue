@@ -22,7 +22,7 @@ window.onscroll = () => {
   <v-btn
     v-show="isScrolledDown"
     class="scroll-up-button"
-    color="#ec4d0b"
+    color="var(--color-green)"
     @click="scrollToTop"
     icon
     style="position: fixed; bottom:20px; width:50px; margin: 5% auto; left: 0; right: 0; z-index: 1000;  ">

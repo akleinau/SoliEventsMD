@@ -7,8 +7,14 @@ import Translation_dialog from "./translation_dialog.vue";
 <template>
   <div class="header-container">
     <div class="header-top">
-      <div class="title-container">
-        <h2><router-link to="/alles">Magdeburg teilt!</router-link></h2>
+      <div class="title-container">        
+        <v-img
+            src="src/assets/logo/Bildmarke_mit_Outlines_grün.svg"
+            class="logo"
+            height="60"
+            min-height="40"
+        />
+        <h2><router-link to="/alles">Magdeburg <b style="color: var(--color-green)">teilt!</b></router-link></h2>
       </div>
 
       <div class="categories-container">
@@ -29,10 +35,9 @@ import Translation_dialog from "./translation_dialog.vue";
   flex-direction: column;
   position: sticky;
   top: 0;
-  background-color: #f8f7f7;
+  background-color: var(--color-offwhite);
   padding: 10px;
   z-index: 100;
-  /*box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);*/
 }
 
 .header-top {
@@ -44,18 +49,20 @@ import Translation_dialog from "./translation_dialog.vue";
 }
 
 .title-container {
-  align-content: center;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 8fr);
+  gap: 10px;
+  margin: 0px;
+  justify-content: left;
+  align-items: center;
   padding: 0;
-  color: #ec4d0b;
-  grid-column: 1;
-  justify-self: start;
+  color: var(--color-anthrazit);
   white-space: nowrap;
-  padding-left: 25px;
 }
 
 .title-container h2 {
   margin: 0;
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   line-height: 1.15;
   font-weight: 700;
   text-align: left;
@@ -74,7 +81,6 @@ import Translation_dialog from "./translation_dialog.vue";
   align-items: center;
   justify-content: flex-end;
   gap: 5px;
-  color: #ec4d0b;
   grid-column: 3;
   justify-self: end;
 }
@@ -97,13 +103,11 @@ a {
   }
 
   .title-container {
-    grid-area: title;
-    justify-self: start;
-    padding-left: 0;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 4fr);
   }
 
   .title-container h2 {
-    font-size: 1.2rem;
+    font-size: 1.4rem;
     text-align: left;
   }
 

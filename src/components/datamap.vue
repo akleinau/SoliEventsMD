@@ -268,7 +268,7 @@ defineExpose({
 
 .map-container {
   padding: 1rem; /* gleiche Größe wie im Container in databable.vue*/
-  border-left: 1px lightgrey solid;
+  border-left: 1px var(--color-anthrazit) solid;
   height: 100vh;
   overflow: hidden; /* Verhindert Überlappung */
 }
@@ -292,11 +292,52 @@ defineExpose({
 
 .map-marker-icon .mdi {
   font-size: 32px;
-  color: #000;
+  color: var(--color-icon-outline);
 }
 
 .highlighted-marker-icon .mdi {
-  filter: drop-shadow(0 0 4px rgba(255, 102, 0, 1)) drop-shadow(0 0 8px rgba(255, 102, 0, 0.8));
-  color: rgb(255, 102, 0);
+  filter: drop-shadow(0 0 4px var(--color-orange)) drop-shadow(0 0 8px rgba(var(--color-orange), 0.8));
+  color: var(--color-orange);
 }
+
+/* TODO insert color codes for map marker cluster of different sizes here :
+  .marker-cluster-small {
+    background-color: rgba(31, 120, 180, 0.6) !important;
+  }
+  .marker-cluster-small div {
+    background-color: rgba(31, 120, 180, 1) !important;
+    color: var(--color-offwhite);
+  } */
+
+  /* Basis-Stile für statische Klassen */
+  /* SMALL: < 10 items */
+  .marker-cluster-small {
+    background-color: rgba(170, 210, 255, 0.6) !important;
+  }
+  .marker-cluster-small div {
+    background-color: rgb(170, 210, 255, 1.0) !important;
+    color: var(--color-anthrazit);
+    font-weight: bold;
+  }
+
+  /* MEDIUM: >= 10 items */
+  .marker-cluster-medium {
+    background-color: rgba(128, 186, 253, 0.6) !important;
+  }
+  .marker-cluster-medium div {
+    background-color: rgb(128, 186, 253, 1.0) !important;
+    color: var(--color-anthrazit);
+    font-weight: bold;
+  }
+
+  /* LARGE: >= 100 items */
+  .marker-cluster-large {
+    background-color: rgba(70, 156, 255, 0.6) !important;
+  }
+  .marker-cluster-large div{
+    background-color: rgb(70, 156, 255, 1.0) !important;
+    color: var(--color-anthrazit);
+    font-weight: bold;
+  }
+  /**/
 </style>

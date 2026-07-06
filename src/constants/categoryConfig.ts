@@ -4,43 +4,48 @@ export interface CategoryDefinition {
   textcolor: string
   color: string
   icon: string // mdi-icons (automatisch über Vuetify)
+  svg: string
 }
 
 export interface SubCategoryDefinition {
   label: string
   path: string
-  color: string
   icon: string // mdi-icons (automatisch über Vuetify)
+  svg: string
 }
 
 export const CATEGORY_CONFIG: Record<string, CategoryDefinition> = {
   begegnung: {
     label: 'Begegnung',
     path: 'begegnung',
-    textcolor: '#724b9b', // Hintergrundfarbe
-    color: '#e5dbeb', // Hintergrundfarbe
+    textcolor: 'var(--color-purple)', // Textfarbe
+    color: 'var(--color-light-purple)', // Hintergrundfarbe
     icon: 'mdi-account-multiple-outline',
+    svg: 'src/assets/icons/main/Sprechblase_mit_HG_und_Strichen.svg'
   },
   online: {
     label: 'Online',
     path: 'online',
-    textcolor: '#ecab06', // Hintergrundfarbe
-    color: '#fde7b4', // Hintergrundfarbe
+    textcolor: 'var(--color-yellow)', // Textfarbe
+    color: 'var(--color-light-yellow)', // Hintergrundfarbe
     icon: 'mdi-laptop',
+    svg: 'src/assets/icons/main/Mauszeiger_mit_HG_und_Strichen.svg'
   },
   lebensmittel: {
     label: 'Lebensmittel',
     path: 'lebensmittel',
-    textcolor: '#eb6715', // Hintergrundfarbe
-    color: '#fad8c3', // Hintergrundfarbe
+    textcolor: 'var(--color-orange)', // Textfarbe
+    color: 'var(--color-light-orange)', // Hintergrundfarbe
     icon: 'mdi-food-apple-outline',
+    svg: 'src/assets/icons/main/Möhre_mit_HG_und_Strichen.svg'
   },
   ressourcen: {
     label: 'Ressourcen',
     path: 'ressourcen',
-    textcolor: '#7da531', // Hintergrundfarbe
-    color: '#e3e8ca', // Hintergrundfarbe
+    textcolor: 'var(--color-green)', // Textfarbe
+    color: 'var(--color-light-green)', // Hintergrundfarbe
     icon: 'mdi-recycle',
+    svg: 'src/assets/icons/main/Schraubenschlüssel_mit_HG_und_Strichen.svg'
   },
 }
 
@@ -48,74 +53,74 @@ export const SUB_CATEGORY_CONFIG: Record<string, SubCategoryDefinition> = {
   aktion: {
     label: 'Aktion',
     path: 'aktion',
-    color: '#fcd8d8',
     icon: 'mdi-human-handsup',
+    svg: 'src/assets/icons/sub/Aktion_Outlines.svg'
   },
   retten: {
     label: 'retten',
     path: 'retten',
-    color: '#dbebff',
     icon: 'mdi-hand-extended-outline',
+    svg: 'src/assets/icons/sub/Retten_Outlines.svg'
   },
   mobilitaet: {
     label: 'Mobilität',
     path: 'mobilitaet',
-    color: '#eae2fd',
     icon: 'mdi-bicycle-cargo',
+    svg: 'src/assets/icons/sub/Mobilität_Outlines.svg'
   },
   essenausgabe: {
     label: 'Essenausgabe',
     path: 'essenausgabe',
-    color: '#ffebd9',
     icon: 'mdi-pot-mix',
+    svg: 'src/assets/icons/sub/Essenausgabe_Outlines.svg'
   },
   futtern: {
     label: 'Futtern',
     path: 'futtern',
-    color: '#ffebd9',
     icon: 'mdi-silverware-fork-knife',
+    svg: 'src/assets/icons/sub/Futtern_Outlines.svg'
   },
   werkstatt: {
     label: 'Werkstatt',
     path: 'werkstatt',
-    color: '#e1ffe1',
     icon: 'mdi-tools',
+    svg: 'src/assets/icons/sub/Werkstatt_Outlines.svg'
   },
-  schenken: {
+  /*schenken: {
     label: 'schenken',
     path: 'schenken',
-    color: '#FFFACD',
     icon: 'mdi-package-variant-plus',
-  },
+    svg: 'src/assets/icons/sub/Aktion_Outlines.svg'
+  },*/
   spielen: {
     label: 'spielen',
     path: 'spielen',
-    color: '#FFFACD',
     icon: 'mdi-cards-playing-outline',
+    svg: 'src/assets/icons/sub/Spielen_Outlines.svg'
   },
   medien: {
     label: 'Medien',
     path: 'medien',
-    color: '#FFFACD',
     icon: 'mdi-book-open-variant-outline',
+    svg: 'src/assets/icons/sub/Medien_Outlines.svg'
   },
   textilien: {
     label: 'Textilien',
     path: 'textilien',
-    color: '#FFFACD',
     icon: 'mdi-tshirt-crew-outline',
+    svg: 'src/assets/icons/sub/Textilien_Outlines.svg'
   },
   moebel: {
     label: 'Möbel',
     path: 'moebel',
-    color: '#FFFACD',
     icon: 'mdi-sofa-outline',
+    svg: 'src/assets/icons/sub/Möbel_Outlines.svg'
   },
   raum: {
     label: 'Raum',
     path: 'raum',
-    color: '#FFFACD',
     icon: 'mdi-home-city-outline',
+    svg: 'src/assets/icons/sub/Raum_Outlines.svg'
   },
 }
 

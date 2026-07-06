@@ -2,6 +2,10 @@
 
 import { computed } from "vue";
 import { useDataStore } from "../stores/dataStore.ts";
+import bgImageEndlessSvg from '/src/assets/pattern/Muster_Endlos_Kachel.svg'
+
+// Vite Syntax: Erstellt den richtigen URL während des Builds
+const svgEndlessUrl = computed(() => new URL(bgImageEndlessSvg, import.meta.url).href)
 
 const dataStore = useDataStore();
 
@@ -72,17 +76,18 @@ const clicked = (itemgroup: any) => {
         class="ma-2 category-card" 
         width="350"
         max-height="180"
-        color="white"
+        color="var(--color-white)"
         link @click="clicked(itemgroup)">
         <div class="category-card__header" :style="{'background-color' : dataStore.getCardColor(itemgroup.Kategorie)}">
           <v-card-title class="category-card__title"            
           >{{ itemgroup.Was }}</v-card-title>
 
-          <div class="category-card__icons">
+          <div class="subcategory-icons__container">
             <template v-for="subcategoryName in dataStore.getSubCategoryNames(itemgroup.Unterkategorie)" :key="subcategoryName">
               <v-tooltip :text="dataStore.getSubCategoryName(subcategoryName)" location="top" open-on-click>
                 <template v-slot:activator="{ props }">
-                  <v-icon class="category-card__icon" v-bind="props" size="x-large" color="black">
+                  <img v-if="dataStore.getSubCategorySvg(subcategoryName) != ''" v-bind="props" class="subcategory-card__icon" color="#3b3b3b" :src="dataStore.getSubCategorySvg(subcategoryName)"/>
+                  <v-icon v-else class="subcategory-card__icon" v-bind="props" size="x-large">
                     {{ dataStore.getSubCategoryIcon(subcategoryName) }}
                   </v-icon>
                 </template>
@@ -101,25 +106,34 @@ const clicked = (itemgroup: any) => {
         </v-card-text>
     </v-card>
 
+    
+    <!-- Extra Card für Neues Item (neues Angebot anlegen) -->
     <v-card
-        class="ma-2 category-card" 
+        class="ma-2 category-card empty-card" 
         width="350"
         max-height="180"
-        :color="dataStore.getCardColor(emptyItem?.Kategorie ?? '')"
+        min-height="150"
+        color="var(--color-white)"
         link @click="clicked(emptyItem)">
-        <div class="category-card__icon" v-if="dataStore.getCategoryIcon(emptyItem?.Kategorie)">
-          <v-tooltip :text="dataStore.getIconText(emptyItem)" location="top" open-on-click>
-            <template v-slot:activator="{ props }">
-                <v-icon v-bind="props" size="large" color="black">{{ dataStore.getIcon(emptyItem) }}</v-icon>
-            </template>
-          </v-tooltip>          
+        <div class="category-card__header" 
+             style="border-bottom: 1px solid var(--color-button-grey);">
+          <v-card-title class="category-card__title"            
+            >{{ emptyItem?.Was }}</v-card-title>
+
+          <div class="subcategory-icons__container">
+            <div v-if="dataStore.getCategoryIcon(emptyItem?.Kategorie)">
+              <v-tooltip :text="dataStore.getIconText(emptyItem)" location="top" open-on-click>
+                <template v-slot:activator="{ props }">
+                  <v-icon class="subcategory-card__icon" v-bind="props" size="x-large">
+                    {{ dataStore.getIcon(emptyItem) }}
+                  </v-icon>
+                </template>
+              </v-tooltip>          
+            </div>
+          </div>
         </div>
-        <v-card-title class="category-card__title">{{ emptyItem?.Was }}</v-card-title>
-        <v-card-subtitle>{{ emptyItem?.Wer }}</v-card-subtitle>
-        <v-card-text>
-          <p class="mb-1"> <v-icon>mdi-map-marker</v-icon>  {{ emptyItem?.Wo }}</p>
-          <p class="mb-1"> <v-icon>mdi-calendar</v-icon> {{ dataStore.getFormattedDay(emptyItem?.Wochentag ?? '')}}</p>
-        </v-card-text>
+        <div class="pattern-background">
+        </div>
     </v-card>
 
 </template>
@@ -129,6 +143,23 @@ const clicked = (itemgroup: any) => {
 .category-card {
   position: relative;
   overflow: hidden;
+}
+
+.empty-card {
+  font-style: italic;
+  border: 7px solid;
+  border-left-color: var(--color-light-purple);
+  border-top-color: var(--color-light-yellow);
+  border-right-color: var(--color-light-orange);
+  border-bottom-color: var(--color-light-green);
+}
+
+.pattern-background {
+  background-image: url("/src/assets/pattern/Muster_Endlos_Kachel.svg");
+  background-repeat: repeat;
+  background-size: contain;
+  padding: 40px;
+  margin: 5px;
 }
 
 .category-card__header {
@@ -141,11 +172,15 @@ const clicked = (itemgroup: any) => {
   overflow-wrap: break-word;
 }
 
-.category-card__icons {
+.subcategory-icons__container {
   justify-self: end;
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 8px;
 }
 
-.category-card__icon {
+.subcategory-card__icon {
+  position: relative;
   top: 8px;
   right: 8px;
   width: 30px;
@@ -154,7 +189,7 @@ const clicked = (itemgroup: any) => {
   opacity: 0.9;
 }
 
-.category-card__icon img {
+.subcategory-card__icon img {
   display: block;
   width: 100%;
   height: 100%;

@@ -7,7 +7,7 @@
         <template v-slot:activator="{ props: activatorProps }">
             <v-btn
                 v-bind="activatorProps"
-                color="surface-variant"
+                color="var(--color-anthrazit)"
                 density="comfortable"
                 icon="mdi-information-variant"
                 variant="outlined"
@@ -18,13 +18,13 @@
         <template v-slot:default="{ isActive }">
             <v-card class="card" title="Die Idee ">
                 <template v-slot:prepend>
-                    <v-icon size="x-large" color="ec4d0b"> mdi-information-variant </v-icon>
+                    <v-icon size="x-large"> mdi-information-variant </v-icon>
                 </template>
                 <template v-slot:append>
                     <v-btn
-                    color="grey"
+                    color="var(--color-anthrazit)"
                     text="X"
-                    variant="flat"
+                    variant="outlined"
                     @click="isActive.value = false"
                     ></v-btn>
                 </template>

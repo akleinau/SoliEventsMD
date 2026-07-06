@@ -22,7 +22,7 @@ import Footer from "./components/footer.vue";
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: #f8f7f7;
+  background-color: var(--color-offwhite);
 }
 
 .main-container {

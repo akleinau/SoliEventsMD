@@ -133,7 +133,7 @@ const resetFilters = () => {
 </script>
 
 <template>
-  <div class="control-bar" style="background: #f3f3f3;">
+  <div class="control-bar" style="background: var(--color-offwhite);">
 
     <!-- ═══ Row 1: main controls ═══ -->
     <div class="control-bar__row">
@@ -172,19 +172,19 @@ const resetFilters = () => {
         variant="outlined"
         density="compact"
         hide-details
-        bg-color="white"
+        bg-color="var(--color-white)"
         single-line
       />
 
       <div class="filter-select">
         <v-select label="Unterkategorie"
-          variant="outlined" multiple density="compact" hide-details bg-color="white"
+          variant="outlined" multiple density="compact" hide-details bg-color="var(--color-white)"
           :items="unterkategorien" v-model="unterkategorieFilter"
           @update:modelValue="dataStore.add_filter('Unterkategorie', unterkategorieFilter)">
           <template v-slot:selection="{ item, index }">
             <v-chip v-if="index < 1">
               <span class="pr-2">{{ item.title }}</span>
-              <v-icon size="x-large" color="ec4d0b" class="pl-2 pr-2">{{ item.raw?.icon }}</v-icon>
+              <v-icon size="x-large" class="pl-2 pr-2">{{ item.raw?.icon }}</v-icon>
             </v-chip>
             <span v-if="index === 1" class="text-grey text-caption align-self-center" style="white-space: nowrap;">
               (+{{ unterkategorieFilter.length - 1 }})
@@ -195,7 +195,7 @@ const resetFilters = () => {
 
       <div class="filter-select">
         <v-select label="Nutzung"
-          variant="outlined" multiple density="compact" hide-details bg-color="white"
+          variant="outlined" multiple density="compact" hide-details bg-color="var(--color-white)"
           :items="nutzungen" v-model="nutzungFilter"
           @update:modelValue="dataStore.add_filter('Nutzung', nutzungFilter)">
           <template v-slot:selection="{ item, index }">
@@ -209,7 +209,7 @@ const resetFilters = () => {
 
       <div class="filter-select">
         <v-select label="Wochentag"
-          variant="outlined" multiple density="compact" hide-details bg-color="white"
+          variant="outlined" multiple density="compact" hide-details bg-color="var(--color-white)"
           :items="wochentage" v-model="wochentagFilter"
           @update:modelValue="onWochentagFilterChange">
           <template v-slot:selection="{ item, index }">
@@ -304,7 +304,7 @@ const resetFilters = () => {
 .control-bar {
   padding: 8px 12px;
   --control-btn-height: 36px;
-  --control-btn-bg: #ffffff;
+  --control-btn-bg: var(--color-white);
   --control-btn-border: rgba(0, 0, 0, 0.38);
 }
 
@@ -386,8 +386,8 @@ const resetFilters = () => {
 }
 
 .control-bar__btn--active {
-  border-color: #ec4d0b !important;
-  color: #ec4d0b;
+  border-color: var(--color-orange) !important;
+  color: var(--color-orange);
 }
 
 .control-bar__view-toggle {
@@ -466,14 +466,14 @@ const resetFilters = () => {
 }
 
 .sort-checkbox--active {
-  border-color: rgb(var(--v-theme-primary));
-  background-color: rgb(var(--v-theme-primary));
+  border-color: var(--color-orange);
+  background-color: var(--color-orange);
 }
 
 .sort-checkbox__number {
   font-size: 12px;
   font-weight: 700;
-  color: white;
+  color: var(--color-white);
   line-height: 1;
 }
 
@@ -501,8 +501,8 @@ const resetFilters = () => {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background-color: #ec4d0b;
-  color: white;
+  background-color: var(--color-orange);
+  color: var(--color-white);
   display: grid;
   place-items: center;
   font-size: 11px;
