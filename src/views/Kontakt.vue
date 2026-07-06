@@ -7,7 +7,7 @@
     <div class="myclass my-5 mx-5 justify-center">
         <h1>KONTAKT</h1>
         <div>
-            Schreib uns über das folgende Formular.
+            Schreib uns über das folgende Formular. (Bitte warte kurz, falls es dir nicht direkt angezeigt wird.)
             <br>
             ...oder an kontakt@magdeburg-teilt.de        
         </div>
