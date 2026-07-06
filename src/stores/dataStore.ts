@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { getCategoryDefinition, getSubCategoryDefinition } from "../constants/categoryConfig";
+import FallbackCategoryIcon from '/src/assets/icons/backgrounds/HG_01.svg';// used as generic fallback category icon
 
 export interface SortLevel {
     column: string;
@@ -565,7 +566,7 @@ export const useDataStore = defineStore('dataStore', {
             return getCategoryDefinition(category)?.icon ?? 'mdi-new-box';
         },
         getCategorySvg(category?: string | null): string | undefined {
-            return getCategoryDefinition(category)?.svg ?? 'src/assets/icons/backgrounds/HG_01.svg';
+            return getCategoryDefinition(category)?.svg ?? FallbackCategoryIcon;
         },
 
         getSubCategoryName(subcategory?: string | null): string | undefined {
@@ -575,7 +576,7 @@ export const useDataStore = defineStore('dataStore', {
             return getSubCategoryDefinition(subcategory)?.icon;
         },
         getSubCategorySvg(subcategory?: string | null): string | undefined {
-            return getSubCategoryDefinition(subcategory)?.svg ?? 'src/assets/icons/sub/Retten_Outlines.svg';
+            return getSubCategoryDefinition(subcategory)?.svg ?? getSubCategoryDefinition('retten')?.svg;
         },
         getSubCategoryNames(subcategories?: string) : string[] | undefined {
             return subcategories?.split(';').map(s => s.trim());

@@ -79,7 +79,7 @@ export const SUB_CATEGORY_CONFIG: Record<string, SubCategoryDefinition> = {
     label: 'retten',
     path: 'retten',
     icon: 'mdi-hand-extended-outline',
-    svg: RettenIcon
+    svg: RettenIcon  // used as generic fallback icon in dataStore
   },
   mobilitaet: {
     label: 'Mobilität',
