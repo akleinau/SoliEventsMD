@@ -74,7 +74,7 @@ const apply_filter = () => {
                 } as Record<string, string>"
                 @click="toggle">
               <span v-if="!isMobile" class="category-button__label">{{ option.label }}</span>
-              <v-tooltip :text="option.label" location="bottom" open-on-click>
+              <v-tooltip v-if="!(option.label == 'Alles' && !isMobile)" :text="option.label" location="bottom" open-on-click>
                 <template v-slot:activator="{ props }">
                     <img v-if="option.svg != ''" v-bind="props" class="category-button__icon" color="#3b3b3b" :src="option.svg"/>
                     <v-icon v-else v-bind="props" class="category-button__icon" color="#3b3b3b" size="x-large">{{ option.icon }}</v-icon>

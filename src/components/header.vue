@@ -14,7 +14,7 @@ import Translation_dialog from "./translation_dialog.vue";
             height="60"
             min-height="40"
         />
-        <h2><router-link to="/alles">Magdeburg teilt!</router-link></h2>
+        <h2><router-link to="/alles">Magdeburg <b style="color: var(--color-green)">teilt!</b></router-link></h2>
       </div>
 
       <div class="categories-container">
@@ -56,7 +56,7 @@ import Translation_dialog from "./translation_dialog.vue";
   justify-content: left;
   align-items: center;
   padding: 0;
-  color: var(--color-green);
+  color: var(--color-anthrazit);
   white-space: nowrap;
 }
 
