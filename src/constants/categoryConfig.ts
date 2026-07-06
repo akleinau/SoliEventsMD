@@ -21,9 +21,9 @@ export const CATEGORY_CONFIG: Record<string, CategoryDefinition> = {
     color: '#e5dbeb', // Hintergrundfarbe
     icon: 'mdi-account-multiple-outline',
   },
-  digitales: {
-    label: 'Digitales',
-    path: 'digitales',
+  online: {
+    label: 'Online',
+    path: 'online',
     textcolor: '#ecab06', // Hintergrundfarbe
     color: '#fde7b4', // Hintergrundfarbe
     icon: 'mdi-laptop',
