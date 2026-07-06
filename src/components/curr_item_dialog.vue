@@ -298,8 +298,8 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
         <v-row>
           <v-col cols="12" :md="showWerbegrafik ? 8 : 12">            
             <div class="mb-1 col-container"> <v-icon>mdi-account-question</v-icon> <div>{{ itemgroup.Wer }}</div></div>
-            <div v-if="itemgroup.Kategorie != 'digitales'" class="mb-1 col-container"> <v-icon>mdi-map-marker</v-icon> <div>{{ itemgroup.Wo }}</div></div>
-            <div v-if="itemgroup.Kategorie != 'digitales'" v-for="timeslot in itemgroup.timeSlots" class="mb-1 col-container"> 
+            <div v-if="itemgroup.Kategorie != 'online'" class="mb-1 col-container"> <v-icon>mdi-map-marker</v-icon> <div>{{ itemgroup.Wo }}</div></div>
+            <div v-if="itemgroup.Kategorie != 'online'" v-for="timeslot in itemgroup.timeSlots" class="mb-1 col-container"> 
               <v-icon>mdi-calendar</v-icon>
               <div>
                 {{ dataStore.getFormattedWhen((timeslot as any).Rhythmus ?? '', (timeslot as any).Wochentag ?? '') }}
@@ -428,7 +428,7 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
               <v-icon>mdi-account-question</v-icon>
               <textarea v-model="editableItemGroup.Wer" placeholder="Wer" type="text" :rows="isMobile ? '2' : '1'" /> 
             </div>
-            <div v-if="editableItemGroup.Kategorie != 'digitales'" class="mb-1 col-container">
+            <div v-if="editableItemGroup.Kategorie != 'online'" class="mb-1 col-container">
               <v-icon>mdi-map-marker</v-icon> 
               <div class="row-container">
                 <p class="col-container">
@@ -440,7 +440,7 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
               </div>
             </div>
 
-            <div v-if="editableItemGroup.Kategorie != 'digitales'" v-for="(timeslot, index) in (editableItemGroup.timeSlots as any[])" :key="index" class="mb-1 col-container">
+            <div v-if="editableItemGroup.Kategorie != 'online'" v-for="(timeslot, index) in (editableItemGroup.timeSlots as any[])" :key="index" class="mb-1 col-container">
               <v-icon>mdi-calendar</v-icon>
               <div class="timeslot-row">
                 <input class="timeslot-rhythm" v-model="(timeslot as any).Rhythmus" placeholder="Rhythmus" type="text" />
@@ -462,7 +462,7 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
                 >mdi-close-circle</v-icon>
               </div>
             </div>
-            <div v-if="editableItemGroup.Kategorie != 'digitales'" class="mb-1 col-container">
+            <div v-if="editableItemGroup.Kategorie != 'online'" class="mb-1 col-container">
               <v-icon class="add-timeslot__placeholder-icon">mdi-calendar</v-icon>
               <button type="button" class="add-timeslot" @click="addTimeSlot">
                 <v-icon size="small">mdi-plus-circle-outline</v-icon>
