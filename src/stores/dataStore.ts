@@ -552,7 +552,7 @@ export const useDataStore = defineStore('dataStore', {
             return `${rhythm} | ${formattedDay}`;
         },
         getCardColor(category: string | undefined): string {                  
-            return getCategoryDefinition(category)?.color ?? 'var(--color-button-grey)';
+            return getCategoryDefinition(category)?.color ?? 'var(--color-offwhite)';
         },
         getCardTextColor(category: string | undefined): string {                  
             return getCategoryDefinition(category)?.textcolor ?? 'var(--color-anthrazit)';
@@ -564,12 +564,18 @@ export const useDataStore = defineStore('dataStore', {
         getCategoryIcon(category?: string | null): string | undefined {
             return getCategoryDefinition(category)?.icon ?? 'mdi-new-box';
         },
+        getCategorySvg(category?: string | null): string | undefined {
+            return getCategoryDefinition(category)?.svg ?? 'src/assets/icons/backgrounds/HG_01.svg';
+        },
 
         getSubCategoryName(subcategory?: string | null): string | undefined {
             return getSubCategoryDefinition(subcategory)?.label;
         },
         getSubCategoryIcon(subcategory?: string | null): string | undefined {
             return getSubCategoryDefinition(subcategory)?.icon;
+        },
+        getSubCategorySvg(subcategory?: string | null): string | undefined {
+            return getSubCategoryDefinition(subcategory)?.svg ?? 'src/assets/icons/sub/Retten_Outlines.svg';
         },
         getSubCategoryNames(subcategories?: string) : string[] | undefined {
             return subcategories?.split(';').map(s => s.trim());

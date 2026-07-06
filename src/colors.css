@@ -37,3 +37,8 @@
 .v-icon {
   color: var(--color-icon-outline);
 }
+
+/* In alerts nichts ändern */
+.v-alert .v-icon {
+  color: currentColor; /* Erbt Farbe aus alert context */
+}

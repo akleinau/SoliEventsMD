@@ -35,14 +35,15 @@ const clicked = (itemgroup: any) => {
 
         <tbody>
           <tr v-for="itemgroup in dataStore.get_grouped_data()" 
-            link @click="clicked(itemgroup)"
-            :style="{ 'cursor': 'pointer' }">
+            :style="{ 'cursor': 'pointer' }"
+            link @click="clicked(itemgroup)">
 
             <td :style="{ 'background-color': dataStore.getCardColor(itemgroup.Kategorie ?? '') }">              
                 <template v-for="subcategoryName in dataStore.getSubCategoryNames(itemgroup.Unterkategorie)" :key="subcategoryName">
                   <v-tooltip :text="dataStore.getSubCategoryName(subcategoryName)" location="top" open-on-click>
                     <template v-slot:activator="{ props }">
-                      <v-icon class="category-list__icon" v-bind="props" size="x-large">
+                      <img v-if="dataStore.getSubCategorySvg(subcategoryName) != ''" v-bind="props" class="category-list__icon" color="#3b3b3b" :src="dataStore.getSubCategorySvg(subcategoryName)"/>
+                      <v-icon v-else class="category-list__icon" v-bind="props" size="x-large">
                         {{ dataStore.getSubCategoryIcon(subcategoryName) }}
                       </v-icon>
                     </template>
@@ -70,15 +71,18 @@ const clicked = (itemgroup: any) => {
 
           </tr>
 
-          <!-- Row für Neues Item (neues Angebot anlegen) -->
+          <!-- Extra Row für Neues Item (neues Angebot anlegen) -->
           <tr
-            link @click="clicked(emptyItem)"
-            :style="{ 'cursor': 'pointer', 'background-color': dataStore.getCardColor(emptyItem?.Kategorie ?? '') }">
+            class="empty-card"
+            :style="{ 'cursor': 'pointer' }"
+            link @click="clicked(emptyItem)">
 
             <td>
               <v-tooltip :text="dataStore.getIconText(emptyItem)" location="top" open-on-click>
                 <template v-slot:activator="{ props }">
-                  <v-icon v-bind="props" size="medium" class="pr-2">{{ dataStore.getIcon(emptyItem) }}</v-icon>
+                  <v-icon class="category-list__icon" v-bind="props" size="x-large" >
+                    {{ dataStore.getIcon(emptyItem) }}
+                  </v-icon>
                 </template>
               </v-tooltip>
             </td>
@@ -110,6 +114,27 @@ th {
   height: 30px;
   margin: 1px;
   opacity: 0.9;
+}
+
+.empty-card {
+  --empty-border-width: 7px;
+  --empty-border-style: solid;
+}
+/* alle Zellen der Zeile 'empty-card' haben oben und unten eine Border */
+.empty-card td {
+  border-top: var(--empty-border-width) var(--empty-border-style);
+  border-bottom: var(--empty-border-width) var(--empty-border-style);
+  border-top-color: var(--color-yellow);
+  border-bottom-color: var(--color-green);
+}
+/* spezielles Styling für erste und letzte Zelle */
+.empty-card td:first-child {
+  border-left: var(--empty-border-width) var(--empty-border-style);
+  border-left-color: var(--color-purple);
+}
+.empty-card td:last-child {
+  border-right: var(--empty-border-width) var(--empty-border-style);
+  border-right-color: var(--color-orange);
 }
 
 </style>

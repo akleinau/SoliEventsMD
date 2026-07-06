@@ -300,28 +300,44 @@ defineExpose({
   color: var(--color-orange);
 }
 
-/* TODO insert color codes for map marker cluster of different sizes here : */
-
-  /* Basis-Stile für statische Klassen *
+/* TODO insert color codes for map marker cluster of different sizes here :
   .marker-cluster-small {
     background-color: rgba(31, 120, 180, 0.6) !important;
   }
   .marker-cluster-small div {
     background-color: rgba(31, 120, 180, 1) !important;
+    color: var(--color-offwhite);
+  } */
+
+  /* Basis-Stile für statische Klassen */
+  /* SMALL: < 10 items */
+  .marker-cluster-small {
+    background-color: var(--color-anthrazit) !important;
+  }
+  .marker-cluster-small div {
+    background-color: var(--color-light-yellow) !important;
+    color: var(--color-anthrazit);
+    font-weight: bold;
   }
 
+  /* MEDIUM: >= 10 items */
   .marker-cluster-medium {
-    background-color: rgba(51, 160, 44, 0.6) !important;
+    background-color: var(--color-anthrazit) !important;
   }
   .marker-cluster-medium div {
-    background-color: rgba(51, 160, 44, 1) !important;
+    background-color: var(--color-light-purple) !important;
+    color: var(--color-anthrazit);
+    font-weight: bold;
   }
 
+  /* LARGE: >= 100 items */
   .marker-cluster-large {
-    background-color: rgba(227, 26, 28, 0.6) !important;
+    background-color: var(--color-anthrazit) !important;
   }
   .marker-cluster-large div{
-    background-color: rgba(227, 26, 28, 1) !important;
+    background-color: var(--color-light-orange) !important;
+    color: var(--color-anthrazit);
+    font-weight: bold;
   }
-  */
+  /**/
 </style>

@@ -2,6 +2,10 @@
 
 import { computed } from "vue";
 import { useDataStore } from "../stores/dataStore.ts";
+import bgImageEndlessSvg from '/src/assets/pattern/Muster_Endlos_Kachel.svg'
+
+// Vite Syntax: Erstellt den richtigen URL während des Builds
+const svgEndlessUrl = computed(() => new URL(bgImageEndlessSvg, import.meta.url).href)
 
 const dataStore = useDataStore();
 
@@ -82,7 +86,8 @@ const clicked = (itemgroup: any) => {
             <template v-for="subcategoryName in dataStore.getSubCategoryNames(itemgroup.Unterkategorie)" :key="subcategoryName">
               <v-tooltip :text="dataStore.getSubCategoryName(subcategoryName)" location="top" open-on-click>
                 <template v-slot:activator="{ props }">
-                  <v-icon class="category-card__icon" v-bind="props" size="x-large">
+                  <img v-if="dataStore.getSubCategorySvg(subcategoryName) != ''" v-bind="props" class="category-card__icon" color="#3b3b3b" :src="dataStore.getSubCategorySvg(subcategoryName)"/>
+                  <v-icon v-else class="category-card__icon" v-bind="props" size="x-large">
                     {{ dataStore.getSubCategoryIcon(subcategoryName) }}
                   </v-icon>
                 </template>
@@ -101,13 +106,16 @@ const clicked = (itemgroup: any) => {
         </v-card-text>
     </v-card>
 
+    
+    <!-- Extra Card für Neues Item (neues Angebot anlegen) -->
     <v-card
-        class="ma-2 category-card" 
+        class="ma-2 category-card empty-card" 
         width="350"
         max-height="180"
         color="var(--color-white)"
         link @click="clicked(emptyItem)">
-        <div class="category-card__header" :style="{'background-color' : dataStore.getCardColor(emptyItem?.Kategorie)}">
+        <div class="category-card__header" 
+             style="border-bottom: 1px solid var(--color-button-grey);">
           <v-card-title class="category-card__title"            
             >{{ emptyItem?.Was }}</v-card-title>
 
@@ -124,7 +132,7 @@ const clicked = (itemgroup: any) => {
           </div>
         </div>
         <v-card-subtitle :style="{'padding-top' : '5px'}">{{ emptyItem?.Wer }}</v-card-subtitle>
-        <v-card-text>
+        <v-card-text >
           <p class="mb-1"> <v-icon>mdi-map-marker</v-icon>  {{ emptyItem?.Wo }}</p>
           <p class="mb-1"> <v-icon>mdi-calendar</v-icon> {{ dataStore.getFormattedDay(emptyItem?.Wochentag ?? '')}}</p>
         </v-card-text>
@@ -137,6 +145,14 @@ const clicked = (itemgroup: any) => {
 .category-card {
   position: relative;
   overflow: hidden;
+}
+
+.empty-card {
+  border: 7px solid;
+  border-left-color: var(--color-purple);
+  border-top-color: var(--color-yellow);
+  border-right-color: var(--color-orange);
+  border-bottom-color: var(--color-green);
 }
 
 .category-card__header {
@@ -154,6 +170,7 @@ const clicked = (itemgroup: any) => {
 }
 
 .category-card__icon {
+  position: relative;
   top: 8px;
   right: 8px;
   width: 30px;

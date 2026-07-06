@@ -272,13 +272,23 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
         :style="{
           'background': dataStore.getCardColor(itemgroup.Kategorie)
         }">
-        <div class="col-container">{{ dataStore.getCategoryName(itemgroup.Kategorie) }}</div>
+        <div class="col-container">
+          <span>{{ dataStore.getCategoryName(itemgroup.Kategorie) }}</span>
+
+          <v-tooltip :text="dataStore.getCategoryName(itemgroup.Kategorie ?? '')" location="top" open-on-click>
+            <template v-slot:activator="{ props }">
+                <img v-if="dataStore.getCategorySvg(itemgroup.Kategorie) != ''" v-bind="props" class="dialog-title__icon" color="#3b3b3b" :src="dataStore.getCategorySvg(itemgroup.Kategorie)"/>
+                <v-icon v-else v-bind="props" size="x-large" color="black" class="dialog-title__icon">{{ dataStore.getCategoryIcon(itemgroup.Kategorie) }}</v-icon>
+            </template>
+          </v-tooltip>
+        </div>
 
         <div class="col-container justify-end" style="display: flex; gap: 8px;">
           <template v-for="subcategoryName in dataStore.getSubCategoryNames(itemgroup.Unterkategorie)" :key="subcategoryName">
             <v-tooltip :text="dataStore.getSubCategoryName(subcategoryName)" location="top" open-on-click>
               <template v-slot:activator="{ props }">
-                <v-icon v-bind="props" size="x-large" color="black" class="dialog-title__icon">
+                <img v-if="dataStore.getSubCategorySvg(subcategoryName) != ''" v-bind="props" class="dialog-title__icon" color="#3b3b3b" :src="dataStore.getSubCategorySvg(subcategoryName)"/>
+                <v-icon v-else v-bind="props" size="x-large" color="black" class="dialog-title__icon">
                   {{ dataStore.getSubCategoryIcon(subcategoryName) }}
                 </v-icon>
               </template>
@@ -370,7 +380,8 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
     <v-card v-if="editableItemGroup && isEditing"
       :style="{
         'background': '#f8f7f7'
-      }">
+      }"
+      :class=" (editableItemGroup?.Kategorie == '') ? 'empty-card' : ''">
       <v-card-title class="dialog-title" :class="isMobile ? 'dialog-title__edit' : 'dialog-title'"
         :style="{
           'background': dataStore.getCardColor(editableItemGroup.Kategorie)
@@ -384,7 +395,8 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
           </select>
           <v-tooltip :text="dataStore.getCategoryName(editableItemGroup.Kategorie ?? '')" location="top" open-on-click>
             <template v-slot:activator="{ props }">
-                <v-icon v-bind="props" size="x-large" color="black" class="dialog-title__icon">{{ dataStore.getCategoryIcon(editableItemGroup.Kategorie) }}</v-icon>
+                <img v-if="dataStore.getCategorySvg(editableItemGroup.Kategorie) != ''" v-bind="props" class="dialog-title__icon" color="#3b3b3b" :src="dataStore.getCategorySvg(editableItemGroup.Kategorie)"/>
+                <v-icon v-else v-bind="props" size="x-large" color="black" class="dialog-title__icon">{{ dataStore.getCategoryIcon(editableItemGroup.Kategorie) }}</v-icon>
             </template>
           </v-tooltip>
         </div>
@@ -408,7 +420,8 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
             </select>
             <v-tooltip :text="dataStore.getSubCategoryName(editableItemGroup.Unterkategorie ?? '')" location="top" open-on-click>
               <template v-slot:activator="{ props }">
-                  <v-icon v-bind="props" size="x-large" color="black" class="dialog-title__icon">{{ dataStore.getSubCategoryIcon(editableItemGroup.Unterkategorie) }}</v-icon>
+                  <img v-if="dataStore.getSubCategorySvg(editableItemGroup.Unterkategorie) != ''" v-bind="props" class="dialog-title__icon" color="#3b3b3b" :src="dataStore.getSubCategorySvg(editableItemGroup.Unterkategorie)"/>
+                  <v-icon v-else v-bind="props" size="x-large" color="black" class="dialog-title__icon">{{ dataStore.getSubCategoryIcon(editableItemGroup.Unterkategorie) }}</v-icon>
               </template>
             </v-tooltip>
           </div>
@@ -626,6 +639,7 @@ input, textarea {
   flex-direction: row;
   flex: 1 1 0;
   column-gap: 5px;
+  align-items: center;
 }
 .row-container {
   display: grid;
@@ -723,6 +737,14 @@ input, textarea {
     display: grid;
     justify-content: stretch;
   }
+}
+
+.empty-card {
+  border: 7px solid !important;
+  border-left-color: var(--color-purple) !important;
+  border-top-color: var(--color-yellow) !important;
+  border-right-color: var(--color-orange) !important;
+  border-bottom-color: var(--color-green) !important;
 }
 
 .v-btn {

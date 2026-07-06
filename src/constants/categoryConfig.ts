@@ -4,12 +4,14 @@ export interface CategoryDefinition {
   textcolor: string
   color: string
   icon: string // mdi-icons (automatisch über Vuetify)
+  svg: string
 }
 
 export interface SubCategoryDefinition {
   label: string
   path: string
   icon: string // mdi-icons (automatisch über Vuetify)
+  svg: string
 }
 
 export const CATEGORY_CONFIG: Record<string, CategoryDefinition> = {
@@ -19,6 +21,7 @@ export const CATEGORY_CONFIG: Record<string, CategoryDefinition> = {
     textcolor: 'var(--color-purple)', // Textfarbe
     color: 'var(--color-light-purple)', // Hintergrundfarbe
     icon: 'mdi-account-multiple-outline',
+    svg: 'src/assets/icons/main/Sprechblase_mit_HG_und_Strichen.svg'
   },
   digitales: {
     label: 'Digitales',
@@ -26,6 +29,7 @@ export const CATEGORY_CONFIG: Record<string, CategoryDefinition> = {
     textcolor: 'var(--color-yellow)', // Textfarbe
     color: 'var(--color-light-yellow)', // Hintergrundfarbe
     icon: 'mdi-laptop',
+    svg: 'src/assets/icons/main/Mauszeiger_mit_HG_und_Strichen.svg'
   },
   lebensmittel: {
     label: 'Lebensmittel',
@@ -33,6 +37,7 @@ export const CATEGORY_CONFIG: Record<string, CategoryDefinition> = {
     textcolor: 'var(--color-orange)', // Textfarbe
     color: 'var(--color-light-orange)', // Hintergrundfarbe
     icon: 'mdi-food-apple-outline',
+    svg: 'src/assets/icons/main/Möhre_mit_HG_und_Strichen.svg'
   },
   ressourcen: {
     label: 'Ressourcen',
@@ -40,6 +45,7 @@ export const CATEGORY_CONFIG: Record<string, CategoryDefinition> = {
     textcolor: 'var(--color-green)', // Textfarbe
     color: 'var(--color-light-green)', // Hintergrundfarbe
     icon: 'mdi-recycle',
+    svg: 'src/assets/icons/main/Schraubenschlüssel_mit_HG_und_Strichen.svg'
   },
 }
 
@@ -48,61 +54,73 @@ export const SUB_CATEGORY_CONFIG: Record<string, SubCategoryDefinition> = {
     label: 'Aktion',
     path: 'aktion',
     icon: 'mdi-human-handsup',
+    svg: 'src/assets/icons/sub/Aktion_Outlines.svg'
   },
   retten: {
     label: 'retten',
     path: 'retten',
     icon: 'mdi-hand-extended-outline',
+    svg: 'src/assets/icons/sub/Retten_Outlines.svg'
   },
   mobilitaet: {
     label: 'Mobilität',
     path: 'mobilitaet',
     icon: 'mdi-bicycle-cargo',
+    svg: 'src/assets/icons/sub/Mobilität_Outlines.svg'
   },
   essenausgabe: {
     label: 'Essenausgabe',
     path: 'essenausgabe',
     icon: 'mdi-pot-mix',
+    svg: 'src/assets/icons/sub/Essenausgabe_Outlines.svg'
   },
   futtern: {
     label: 'Futtern',
     path: 'futtern',
     icon: 'mdi-silverware-fork-knife',
+    svg: 'src/assets/icons/sub/Futtern_Outlines.svg'
   },
   werkstatt: {
     label: 'Werkstatt',
     path: 'werkstatt',
     icon: 'mdi-tools',
+    svg: 'src/assets/icons/sub/Werkstatt_Outlines.svg'
   },
-  schenken: {
+  /*schenken: {
     label: 'schenken',
     path: 'schenken',
     icon: 'mdi-package-variant-plus',
-  },
+    svg: 'src/assets/icons/sub/Aktion_Outlines.svg'
+  },*/
   spielen: {
     label: 'spielen',
     path: 'spielen',
     icon: 'mdi-cards-playing-outline',
+    svg: 'src/assets/icons/sub/Spielen_Outlines.svg'
   },
   medien: {
     label: 'Medien',
     path: 'medien',
     icon: 'mdi-book-open-variant-outline',
+    svg: 'src/assets/icons/sub/Medien_Outlines.svg'
   },
   textilien: {
     label: 'Textilien',
     path: 'textilien',
     icon: 'mdi-tshirt-crew-outline',
+    svg: 'src/assets/icons/sub/Textilien_Outlines.svg'
   },
   moebel: {
     label: 'Möbel',
     path: 'moebel',
     icon: 'mdi-sofa-outline',
+    svg: 'src/assets/icons/sub/Möbel_Outlines.svg'
   },
   raum: {
     label: 'Raum',
     path: 'raum',
     icon: 'mdi-home-city-outline',
+    svg: 'src/assets/icons/sub/Raum_Outlines.svg'
   },
 }
 
