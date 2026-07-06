@@ -2,6 +2,7 @@
 import Category_menu from "./category_menu.vue";
 import About_dialog from "./about_dialog.vue";
 import Translation_dialog from "./translation_dialog.vue";
+import MainLogo from '/src/assets/logo/Bildmarke_mit_Outlines_grün.svg';
 </script>
 
 <template>
@@ -9,7 +10,7 @@ import Translation_dialog from "./translation_dialog.vue";
     <div class="header-top">
       <div class="title-container">        
         <v-img
-            src="src/assets/logo/Bildmarke_mit_Outlines_grün.svg"
+            :src="MainLogo"
             class="logo"
             height="60"
             min-height="40"
