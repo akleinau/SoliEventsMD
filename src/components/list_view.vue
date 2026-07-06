@@ -117,6 +117,7 @@ th {
 }
 
 .empty-card {
+  font-style: italic;
   --empty-border-width: 7px;
   --empty-border-style: solid;
 }
@@ -124,17 +125,17 @@ th {
 .empty-card td {
   border-top: var(--empty-border-width) var(--empty-border-style);
   border-bottom: var(--empty-border-width) var(--empty-border-style);
-  border-top-color: var(--color-yellow);
-  border-bottom-color: var(--color-green);
+  border-top-color: var(--color-light-yellow);
+  border-bottom-color: var(--color-light-green);
 }
 /* spezielles Styling für erste und letzte Zelle */
 .empty-card td:first-child {
   border-left: var(--empty-border-width) var(--empty-border-style);
-  border-left-color: var(--color-purple);
+  border-left-color: var(--color-light-purple);
 }
 .empty-card td:last-child {
   border-right: var(--empty-border-width) var(--empty-border-style);
-  border-right-color: var(--color-orange);
+  border-right-color: var(--color-light-orange);
 }
 
 </style>

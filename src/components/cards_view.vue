@@ -148,11 +148,12 @@ const clicked = (itemgroup: any) => {
 }
 
 .empty-card {
+  font-style: italic;
   border: 7px solid;
-  border-left-color: var(--color-purple);
-  border-top-color: var(--color-yellow);
-  border-right-color: var(--color-orange);
-  border-bottom-color: var(--color-green);
+  border-left-color: var(--color-light-purple);
+  border-top-color: var(--color-light-yellow);
+  border-right-color: var(--color-light-orange);
+  border-bottom-color: var(--color-light-green);
 }
 
 .category-card__header {

@@ -312,30 +312,30 @@ defineExpose({
   /* Basis-Stile für statische Klassen */
   /* SMALL: < 10 items */
   .marker-cluster-small {
-    background-color: var(--color-anthrazit) !important;
+    background-color: rgba(170, 210, 255, 0.6) !important;
   }
   .marker-cluster-small div {
-    background-color: var(--color-light-yellow) !important;
+    background-color: rgb(170, 210, 255, 1.0) !important;
     color: var(--color-anthrazit);
     font-weight: bold;
   }
 
   /* MEDIUM: >= 10 items */
   .marker-cluster-medium {
-    background-color: var(--color-anthrazit) !important;
+    background-color: rgba(128, 186, 253, 0.6) !important;
   }
   .marker-cluster-medium div {
-    background-color: var(--color-light-purple) !important;
+    background-color: rgb(128, 186, 253, 1.0) !important;
     color: var(--color-anthrazit);
     font-weight: bold;
   }
 
   /* LARGE: >= 100 items */
   .marker-cluster-large {
-    background-color: var(--color-anthrazit) !important;
+    background-color: rgba(70, 156, 255, 0.6) !important;
   }
   .marker-cluster-large div{
-    background-color: var(--color-light-orange) !important;
+    background-color: rgb(70, 156, 255, 1.0) !important;
     color: var(--color-anthrazit);
     font-weight: bold;
   }
