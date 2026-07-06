@@ -23,9 +23,9 @@ export const CATEGORY_CONFIG: Record<string, CategoryDefinition> = {
     icon: 'mdi-account-multiple-outline',
     svg: 'src/assets/icons/main/Sprechblase_mit_HG_und_Strichen.svg'
   },
-  digitales: {
-    label: 'Digitales',
-    path: 'digitales',
+  online: {
+    label: 'Online',
+    path: 'online',
     textcolor: 'var(--color-yellow)', // Textfarbe
     color: 'var(--color-light-yellow)', // Hintergrundfarbe
     icon: 'mdi-laptop',

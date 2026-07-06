@@ -57,17 +57,17 @@ const clicked = (itemgroup: any) => {
 
             <td>{{ itemgroup.Wer }}</td>
 
-            <td v-if="itemgroup.Kategorie != 'digitales'">{{ itemgroup.Wo }}</td>
+            <td v-if="itemgroup.Kategorie != 'online'">{{ itemgroup.Wo }}</td>
 
-            <td v-if="itemgroup.Kategorie != 'digitales'">
+            <td v-if="itemgroup.Kategorie != 'online'">
               <tr  v-for="timeslot in itemgroup.timeSlots">{{ dataStore.getFormattedDay(timeslot.Wochentag ?? '') }}</tr>
             </td>
 
-            <td v-if="itemgroup.Kategorie != 'digitales'">
+            <td v-if="itemgroup.Kategorie != 'online'">
               <tr  v-for="timeslot in itemgroup.timeSlots">{{ timeslot.Uhrzeit_Start }} - {{ timeslot.Uhrzeit_Ende }}</tr>
             </td>
 
-            <td v-if="itemgroup.Kategorie == 'digitales'" colspan="3">{{ itemgroup.Link }}</td>
+            <td v-if="itemgroup.Kategorie == 'online'" colspan="3">{{ itemgroup.Link }}</td>
 
           </tr>
 

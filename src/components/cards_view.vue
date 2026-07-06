@@ -97,11 +97,11 @@ const clicked = (itemgroup: any) => {
         </div>
 
         <v-card-subtitle :style="{'padding-top' : '5px'}">{{ itemgroup.Wer }}</v-card-subtitle>
-        <v-card-text v-if="itemgroup.Kategorie != 'digitales'">
+        <v-card-text v-if="itemgroup.Kategorie != 'online'">
           <p class="mb-1"> <v-icon>mdi-map-marker</v-icon> {{ itemgroup.Wo }}</p>
           <div class="mb-1 opening-hours"> <v-icon>mdi-calendar</v-icon> {{ listTimeSlots(itemgroup.timeSlots) }}</div>
         </v-card-text>
-        <v-card-text v-if="itemgroup.Kategorie == 'digitales'">
+        <v-card-text v-if="itemgroup.Kategorie == 'online'">
           <p class="mb-1"> <v-icon>mdi-web</v-icon>  {{ itemgroup.Link }}</p>
         </v-card-text>
     </v-card>
