@@ -92,7 +92,7 @@ onBeforeUnmount(() => {
             <Filter_menu />
           </div>
 
-          <div class="datatable-content">
+          <div class="datatable-content background-pattern">
             <!--List of Cards /-->
             <Datatable 
                 class="datatable"
@@ -195,6 +195,20 @@ onBeforeUnmount(() => {
   position: relative;
   flex: 1 1 auto;
   min-height: 0;
+}
+
+.background-pattern::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url("/src/assets/pattern/Muster_Endlos_Kachel.svg");
+  background-repeat: repeat;
+  background-size: 210px;
+  opacity: 0.2;
+  margin: 10px;
 }
 
 .dialog-backdrop {

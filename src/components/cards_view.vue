@@ -82,12 +82,12 @@ const clicked = (itemgroup: any) => {
           <v-card-title class="category-card__title"            
           >{{ itemgroup.Was }}</v-card-title>
 
-          <div class="category-card__icons">
+          <div class="subcategory-icons__container">
             <template v-for="subcategoryName in dataStore.getSubCategoryNames(itemgroup.Unterkategorie)" :key="subcategoryName">
               <v-tooltip :text="dataStore.getSubCategoryName(subcategoryName)" location="top" open-on-click>
                 <template v-slot:activator="{ props }">
-                  <img v-if="dataStore.getSubCategorySvg(subcategoryName) != ''" v-bind="props" class="category-card__icon" color="#3b3b3b" :src="dataStore.getSubCategorySvg(subcategoryName)"/>
-                  <v-icon v-else class="category-card__icon" v-bind="props" size="x-large">
+                  <img v-if="dataStore.getSubCategorySvg(subcategoryName) != ''" v-bind="props" class="subcategory-card__icon" color="#3b3b3b" :src="dataStore.getSubCategorySvg(subcategoryName)"/>
+                  <v-icon v-else class="subcategory-card__icon" v-bind="props" size="x-large">
                     {{ dataStore.getSubCategoryIcon(subcategoryName) }}
                   </v-icon>
                 </template>
@@ -112,6 +112,7 @@ const clicked = (itemgroup: any) => {
         class="ma-2 category-card empty-card" 
         width="350"
         max-height="180"
+        min-height="150"
         color="var(--color-white)"
         link @click="clicked(emptyItem)">
         <div class="category-card__header" 
@@ -119,11 +120,11 @@ const clicked = (itemgroup: any) => {
           <v-card-title class="category-card__title"            
             >{{ emptyItem?.Was }}</v-card-title>
 
-          <div class="category-card__icons">
+          <div class="subcategory-icons__container">
             <div v-if="dataStore.getCategoryIcon(emptyItem?.Kategorie)">
               <v-tooltip :text="dataStore.getIconText(emptyItem)" location="top" open-on-click>
                 <template v-slot:activator="{ props }">
-                  <v-icon class="category-card__icon" v-bind="props" size="x-large">
+                  <v-icon class="subcategory-card__icon" v-bind="props" size="x-large">
                     {{ dataStore.getIcon(emptyItem) }}
                   </v-icon>
                 </template>
@@ -131,11 +132,8 @@ const clicked = (itemgroup: any) => {
             </div>
           </div>
         </div>
-        <v-card-subtitle :style="{'padding-top' : '5px'}">{{ emptyItem?.Wer }}</v-card-subtitle>
-        <v-card-text >
-          <p class="mb-1"> <v-icon>mdi-map-marker</v-icon>  {{ emptyItem?.Wo }}</p>
-          <p class="mb-1"> <v-icon>mdi-calendar</v-icon> {{ dataStore.getFormattedDay(emptyItem?.Wochentag ?? '')}}</p>
-        </v-card-text>
+        <div class="pattern-background">
+        </div>
     </v-card>
 
 </template>
@@ -156,6 +154,14 @@ const clicked = (itemgroup: any) => {
   border-bottom-color: var(--color-light-green);
 }
 
+.pattern-background {
+  background-image: url("/src/assets/pattern/Muster_Endlos_Kachel.svg");
+  background-repeat: repeat;
+  background-size: contain;
+  padding: 40px;
+  margin: 5px;
+}
+
 .category-card__header {
   display: grid;
   grid-template-columns: auto auto;
@@ -166,11 +172,14 @@ const clicked = (itemgroup: any) => {
   overflow-wrap: break-word;
 }
 
-.category-card__icons {
+.subcategory-icons__container {
   justify-self: end;
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 8px;
 }
 
-.category-card__icon {
+.subcategory-card__icon {
   position: relative;
   top: 8px;
   right: 8px;
@@ -180,7 +189,7 @@ const clicked = (itemgroup: any) => {
   opacity: 0.9;
 }
 
-.category-card__icon img {
+.subcategory-card__icon img {
   display: block;
   width: 100%;
   height: 100%;
