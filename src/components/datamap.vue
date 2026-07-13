@@ -10,6 +10,28 @@ import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import { useDataStore } from "../stores/dataStore.ts";
 import { ref, onMounted, watch, nextTick } from 'vue';
 
+// "Klecks"-Formen (organische Hintergrund-Blobs) – als Maske genutzt, damit sie
+// in der jeweiligen Kategoriefarbe eingefärbt werden.
+import HG_01 from '/src/assets/icons/backgrounds/HG_01.svg';
+import HG_02 from '/src/assets/icons/backgrounds/HG_02.svg';
+import HG_03 from '/src/assets/icons/backgrounds/HG_03.svg';
+import HG_04 from '/src/assets/icons/backgrounds/HG_04.svg';
+import HG_05 from '/src/assets/icons/backgrounds/HG_05.svg';
+import HG_06 from '/src/assets/icons/backgrounds/HG_06.svg';
+import HG_07 from '/src/assets/icons/backgrounds/HG_07.svg';
+import HG_08 from '/src/assets/icons/backgrounds/HG_08.svg';
+import HG_09 from '/src/assets/icons/backgrounds/HG_09.svg';
+import HG_10 from '/src/assets/icons/backgrounds/HG_10.svg';
+import HG_11 from '/src/assets/icons/backgrounds/HG_11.svg';
+const BLOB_SHAPES = [HG_01, HG_02, HG_03, HG_04, HG_05, HG_06, HG_07, HG_08, HG_09, HG_10, HG_11];
+
+// stabile, aber über die Marker variierende Blob-Form je Item
+const blobShapeFor = (key: string): string => {
+  let h = 0;
+  for (let i = 0; i < key.length; i++) h = (h * 31 + key.charCodeAt(i)) >>> 0;
+  return BLOB_SHAPES[h % BLOB_SHAPES.length];
+};
+
 // Props
 const props = defineProps<{
   isMobile: boolean;
@@ -91,8 +113,11 @@ const addMarker = async (item: any) => {
   if (!symbolSvg) return;
 
   const blobColor = dataStore.getCardTextColor(item.Kategorie);
+  // Vite inlined das SVG evtl. als data-URI mit einfachen Anführungszeichen – diese
+  // kodieren, damit die in url('…') eingebettete Maske nicht vorzeitig endet.
+  const blobShape = blobShapeFor(itemKey(item)).replace(/'/g, '%27');
   const blobSpan = singleSub
-    ? `<span class="map-marker__blob" style="background:${blobColor}"></span>`
+    ? `<span class="map-marker__blob" style="background:${blobColor}; -webkit-mask:url('${blobShape}') center/contain no-repeat; mask:url('${blobShape}') center/contain no-repeat;"></span>`
     : '';
   const markerHtml = `
     <div class="map-marker${singleSub ? '' : ' map-marker--plain'}">
@@ -104,16 +129,16 @@ const addMarker = async (item: any) => {
   const originalIcon = L.divIcon({
     className: 'map-marker-icon',
     html: markerHtml,
-    iconSize: [40, 40],
-    iconAnchor: [20, 40],
+    iconSize: [32, 32],
+    iconAnchor: [16, 32],
   });
 
   // Highlighted icon with glow effect
   const highlightIcon = L.divIcon({
     className: 'map-marker-icon highlighted-marker-icon',
     html: markerHtml,
-    iconSize: [40, 40],
-    iconAnchor: [20, 40],
+    iconSize: [32, 32],
+    iconAnchor: [16, 32],
   });
 
   // Marker mit Icon hinzufügen
@@ -316,17 +341,18 @@ defineExpose({
 
 .map-marker {
   position: relative;
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
 }
 
-/* Farbiger "Klecks" hinter dem Symbol, halbtransparent in der Kategoriefarbe */
+/* Farbiger "Klecks" hinter dem Symbol: organische Blob-Form (via Maske),
+   halbtransparent in der Kategoriefarbe. Etwas größer als der Marker, damit
+   das Symbol bequem innerhalb der Form sitzt. Form + Farbe kommen inline. */
 .map-marker__blob {
   position: absolute;
-  inset: 0;
-  border-radius: 50%;
+  inset: -4px;
   opacity: 0.65;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.35));
 }
 
 .map-marker__symbol {
@@ -353,7 +379,6 @@ defineExpose({
 }
 .highlighted-marker-icon .map-marker__blob {
   opacity: 0.9;
-  box-shadow: 0 0 0 2px var(--color-orange), 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
   /* Marker-Cluster: distinktes Blau je nach Anzahl der Einträge */
