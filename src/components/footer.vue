@@ -51,8 +51,14 @@ const links = [
         color: inherit;
     }
 
-    /* Mobile-Ansicht ToDo: fix code or this section -> use "@media ..."" OR use "".XYZ--mobile" ! */
+    /* Mobile-Ansicht: Footer kompakter packen */
     @media (max-width: 767px) {
+        .myfooter {
+            padding-top: 4px;
+            padding-bottom: 4px;
+            row-gap: 4px;
+        }
+
         a.v-btn {
             padding: 0px;
             margin: 0px;
