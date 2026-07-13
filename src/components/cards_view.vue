@@ -86,7 +86,7 @@ const clicked = (itemgroup: any) => {
             <template v-for="subcategoryName in dataStore.getSubCategoryNames(itemgroup.Unterkategorie)" :key="subcategoryName">
               <v-tooltip :text="dataStore.getSubCategoryName(subcategoryName)" location="top" open-on-click>
                 <template v-slot:activator="{ props }">
-                  <img v-if="dataStore.getSubCategorySvg(subcategoryName) != ''" v-bind="props" class="subcategory-card__icon" color="#3b3b3b" :src="dataStore.getSubCategorySvg(subcategoryName)"/>
+                  <img v-if="dataStore.getSubCategorySvg(subcategoryName) != ''" v-bind="props" class="subcategory-card__icon" color="var(--color-anthrazit)" :src="dataStore.getSubCategorySvg(subcategoryName)"/>
                   <v-icon v-else class="subcategory-card__icon" v-bind="props" size="x-large">
                     {{ dataStore.getSubCategoryIcon(subcategoryName) }}
                   </v-icon>

@@ -33,19 +33,73 @@
   --color-white: white;
   --color-button-grey: grey;
 
-  /* easier access to default colors using colorcodes from above */
-  --color-primary: #7da631;
-  --color-secondary: #ec6712;
-  --color-bg-primary: #e3e8ca;
-  --color-bg-secondary: #fdd9c2;
-  --color-text-main: #3b3b3b;
-  --color-text-muted: #666666;
+  /* neutral colors for buttons etc */
+  --color-border: #ddd;
+  --color-surface-2: #f0f0f0;
+  --color-surface-3: #e0e0e0;
+  --color-surface-hover: #ececec;
+
+  /* easier access to default colors – reference the base vars above, no duplicated hex */
+  --color-primary: var(--color-green);
+  --color-secondary: var(--color-orange);
+  --color-bg-primary: var(--color-light-green);
+  --color-bg-secondary: var(--color-light-orange);
+  --color-text-main: var(--color-anthrazit);
+  /* muted text derived from brand anthracite (book defines no separate grey) */
+  --color-text-muted: rgba(59, 59, 59, 0.65);
+
+  /* Typografie – Hierarchie laut Brand Book (Web-Größen).
+     Wichtig ist das Verhältnis H1 > H2 > H3 > Fließtext > Bildunterschrift. */
+  --font-size-h1: 58px;
+  --font-size-h2: 38px;
+  --font-size-h3: 25px;
+  --font-size-body: 18px;      /* Buch: 16–20 px */
+  --font-size-caption: 13px;   /* Buch: 12–14 px, kursiv */
+
+  --font-weight-h1: 700;       /* Bold */
+  --font-weight-h2: 600;       /* SemiBold */
+  --font-weight-h3: 600;       /* SemiBold */
+  --font-weight-body: 400;     /* Regular */
 }
 
 
 /* Vuetify setzt die Schriftart selbst auf seinen Komponenten – hier auf Quicksand überschreiben */
 .v-application {
   font-family: 'Quicksand', system-ui, Avenir, Helvetica, Arial, sans-serif;
+}
+
+/* Typografie-Hierarchie laut Brand Book.
+   Gilt für Inhalts-Überschriften; Komponenten mit eigener (scoped) Schriftgröße
+   überschreiben das gezielt (höhere Spezifität). */
+h1 {
+  font-size: var(--font-size-h1);
+  font-weight: var(--font-weight-h1);
+  line-height: 1.1;
+  margin: 0 0 0.4em;
+}
+h2 {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-h2);
+  line-height: 1.15;
+  margin: 0 0 0.35em;
+}
+h3 {
+  font-size: var(--font-size-h3);
+  font-weight: var(--font-weight-h3);
+  line-height: 1.25;
+  margin: 0 0 0.3em;
+}
+.brand-caption {
+  font-size: var(--font-size-caption);
+  font-style: italic;
+}
+
+/* Textlastige Seiten / kleine Viewports: Größen reduzieren, Verhältnis bleibt
+   (Brand Book: Abweichungen möglich, solange die Abstufung gleich bleibt). */
+@media (max-width: 767px) {
+  h1 { font-size: 40px; }
+  h2 { font-size: 28px; }
+  h3 { font-size: 20px; }
 }
 
 .v-icon {

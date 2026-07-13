@@ -76,8 +76,8 @@ const apply_filter = () => {
               <span v-if="!isMobile" class="category-button__label">{{ option.label }}</span>
               <v-tooltip v-if="!(option.label == 'Alles' && !isMobile)" :text="option.label" location="bottom" open-on-click>
                 <template v-slot:activator="{ props }">
-                    <img v-if="option.svg != ''" v-bind="props" class="category-button__icon" color="#3b3b3b" :src="option.svg"/>
-                    <v-icon v-else v-bind="props" class="category-button__icon" color="#3b3b3b" size="x-large">{{ option.icon }}</v-icon>
+                    <img v-if="option.svg != ''" v-bind="props" class="category-button__icon" color="var(--color-anthrazit)" :src="option.svg"/>
+                    <v-icon v-else v-bind="props" class="category-button__icon" color="var(--color-anthrazit)" size="x-large">{{ option.icon }}</v-icon>
                 </template>
               </v-tooltip>
             </v-btn>

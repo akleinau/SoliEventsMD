@@ -420,7 +420,7 @@ defineExpose({
   border-bottom-color: rgba(0, 0, 0, 0.12);
 }
 .leaflet-bar a:hover {
-  background-color: #ececec;
+  background-color: var(--color-surface-hover);
   color: var(--color-anthrazit);
 }
 </style>
