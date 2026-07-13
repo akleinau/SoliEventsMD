@@ -10,6 +10,28 @@ import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import { useDataStore } from "../stores/dataStore.ts";
 import { ref, onMounted, watch, nextTick } from 'vue';
 
+// "Klecks"-Formen (organische Hintergrund-Blobs) – als Maske genutzt, damit sie
+// in der jeweiligen Kategoriefarbe eingefärbt werden.
+import HG_01 from '/src/assets/icons/backgrounds/HG_01.svg';
+import HG_02 from '/src/assets/icons/backgrounds/HG_02.svg';
+import HG_03 from '/src/assets/icons/backgrounds/HG_03.svg';
+import HG_04 from '/src/assets/icons/backgrounds/HG_04.svg';
+import HG_05 from '/src/assets/icons/backgrounds/HG_05.svg';
+import HG_06 from '/src/assets/icons/backgrounds/HG_06.svg';
+import HG_07 from '/src/assets/icons/backgrounds/HG_07.svg';
+import HG_08 from '/src/assets/icons/backgrounds/HG_08.svg';
+import HG_09 from '/src/assets/icons/backgrounds/HG_09.svg';
+import HG_10 from '/src/assets/icons/backgrounds/HG_10.svg';
+import HG_11 from '/src/assets/icons/backgrounds/HG_11.svg';
+const BLOB_SHAPES = [HG_01, HG_02, HG_03, HG_04, HG_05, HG_06, HG_07, HG_08, HG_09, HG_10, HG_11];
+
+// stabile, aber über die Marker variierende Blob-Form je Item
+const blobShapeFor = (key: string): string => {
+  let h = 0;
+  for (let i = 0; i < key.length; i++) h = (h * 31 + key.charCodeAt(i)) >>> 0;
+  return BLOB_SHAPES[h % BLOB_SHAPES.length];
+};
+
 // Props
 const props = defineProps<{
   isMobile: boolean;
@@ -22,9 +44,14 @@ const dataStore = useDataStore();
 // Reaktive Variablen
 const mapElement = ref<HTMLElement | null>(null);
 const map = ref<L.Map | null>(null);
-const markers = ref<Map<any, { marker: L.Marker; originalIcon: L.DivIcon; highlightIcon: L.DivIcon }>>(new Map());
+const markers = ref<Map<string, { marker: L.Marker; originalIcon: L.DivIcon; highlightIcon: L.DivIcon }>>(new Map());
 const markersClusterGroup = ref<L.MarkerClusterGroup | null>(null);
-const highlightedItem = ref<any | null>(null);
+const highlightedKey = ref<string | null>(null);
+
+// Stable key for an itemgroup (mirrors the grouping key in dataStore.get_grouped_data()).
+// Used to match markers to itemgroups by content, since get_grouped_data() returns fresh
+// objects on every call and object identity can therefore not be relied upon.
+const itemKey = (group: any): string => `${group?.Was}|${group?.Wer}|${group?.Wo}`;
 
 
 // Adresse in Koordinaten umwandeln
@@ -65,7 +92,7 @@ const getCoordinates = async (location: string): Promise<{ lat: number; lng: num
   }
 };
 
-// Marker für ein Item erstellen
+// Marker für eine Item-Gruppe erstellen
 const addMarker = async (item: any) => {
   // Sicherstellen, dass Karte vorhanden ist
   if (!map.value) return;
@@ -74,14 +101,34 @@ const addMarker = async (item: any) => {
   const coords = await getCoordinates(item.Koordinaten);
   if (!coords) return;
 
-  // MDI Icon laden
-  const mdiIcon = dataStore.getCategoryIcon(item.Kategorie);
-  if (!mdiIcon) return;
-  
-  // Original icon as DivIcon with MDI font
+  // Symbol wählen: bei genau einer Unterkategorie deren Outline-Icon, sonst das
+  // Hauptkategorie-Icon. Nur im Unterkategorie-Fall kommt dahinter ein farbiger
+  // "Klecks" in der Hauptkategorie-Farbe; die Hauptkategorie-Icons bringen ihren
+  // eigenen Hintergrund bereits mit und bleiben daher ohne Klecks.
+  const subNames = dataStore.getSubCategoryNames(item.Unterkategorie);
+  const singleSub = subNames && subNames.length === 1 ? subNames[0] : null;
+  const symbolSvg = singleSub
+    ? dataStore.getSubCategorySvg(singleSub)
+    : dataStore.getCategorySvg(item.Kategorie);
+  if (!symbolSvg) return;
+
+  const blobColor = dataStore.getCardTextColor(item.Kategorie);
+  // Vite inlined das SVG evtl. als data-URI mit einfachen Anführungszeichen – diese
+  // kodieren, damit die in url('…') eingebettete Maske nicht vorzeitig endet.
+  const blobShape = blobShapeFor(itemKey(item)).replace(/'/g, '%27');
+  const blobSpan = singleSub
+    ? `<span class="map-marker__blob" style="background:${blobColor}; -webkit-mask:url('${blobShape}') center/contain no-repeat; mask:url('${blobShape}') center/contain no-repeat;"></span>`
+    : '';
+  const markerHtml = `
+    <div class="map-marker${singleSub ? '' : ' map-marker--plain'}">
+      ${blobSpan}
+      <img class="map-marker__symbol" src="${symbolSvg}" alt="" />
+    </div>`;
+
+  // Original icon
   const originalIcon = L.divIcon({
     className: 'map-marker-icon',
-    html: `<i class="mdi ${mdiIcon}"></i>`,
+    html: markerHtml,
     iconSize: [32, 32],
     iconAnchor: [16, 32],
   });
@@ -89,29 +136,29 @@ const addMarker = async (item: any) => {
   // Highlighted icon with glow effect
   const highlightIcon = L.divIcon({
     className: 'map-marker-icon highlighted-marker-icon',
-    html: `<i class="mdi ${mdiIcon}"></i>`,
+    html: markerHtml,
     iconSize: [32, 32],
     iconAnchor: [16, 32],
   });
 
   // Marker mit Icon hinzufügen
   const marker = L.marker([coords.lat, coords.lng], { icon: originalIcon })
-    // Inhalt vom Popup, wenn auf Marker geklickt wird
-    .bindPopup(`
+    // Kurzinfos als Tooltip: erscheint beim Hovern, nicht beim Klick
+    .bindTooltip(`
       <b>${item.Was}</b><br>
       ${item.Wer}<br>
       ${item.Wo}
-    `)
+    `, { direction: 'top', offset: [0, -28] })
     // Marker über das MarkersCluster zur Karte hinzufügen (und je nach Zoomstufe automatisch anzeigen oder clustern)
     .addTo(markersClusterGroup.value!);
 
-  // Click handler to open item dialog
+  // Klick öffnet die volle Karte (Dialog); der Tooltip bleibt dem Hover vorbehalten
   marker.on('click', () => {
-    dataStore.set_current_item(item);
+    dataStore.set_current_itemgroup(item);
   });
 
-  // Marker im Map speichern (für Fokus-Funktionalität)
-  markers.value.set(item, { marker, originalIcon, highlightIcon });
+  // Marker im Map speichern (für Fokus-Funktionalität), gekeyed über den stabilen itemKey
+  markers.value.set(itemKey(item), { marker, originalIcon, highlightIcon });
 };
 
 const updateMarkers = () => {
@@ -120,9 +167,11 @@ const updateMarkers = () => {
   markersClusterGroup.value.clearLayers();
   markers.value.clear();
 
-  // Marker für alle derzeit gefilterten Items hinzufügen
-  props.items.map((item : any) => {
-    addMarker(item);
+  // Marker für alle derzeit gefilterten Item-Gruppen hinzufügen.
+  // Wir nutzen die gruppierten Daten (wie Karten-/Listenansicht und Dialog),
+  // damit ein Marker-Klick eine vollständige Item-Gruppe liefert.
+  dataStore.get_grouped_data().forEach((group: any) => {
+    addMarker(group);
   });
 }
 
@@ -153,8 +202,8 @@ const initMap = () => {
 const focusOnItemInternal = async (item: any) => {
   if (!map.value || !item || !markersClusterGroup.value) return;
 
-  // Find the marker data for this item
-  const markerData = markers.value.get(item);
+  // Find the marker data for this itemgroup
+  const markerData = markers.value.get(itemKey(item));
   if (!markerData) {
     // Marker might not exist yet (async loading), try to get coords and just center
     const coords = await getCoordinates(item.Koordinaten);
@@ -168,7 +217,7 @@ const focusOnItemInternal = async (item: any) => {
 
   // Set the highlighted icon on the marker (stays within cluster group)
   marker.setIcon(highlightIcon);
-  highlightedItem.value = item;
+  highlightedKey.value = itemKey(item);
 
   // zoomToShowLayer will zoom in and spiderfy the cluster if needed to reveal the marker
   markersClusterGroup.value.zoomToShowLayer(marker, () => {
@@ -180,37 +229,37 @@ const focusOnItemInternal = async (item: any) => {
   });
 };
 
-// Public function to focus on item (sets the store which triggers the watch)
+// Public function to focus on an itemgroup (sets the store which triggers the watch)
 const focusOnItem = (item: any) => {
-  dataStore.set_focused_item(item);
+  dataStore.set_focused_itemgroup(item);
 };
 
 const clearHighlight = () => {
   // Restore the original icon on the previously highlighted marker
-  if (highlightedItem.value) {
-    const markerData = markers.value.get(highlightedItem.value);
+  if (highlightedKey.value) {
+    const markerData = markers.value.get(highlightedKey.value);
     if (markerData) {
       markerData.marker.setIcon(markerData.originalIcon);
     }
-    highlightedItem.value = null;
+    highlightedKey.value = null;
   }
 };
 
-// Watch for focused_item changes from the store
-watch(() => dataStore.focused_item, (newItem, oldItem) => {
+// Watch for focused_itemgroup changes from the store (e.g. after a card/list click)
+watch(() => dataStore.focused_itemgroup, (newItem, oldItem) => {
   // Only react if there's actually a change
   if (newItem === oldItem) return;
-  
+
   if (newItem && props.isMapOpen) {
     // Clear previous highlight
-    if (highlightedItem.value && highlightedItem.value !== newItem) {
-      const markerData = markers.value.get(highlightedItem.value);
+    if (highlightedKey.value && highlightedKey.value !== itemKey(newItem)) {
+      const markerData = markers.value.get(highlightedKey.value);
       if (markerData) {
         markerData.marker.setIcon(markerData.originalIcon);
       }
-      highlightedItem.value = null;
+      highlightedKey.value = null;
     }
-    // Now focus on the new item
+    // Now focus on the new itemgroup
     focusOnItemInternal(newItem);
   } else if (!newItem) {
     clearHighlight();
@@ -290,26 +339,49 @@ defineExpose({
   border: none !important;
 }
 
-.map-marker-icon .mdi {
-  font-size: 32px;
-  color: var(--color-icon-outline);
+.map-marker {
+  position: relative;
+  width: 32px;
+  height: 32px;
 }
 
-.highlighted-marker-icon .mdi {
-  filter: drop-shadow(0 0 4px var(--color-orange)) drop-shadow(0 0 8px rgba(var(--color-orange), 0.8));
-  color: var(--color-orange);
+/* Farbiger "Klecks" hinter dem Symbol: organische Blob-Form (via Maske),
+   halbtransparent in der Kategoriefarbe. Etwas größer als der Marker, damit
+   das Symbol bequem innerhalb der Form sitzt. Form + Farbe kommen inline. */
+.map-marker__blob {
+  position: absolute;
+  inset: -4px;
+  opacity: 0.65;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.35));
 }
 
-/* TODO insert color codes for map marker cluster of different sizes here :
-  .marker-cluster-small {
-    background-color: rgba(31, 120, 180, 0.6) !important;
-  }
-  .marker-cluster-small div {
-    background-color: rgba(31, 120, 180, 1) !important;
-    color: var(--color-offwhite);
-  } */
+.map-marker__symbol {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 70%;
+  height: 70%;
+  object-fit: contain;
+  pointer-events: none;
+}
 
-  /* Basis-Stile für statische Klassen */
+/* Hauptkategorie-Icon ohne Klecks: Symbol füllt den ganzen Marker */
+.map-marker--plain .map-marker__symbol {
+  width: 100%;
+  height: 100%;
+}
+
+/* Hervorgehobener Marker (z. B. nach Karten-/Listen-Klick) */
+.highlighted-marker-icon .map-marker {
+  filter: drop-shadow(0 0 6px var(--color-orange));
+  transform: scale(1.15);
+}
+.highlighted-marker-icon .map-marker__blob {
+  opacity: 0.9;
+}
+
+  /* Marker-Cluster: distinktes Blau je nach Anzahl der Einträge */
   /* SMALL: < 10 items */
   .marker-cluster-small {
     background-color: rgba(170, 210, 255, 0.6) !important;
@@ -339,5 +411,16 @@ defineExpose({
     color: var(--color-anthrazit);
     font-weight: bold;
   }
-  /**/
+
+/* Leaflet Zoom-Buttons an das neutrale Markendesign angleichen */
+.leaflet-bar a,
+.leaflet-bar a:link {
+  background-color: var(--color-offwhite);
+  color: var(--color-anthrazit);
+  border-bottom-color: rgba(0, 0, 0, 0.12);
+}
+.leaflet-bar a:hover {
+  background-color: #ececec;
+  color: var(--color-anthrazit);
+}
 </style>

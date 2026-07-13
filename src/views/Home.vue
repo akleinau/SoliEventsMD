@@ -99,7 +99,7 @@ onBeforeUnmount(() => {
                 :class="{ 'datatable--collapsed': isMapOpen}"
                 :viewMode="dataStore.getViewMode()"
                 :items="dataStore.get_filtered_data()"
-                @item-clicked="handleItemClick"
+                @itemgroup-clicked="handleItemClick"
             />
 
           </div>
@@ -114,8 +114,14 @@ onBeforeUnmount(() => {
             'toggle-map-button--open': isMapOpen,
             'toggle-map-button--mobile-open': isMobile && isMapOpen
           }"
+          :title="isMapOpen ? 'Karte ausblenden' : 'Karte anzeigen'"
+          :aria-label="isMapOpen ? 'Karte ausblenden' : 'Karte anzeigen'"
         >
-          {{ isMapOpen ? (isMobile ? '▼ Karte ausblenden' : '▶ Karte ausblenden') : (isMobile ? '▲ Karte anzeigen' : '◀ Karte anzeigen') }}
+          <v-icon size="40">{{
+            isMapOpen
+              ? (isMobile ? 'mdi-menu-down' : 'mdi-menu-right')
+              : (isMobile ? 'mdi-menu-up' : 'mdi-menu-left')
+          }}</v-icon>
         </button>
 
         <!--Datamap /-->
@@ -241,15 +247,23 @@ onBeforeUnmount(() => {
   right: 0;
   top: 50%;
   transform: translateY(-50%);
-  padding: 10px;
-  background-color: var(--color-anthrazit); 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 48px;
+  padding: 0;
+  background-color: var(--color-anthrazit);
   color: var(--color-offwhite);
   border: none;
   cursor: pointer;
   z-index: 2;
   border-radius: 4px 0 0 4px;
-  writing-mode: vertical-rl;
-  text-orientation: mixed;
+}
+
+/* Icon hell halten – sonst dunkles Icon auf dunklem Anthrazit-Grund */
+.toggle-map-button .v-icon {
+  color: var(--color-offwhite);
 }
 
 .toggle-map-button--mobile {
@@ -268,8 +282,11 @@ onBeforeUnmount(() => {
     width: 60%;
   }
 
+  /* Bei offener Karte sitzt der Button INNEN an der linken Kante der Karte */
   .toggle-map-button--open {
-    transform: translateY(-50%) translateX(0);
+    right: auto;
+    left: 60%;
+    border-radius: 0 4px 4px 0;
   }
 }
 

@@ -1,19 +1,29 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
+
+const isScrolledDown = ref(false);
+
+// The actual scroller is the ".data-container" in datatable.vue (overflow-y: auto),
+// not the window/body. Listen on and scroll that element instead.
+let container: HTMLElement | null = null;
+
+const onScroll = () => {
+  if (!container) return;
+  isScrolledDown.value = container.scrollTop > 20;
+};
 
 const scrollToTop = () => {
-  window.scrollTo({
-    top: 0,
-    behavior: 'smooth'
-  });
-}
-
-let isScrolledDown = ref(false);
-
-window.onscroll = () => {
-  // This will trigger the reactivity system to update the button visibility
-  isScrolledDown.value = document.body.scrollTop > 20 || document.documentElement.scrollTop > 20
+  container?.scrollTo({ top: 0, behavior: 'smooth' });
 };
+
+onMounted(() => {
+  container = document.querySelector('.data-container');
+  container?.addEventListener('scroll', onScroll, { passive: true });
+});
+
+onUnmounted(() => {
+  container?.removeEventListener('scroll', onScroll);
+});
 
 </script>
 
@@ -22,7 +32,7 @@ window.onscroll = () => {
   <v-btn
     v-show="isScrolledDown"
     class="scroll-up-button"
-    color="var(--color-green)"
+    color="var(--color-anthrazit)"
     @click="scrollToTop"
     icon
     style="position: fixed; bottom:20px; width:50px; margin: 5% auto; left: 0; right: 0; z-index: 1000;  ">
