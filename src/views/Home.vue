@@ -117,7 +117,11 @@ onBeforeUnmount(() => {
           :title="isMapOpen ? 'Karte ausblenden' : 'Karte anzeigen'"
           :aria-label="isMapOpen ? 'Karte ausblenden' : 'Karte anzeigen'"
         >
-          <v-icon size="40">{{ isMapOpen ? 'mdi-menu-right' : 'mdi-menu-left' }}</v-icon>
+          <v-icon size="40">{{
+            isMapOpen
+              ? (isMobile ? 'mdi-menu-down' : 'mdi-menu-right')
+              : (isMobile ? 'mdi-menu-up' : 'mdi-menu-left')
+          }}</v-icon>
         </button>
 
         <!--Datamap /-->
