@@ -183,8 +183,7 @@ const resetFilters = () => {
           @update:modelValue="dataStore.add_filter('Unterkategorie', unterkategorieFilter)">
           <template v-slot:selection="{ item, index }">
             <v-chip v-if="index < 1">
-              <span class="pr-2">{{ item.title }}</span>
-              <v-icon size="x-large" class="pl-2 pr-2">{{ item.raw?.icon }}</v-icon>
+              <span>{{ item.title }}</span>
             </v-chip>
             <span v-if="index === 1" class="text-grey text-caption align-self-center" style="white-space: nowrap;">
               (+{{ unterkategorieFilter.length - 1 }})

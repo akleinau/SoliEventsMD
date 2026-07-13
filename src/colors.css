@@ -1,5 +1,14 @@
+/* Quicksand – selbst gehostet (variable Font, Gewichte 300–700), keine externen Requests */
+@font-face {
+  font-family: 'Quicksand';
+  src: url('./assets/fonts/Quicksand-VariableFont_wght.woff2') format('woff2');
+  font-weight: 300 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
-  /*font-family: system-ui, Avenir, Helvetica, Arial, sans-serif; /* #TODO: ADD QUICKSAND HERE */
+  font-family: 'Quicksand', system-ui, Avenir, Helvetica, Arial, sans-serif;
 
   /* USE COLOR DEFINITIONS LIKE THIS IN OTHER CSS-SECTIONS : 
     color: var(--color-text-main);
@@ -33,6 +42,11 @@
   --color-text-muted: #666666;
 }
 
+
+/* Vuetify setzt die Schriftart selbst auf seinen Komponenten – hier auf Quicksand überschreiben */
+.v-application {
+  font-family: 'Quicksand', system-ui, Avenir, Helvetica, Arial, sans-serif;
+}
 
 .v-icon {
   color: var(--color-icon-outline);

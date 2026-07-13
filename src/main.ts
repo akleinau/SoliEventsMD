@@ -12,7 +12,9 @@ import { aliases, mdi } from 'vuetify/iconsets/mdi'
 import '@mdi/font/css/materialdesignicons.css' // Ensure you are using css-loader
 import './colors.css' // load brand colors
 
-export default createVuetify({
+const vuetify = createVuetify({
+  components,
+  directives,
   icons: {
     defaultSet: 'mdi',
     aliases,
@@ -20,11 +22,6 @@ export default createVuetify({
       mdi,
     }
   },
-})
-
-const vuetify = createVuetify({
-  components,
-  directives
 })
 
 const app = createApp(App)
