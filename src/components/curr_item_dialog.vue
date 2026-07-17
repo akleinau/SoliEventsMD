@@ -3,6 +3,8 @@
 import { computed, onMounted, ref, watch } from "vue";
 import { useDataStore } from "../stores/dataStore.ts";
 import { MAIN_CATEGORIES, SUB_CATEGORIES } from "../constants/categoryConfig";
+import SubcategoriesEditor from "./subcategories_editor.vue";
+import TimeSlotEditor from "./timeslot_editor.vue";
 
 const props = withDefaults(defineProps<{
   attachTarget?: string;
@@ -248,7 +250,7 @@ const copyToClipboard = async() => {
   }
 }
 
-const sortedWochentage = dataStore.getSortedWochentageOptionen();
+const sortedWochentageOptionen = dataStore.getSortedWochentageOptionen();
 
 </script>
 
@@ -411,7 +413,10 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
                 class="ml-1" />
           </div>
           <div style="width: 10px"></div>
-          <div class="row3-container">
+          <SubcategoriesEditor
+            :editableItemGroup="editableItemGroup">
+          </SubcategoriesEditor>
+          <!--div class="row3-container">
             <span style="color: grey;">Unterkategorie: </span>
             <select v-model="editableItemGroup.Unterkategorie">
               <option v-for="option in SUB_CATEGORIES" :value="option.path" :placeholder="editableItemGroup.Unterkategorie">
@@ -424,7 +429,7 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
                   <v-icon v-else v-bind="props" size="x-large" color="black" class="dialog-title__icon">{{ dataStore.getSubCategoryIcon(editableItemGroup.Unterkategorie) }}</v-icon>
               </template>
             </v-tooltip>
-          </div>
+          </div-->
           
         </div>
       </v-card-title>
@@ -453,21 +458,15 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
               </div>
             </div>
 
-            <div v-if="editableItemGroup.Kategorie != 'online'" v-for="(timeslot, index) in (editableItemGroup.timeSlots as any[])" :key="index" class="mb-1 col-container">
+            <div v-if="editableItemGroup.Kategorie != 'online'" v-for="(timeslot, index) in (editableItemGroup.timeSlots as any)" :key="index" class="mb-1 col-container">
               <v-icon>mdi-calendar</v-icon>
               <div class="timeslot-row">
-                <input class="timeslot-rhythm" v-model="(timeslot as any).Rhythmus" placeholder="Rhythmus" type="text" />
-                <select class="timeslot-day" v-model="(timeslot as any).Wochentag">
-                  <option v-for="option in sortedWochentage" :value="option.value" :placeholder="(timeslot as any).Wochentag">
-                    {{ option.title }}
-                  </option>
-                </select>
-                <input class="timeslot-time" v-model="(timeslot as any).Uhrzeit_Start" placeholder="Start" type="text" />
-                <span>bis</span>
-                <input class="timeslot-time" v-model="(timeslot as any).Uhrzeit_Ende" placeholder="Ende" type="text" />
-                <span>Uhr</span>
+                <TimeSlotEditor
+                  :key="index"
+                  :timeslot="timeslot"
+                />                
                 <v-icon
-                  v-if="(editableItemGroup.timeSlots as any[]).length > 1"
+                  v-if="(editableItemGroup.timeSlots as any).length > 1"
                   size="small"
                   class="timeslot-remove"
                   title="Zeit entfernen"
