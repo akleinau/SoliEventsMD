@@ -10,82 +10,67 @@ const props = defineProps({
   timeslot: { type: Object, required: true }
 })
 
+const sortedWochentage = dataStore.getSortedWochentageOptionen();
+
+// 0. Suche im Nachschlage-Objekt vorbereiten --> alle Keys und Values vertauschen
+const sortedWochentageOptionen = {}
+const reverseSortedWochentageOptionen = {};
+sortedWochentage.forEach(opt => {
+  reverseSortedWochentageOptionen[opt.title] = opt.value;
+  sortedWochentageOptionen[opt.value] = opt.title;
+});
+
+const sortedWochentageOptionenTitles = sortedWochentage.map(opt => opt.title);
+
 // Helper: Extrahiert nur Wochentags-Namen (ohne Zahlen)
-const extractDayNames = () => {
-  var str = props.timeslot.Wochentag
-  if (!str) return []
-  return str
-    .split(';')
-    .map(s => s.trim())
-    .filter(Boolean)
-    .map(part => {
-      const match = part.match(/^\d+\s+(.+)$/)
-      return match ? match[1].trim() : part.trim()
-    })
+const extractDayNames = (dayNames) => {
+  const result = dayNames.map(title => sortedWochentageOptionen[title]);  
+  return result;
 }
 
-// Helper: Baut String mit originalen/beibehaltenen Nummern neu zusammen
-const rebuildWochentagString = (newDayNames) => {
-  // 1. Existing entries parsen
-  const existing = (props.timeslot.Wochentag || '')
-    .split(';')
-    .map(s => s.trim())
-    .filter(Boolean)
-    .map(part => {
-      const match = part.match(/^(\d+)\s+(.+)$/)
-      return match
-        ? { number: parseInt(match[1]), tag: match[2].trim() }
-        : { number: 0, tag: part }
-    })
+// Helper: Baut ausgewählte Wochentage mit Hilfs-Nummern neu zusammen
+const rebuildDayNames = (selectedDayNames) => {
+  console.log(selectedDayNames);
+  // 1. Wert(e) ersetzen
+  const fullDayNameValues = selectedDayNames.map(title => reverseSortedWochentageOptionen[title]);
+  
+  // 2. Werte sortieren
+  const sortedFullDayNameValues = fullDayNameValues.sort();
 
-  // 2. Lookup: tag → number
-  const numberByTag = {}
-  existing.forEach(e => {
-    if (!(e.tag in numberByTag)) numberByTag[e.tag] = e.number
-  })
+  // 3. als String konvertieren mit ";" als Trennzeichen
+  const arrayedFullDayNameValues = sortedFullDayNameValues.join("; ");
 
-  // 3. Nächste Nummer für neue Einträge (max + 1)
-  const maxNumber = existing.length > 0
-    ? Math.max(...existing.map(e => e.number))
-    : 0
-  let nextNumber = maxNumber + 1
-
-  // 4. Neu aufbauen
-  return newDayNames.map(tag => {
-    if (tag in numberByTag) {
-      return `${numberByTag[tag]} ${tag}`
-    }
-    return `${nextNumber++} ${tag}`
-  }).join('; ')
+  return arrayedFullDayNameValues;
 }
 
 const selectedDays = computed({
   get: () => {
-    const dayNames = extractDayNames(props.timeslot.Wochentag)
-    // Finde passende Objekte aus sortedWochentageOptionen
-    return sortedWochentageOptionen.filter(opt => dayNames.includes(opt.title)).map(opt => opt.title)
+    const arr = Array.isArray(props.timeslot.Wochentag)
+    ? props.timeslot.Wochentag
+    : props.timeslot.Wochentag.split('; ').map(s => s.trim());
+  
+    const dayNames = extractDayNames(arr);
+    return dayNames;
   },
-  set: (newArray) => {
-    // newArray = [{value:'montag', title:'Montag'}, ...]
-    const dayNames = newArray.map(obj => obj.title)
-    props.timeslot.Wochentag = rebuildWochentagString(dayNames)
+  set: (selectedDayNames) => {    
+    const newDayNames = rebuildDayNames(selectedDayNames)
+    props.timeslot.Wochentag = newDayNames;
   }
 })
 
-const sortedWochentageOptionen = dataStore.getSortedWochentageOptionen();
-const sortedWochentageOptionenTitles = sortedWochentageOptionen.map(opt => opt.title);
 
 </script>
 
-<template>
+<template>              
   <div class="timeslot-row">
     <input class="timeslot-rhythm" v-model="timeslot.Rhythmus" placeholder="Rhythmus" type="text" />
     <VueMultiselect 
         v-model="selectedDays" 
         :options="sortedWochentageOptionenTitles"
+        :searchable="false"
         :multiple="true"
-        :close-on-select="false"
-        placeholder="Wochentage"
+        :close-on-select="false"        
+        placeholder="Wochentag(e)"
         class="timeslot-day">
     </VueMultiselect>
     <input class="timeslot-time" v-model="timeslot.Uhrzeit_Start" placeholder="Start" type="text" />
