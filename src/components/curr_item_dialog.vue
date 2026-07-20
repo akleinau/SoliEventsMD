@@ -266,7 +266,7 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
     <!-- Anzeigemodus (View) -->
     <v-card v-if="itemgroup && !isEditing"
       :style="{
-        'background': '#f8f7f7'
+        'background': 'var(--color-offwhite)'
       }">    
       <v-card-title class="dialog-title"
         :style="{
@@ -277,7 +277,7 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
 
           <v-tooltip :text="dataStore.getCategoryName(itemgroup.Kategorie ?? '')" location="top" open-on-click>
             <template v-slot:activator="{ props }">
-                <img v-if="dataStore.getCategorySvg(itemgroup.Kategorie) != ''" v-bind="props" class="dialog-title__icon" color="#3b3b3b" :src="dataStore.getCategorySvg(itemgroup.Kategorie)"/>
+                <img v-if="dataStore.getCategorySvg(itemgroup.Kategorie) != ''" v-bind="props" class="dialog-title__icon" color="var(--color-anthrazit)" :src="dataStore.getCategorySvg(itemgroup.Kategorie)"/>
                 <v-icon v-else v-bind="props" size="x-large" color="black" class="dialog-title__icon">{{ dataStore.getCategoryIcon(itemgroup.Kategorie) }}</v-icon>
             </template>
           </v-tooltip>
@@ -287,7 +287,7 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
           <template v-for="subcategoryName in dataStore.getSubCategoryNames(itemgroup.Unterkategorie)" :key="subcategoryName">
             <v-tooltip :text="dataStore.getSubCategoryName(subcategoryName)" location="top" open-on-click>
               <template v-slot:activator="{ props }">
-                <img v-if="dataStore.getSubCategorySvg(subcategoryName) != ''" v-bind="props" class="dialog-title__icon" color="#3b3b3b" :src="dataStore.getSubCategorySvg(subcategoryName)"/>
+                <img v-if="dataStore.getSubCategorySvg(subcategoryName) != ''" v-bind="props" class="dialog-title__icon" color="var(--color-anthrazit)" :src="dataStore.getSubCategorySvg(subcategoryName)"/>
                 <v-icon v-else v-bind="props" size="x-large" color="black" class="dialog-title__icon">
                   {{ dataStore.getSubCategoryIcon(subcategoryName) }}
                 </v-icon>
@@ -379,7 +379,7 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
     <!-- Bearbeitungsmodus (Edit) -->
     <v-card v-if="editableItemGroup && isEditing"
       :style="{
-        'background': '#f8f7f7'
+        'background': 'var(--color-offwhite)'
       }"
       :class=" (editableItemGroup?.Kategorie == '') ? 'empty-card' : ''">
       <v-card-title class="dialog-title" :class="isMobile ? 'dialog-title__edit' : 'dialog-title'"
@@ -395,7 +395,7 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
           </select>
           <v-tooltip :text="dataStore.getCategoryName(editableItemGroup.Kategorie ?? '')" location="top" open-on-click>
             <template v-slot:activator="{ props }">
-                <img v-if="dataStore.getCategorySvg(editableItemGroup.Kategorie) != ''" v-bind="props" class="dialog-title__icon" color="#3b3b3b" :src="dataStore.getCategorySvg(editableItemGroup.Kategorie)"/>
+                <img v-if="dataStore.getCategorySvg(editableItemGroup.Kategorie) != ''" v-bind="props" class="dialog-title__icon" color="var(--color-anthrazit)" :src="dataStore.getCategorySvg(editableItemGroup.Kategorie)"/>
                 <v-icon v-else v-bind="props" size="x-large" color="black" class="dialog-title__icon">{{ dataStore.getCategoryIcon(editableItemGroup.Kategorie) }}</v-icon>
             </template>
           </v-tooltip>
@@ -420,7 +420,7 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
             </select>
             <v-tooltip :text="dataStore.getSubCategoryName(editableItemGroup.Unterkategorie ?? '')" location="top" open-on-click>
               <template v-slot:activator="{ props }">
-                  <img v-if="dataStore.getSubCategorySvg(editableItemGroup.Unterkategorie) != ''" v-bind="props" class="dialog-title__icon" color="#3b3b3b" :src="dataStore.getSubCategorySvg(editableItemGroup.Unterkategorie)"/>
+                  <img v-if="dataStore.getSubCategorySvg(editableItemGroup.Unterkategorie) != ''" v-bind="props" class="dialog-title__icon" color="var(--color-anthrazit)" :src="dataStore.getSubCategorySvg(editableItemGroup.Unterkategorie)"/>
                   <v-icon v-else v-bind="props" size="x-large" color="black" class="dialog-title__icon">{{ dataStore.getSubCategoryIcon(editableItemGroup.Unterkategorie) }}</v-icon>
               </template>
             </v-tooltip>
@@ -768,7 +768,7 @@ input, textarea {
   min-height: 120px;
   padding: 10px;
   padding-right: 40px; /* Platz für den Copy-Button */
-  border: 1px solid #ddd;
+  border: 1px solid var(--color-border);
   border-radius: 4px;
   font-family: monospace;
   resize: vertical; /* Nur vertikales Skalieren erlauben */
@@ -778,8 +778,8 @@ input, textarea {
   position: absolute;
   top: 8px;
   right: 8px;
-  background: #f0f0f0;
-  border: 1px solid #ddd;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
   border-radius: 4px;
   padding: 4px 8px;
   cursor: pointer;
@@ -788,7 +788,7 @@ input, textarea {
 }
 
 .copy-button:hover {
-  background: #e0e0e0;
+  background: var(--color-surface-3);
 }
 
 </style>
