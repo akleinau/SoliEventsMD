@@ -15,7 +15,7 @@ import MainLogo from '/src/assets/logo/Bildmarke_mit_Outlines_grün.svg';
             height="60"
             min-height="40"
         />
-        <h2><router-link to="/alles">Magdeburg <b style="color: var(--color-green)">teilt!</b></router-link></h2>
+        <h2><router-link to="/">Magdeburg <b style="color: var(--color-green)">teilt!</b></router-link></h2>
       </div>
 
       <div class="categories-container">

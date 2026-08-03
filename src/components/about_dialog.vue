@@ -1,5 +1,8 @@
 <script setup lang="ts">
 
+const props = defineProps<{
+  buttonLabel: string;
+}>();
 </script>
 
 <template>
@@ -11,8 +14,10 @@
                 density="comfortable"
                 icon="mdi-information-variant"
                 variant="outlined"
+                class="icon-right-btn"
             >
             </v-btn>
+            {{ buttonLabel }}
         </template>
 
         <template v-slot:default="{ isActive }">
@@ -68,6 +73,12 @@
   height: auto !important;
 }
 
+.icon-right-btn {
+    display: inline-flex;
+    flex-direction: row;        /* Icon links → Text rechts */
+    align-items: center;        /* Vertikal zentriert */
+    gap: 8px;                   /* Abstand zwischen Icon und Text */
+}
 </style>
 
 

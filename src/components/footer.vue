@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 const links = [
-  { text: 'Home', url: '/home', icon: 'mdi-home' },
+  { text: 'Start', url: '/', icon: 'mdi-home' },
   { text: 'Kontaktformular', url: '/kontakt', icon: 'mdi-email' },
   { text: 'Impressum', url: '/impressum', icon: 'mdi-information' },
   { text: 'Datenschutz', url: '/datenschutz', icon: 'mdi-shield-lock' },

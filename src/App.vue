@@ -22,11 +22,13 @@ import Footer from "./components/footer.vue";
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  min-height: 100dvh;
   background-color: var(--color-offwhite);
 }
 
 .main-container {
   flex: 1 1 0;
+  overflow-y: auto;
 }
 
 </style>
