@@ -36,7 +36,7 @@ onUnmounted(() => {
     @click="scrollToTop"
     icon
     style="position: fixed; bottom:20px; width:50px; margin: 5% auto; left: 0; right: 0; z-index: 1000;  ">
-    <v-icon>mdi-arrow-up</v-icon>
+    <v-icon color="var(--color-white)">mdi-arrow-up</v-icon>
   </v-btn>
 
 </template>
