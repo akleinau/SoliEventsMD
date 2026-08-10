@@ -1,23 +1,29 @@
 <script setup lang="ts">
 
 const props = defineProps<{
-  buttonLabel: string;
+  isHeader: boolean;
+  buttonLabel?: string;
 }>();
 </script>
 
 <template>
     <v-dialog max-width="800">
         <template v-slot:activator="{ props: activatorProps }">
-            <v-btn
+            <v-btn                
                 v-bind="activatorProps"
-                color="var(--color-anthrazit)"
                 density="comfortable"
                 icon="mdi-information-variant"
                 variant="outlined"
-                class="icon-right-btn"
             >
             </v-btn>
+            <!-- if button not in header, add text-->
+            <v-btn
+                v-if="!isHeader"
+                v-bind="activatorProps"
+                class="normal-button"             
+            >
             {{ buttonLabel }}
+            </v-btn>
         </template>
 
         <template v-slot:default="{ isActive }">
@@ -67,17 +73,9 @@ const props = defineProps<{
 
 <style scoped>
 
-.v-card-title {
-  white-space: wrap !important;
-  overflow: visible !important;
-  height: auto !important;
-}
-
-.icon-right-btn {
-    display: inline-flex;
-    flex-direction: row;        /* Icon links → Text rechts */
-    align-items: center;        /* Vertikal zentriert */
-    gap: 8px;                   /* Abstand zwischen Icon und Text */
+.normal-button {
+    text-transform: none;
+    box-shadow: none;
 }
 </style>
 

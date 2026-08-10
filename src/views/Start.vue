@@ -26,6 +26,7 @@ const buttonLabel = "Was genau ist 'Magdeburg teilt!' ?"
             <br>
             <div class="start-info">
                 <About_dialog
+                    :isHeader="false"
                     :buttonLabel="buttonLabel" /> <span></span>
             </div>
         </div>

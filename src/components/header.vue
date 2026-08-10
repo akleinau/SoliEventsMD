@@ -23,7 +23,8 @@ import MainLogo from '/src/assets/logo/Bildmarke_mit_Outlines_grün.svg';
       </div>
 
       <div class="dialog-container">
-        <About_dialog />
+        <About_dialog 
+            :isHeader="true" />
         <Translation_dialog />
       </div>
     </div>
