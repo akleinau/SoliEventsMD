@@ -82,6 +82,8 @@ onBeforeUnmount(() => {
 <template>
 
   <div class="home-container">
+    <h1 class="visually-hidden">Soli-Angebote in Magdeburg</h1>
+
     <!--Prepare data /-->
     <Data_loader />
 

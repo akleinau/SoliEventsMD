@@ -12,7 +12,7 @@
             ...oder an kontakt@magdeburg-teilt.de        
         </div>
 
-        <iframe class="myframe" src="https://cloud.magdeburg.jetzt/apps/forms/embed/sWAy75S2qAq5JeccorqTEQFq"></iframe>
+        <iframe class="myframe" title="Kontakt-Formular von Sharing in Magdeburg" src="https://cloud.magdeburg.jetzt/apps/forms/embed/sWAy75S2qAq5JeccorqTEQFq"></iframe>
     </div>
 
 </template>

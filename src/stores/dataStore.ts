@@ -563,10 +563,13 @@ export const useDataStore = defineStore('dataStore', {
             return getCategoryDefinition(category)?.label ?? 'Neu';
         },
         getCategoryIcon(category?: string | null): string | undefined {
-            return getCategoryDefinition(category)?.icon ?? 'mdi-new-box';
+            return getCategoryDefinition(category)?.icon ?? 'mdi-plus-box';
         },
         getCategorySvg(category?: string | null): string | undefined {
             return getCategoryDefinition(category)?.svg ?? FallbackCategoryIcon;
+        },
+        getCategoryAlt(category?: string | null): string {
+            return getCategoryDefinition(category)?.alt ?? '';
         },
 
         getSubCategoryName(subcategory?: string | null): string | undefined {
@@ -577,6 +580,11 @@ export const useDataStore = defineStore('dataStore', {
         },
         getSubCategorySvg(subcategory?: string | null): string | undefined {
             return getSubCategoryDefinition(subcategory)?.svg ?? getSubCategoryDefinition('retten')?.svg;
+        },
+        getSubCategoryAlt(subcategory?: string | null): string {
+            return getSubCategoryDefinition(subcategory)?.alt
+                ?? getSubCategoryDefinition('retten')?.alt
+                ?? '';
         },
         getSubCategoryNames(subcategories?: string) : string[] | undefined {
             return subcategories?.split(';').map(s => s.trim());

@@ -13,7 +13,7 @@ const links = [
 <template>
     <v-footer class="d-flex align-center justify-center ga-2 flex-wrap flex-grow-1 py-3 myfooter">
 
-        <div class="text-caption font-weight-regular opacity-60">
+        <div class="text-caption font-weight-regular disclaimer">
             Disclaimer: Die auf dieser Website bereitgestellten Informationen und Daten wurden mit größter Sorgfalt zusammengestellt. Dennoch übernehmen wir keine Gewähr für die Richtigkeit, Vollständigkeit oder Aktualität der Angaben.
         </div>
 
@@ -29,10 +29,11 @@ const links = [
             :target="link.url.startsWith('http') ? '_blank' : undefined"
             class="mx-1"
         >
-            <v-icon left class="mr-2">{{ link.icon }}</v-icon> {{ link.text }}
+            <v-icon left class="mr-2" aria-hidden="true">{{ link.icon }}</v-icon> {{ link.text }}<span
+                v-if="link.url.startsWith('http')" class="visually-hidden"> (öffnet in neuem Fenster)</span>
         </v-btn>
 
-        <div class="ma-1" style="color: var(--color-green); text-align: end;">
+        <div class="ma-1 footer-credit" style="text-align: end;">
             {{ new Date().getFullYear() }} — <strong>ein Projekt von Sharing in Magdeburg</strong>
         </div>
 
@@ -46,6 +47,11 @@ const links = [
         max-height: 100px;
     }
 
+    .disclaimer,
+    .footer-credit {
+        color: var(--color-anthrazit);
+        opacity: 1;
+    }
 
     a {
         color: inherit;

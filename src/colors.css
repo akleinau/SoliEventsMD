@@ -29,6 +29,8 @@
   --color-offwhite: #f8f7f7;
   --color-anthrazit: #3b3b3b;
 
+  --color-orange-text: #8f3c00;
+
   --color-icon-outline: #010304;
   --color-white: white;
   --color-button-grey: grey;
@@ -100,6 +102,24 @@ h3 {
   h1 { font-size: 40px; }
   h2 { font-size: 28px; }
   h3 { font-size: 20px; }
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-orange);
+  outline-offset: 2px;
 }
 
 .v-icon {

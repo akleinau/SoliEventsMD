@@ -3,7 +3,7 @@
 </script>
 
 <template>
-    <v-dialog max-width="800">
+    <v-dialog max-width="800" aria-label="Informationen zur Seiten-Nutzung">
         <template v-slot:activator="{ props: activatorProps }">
             <v-btn
                 v-bind="activatorProps"
@@ -11,6 +11,8 @@
                 density="comfortable"
                 icon="mdi-information-variant"
                 variant="outlined"
+                aria-label="Informationen zur Seiten-Nutzung anzeigen"
+                title="Informationen zur Seiten-Nutzung anzeigen"
             >
             </v-btn>
         </template>
@@ -25,6 +27,8 @@
                     color="var(--color-anthrazit)"
                     text="X"
                     variant="outlined"
+                    aria-label="Fenster schließen"
+                    title="Fenster schließen"
                     @click="isActive.value = false"
                     ></v-btn>
                 </template>
