@@ -68,9 +68,36 @@
   font-family: 'Quicksand', system-ui, Avenir, Helvetica, Arial, sans-serif;
 }
 
+/* die ganzen vuetify Klassen haben eigene Schriftarten, die warum auch immer eigene
+Schriftarten überschreiben, also hier nochmal extra */
+.v-application [class*="text-h"],
+.v-application [class*="text-subtitle"],
+.v-application [class*="text-body"],
+.v-application .text-caption,
+.v-application .text-overline,
+.v-application .text-button,
+.v-overlay-container [class*="text-h"],
+.v-overlay-container [class*="text-subtitle"],
+.v-overlay-container [class*="text-body"],
+.v-overlay-container .text-caption,
+.v-overlay-container .text-overline,
+.v-overlay-container .text-button {
+  font-family: 'Quicksand', system-ui, Avenir, Helvetica, Arial, sans-serif;
+}
+
+.leaflet-container,
+.leaflet-container a,
+.leaflet-control,
+.leaflet-popup-content,
+.marker-cluster,
+.marker-cluster div,
+.marker-cluster span {
+  font-family: 'Quicksand', system-ui, Avenir, Helvetica, Arial, sans-serif !important;
+}
+
 /* Typografie-Hierarchie laut Brand Book.
    Gilt für Inhalts-Überschriften; Komponenten mit eigener (scoped) Schriftgröße
-   überschreiben das gezielt (höhere Spezifität). */
+   überschreiben das. */
 h1 {
   font-size: var(--font-size-h1);
   font-weight: var(--font-weight-h1);

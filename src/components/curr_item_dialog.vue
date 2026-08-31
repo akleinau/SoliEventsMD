@@ -2,7 +2,9 @@
 
 import { computed, onMounted, ref, watch } from "vue";
 import { useDataStore } from "../stores/dataStore.ts";
-import { MAIN_CATEGORIES, SUB_CATEGORIES } from "../constants/categoryConfig";
+import { MAIN_CATEGORIES } from "../constants/categoryConfig";
+import SubcategoriesEditor from "./subcategories_editor.vue";
+import TimeSlotDaySelect from "./timeslot_day_select.vue";
 
 const props = withDefaults(defineProps<{
   attachTarget?: string;
@@ -248,8 +250,6 @@ const copyToClipboard = async() => {
   }
 }
 
-const sortedWochentage = dataStore.getSortedWochentageOptionen();
-
 </script>
 
 <template>
@@ -411,19 +411,17 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
                 class="ml-1" />
           </div>
           <div style="width: 10px"></div>
-          <div class="row3-container">
-            <span style="color: grey;">Unterkategorie: </span>
-            <select v-model="editableItemGroup.Unterkategorie">
-              <option v-for="option in SUB_CATEGORIES" :value="option.path" :placeholder="editableItemGroup.Unterkategorie">
-                {{ option.label }}
-              </option>
-            </select>
-            <v-tooltip :text="dataStore.getSubCategoryName(editableItemGroup.Unterkategorie ?? '')" location="top" open-on-click>
-              <template v-slot:activator="{ props }">
-                  <img v-if="dataStore.getSubCategorySvg(editableItemGroup.Unterkategorie) != ''" v-bind="props" class="dialog-title__icon" color="var(--color-anthrazit)" :src="dataStore.getSubCategorySvg(editableItemGroup.Unterkategorie)"/>
-                  <v-icon v-else v-bind="props" size="x-large" color="black" class="dialog-title__icon">{{ dataStore.getSubCategoryIcon(editableItemGroup.Unterkategorie) }}</v-icon>
-              </template>
-            </v-tooltip>
+          <div class="subcat-container">
+            <span style="color: grey; white-space: nowrap;">Unterkategorie: </span>
+            <SubcategoriesEditor :editableItemGroup="editableItemGroup" />
+            <template v-for="subcategoryName in dataStore.getSubCategoryNames(editableItemGroup.Unterkategorie)?.filter(Boolean).slice(0, 2)" :key="subcategoryName">
+              <v-tooltip :text="dataStore.getSubCategoryName(subcategoryName)" location="top" open-on-click>
+                <template v-slot:activator="{ props }">
+                  <img v-if="dataStore.getSubCategorySvg(subcategoryName) != ''" v-bind="props" class="dialog-title__icon" color="var(--color-anthrazit)" :src="dataStore.getSubCategorySvg(subcategoryName)"/>
+                  <v-icon v-else v-bind="props" size="x-large" color="black" class="dialog-title__icon">{{ dataStore.getSubCategoryIcon(subcategoryName) }}</v-icon>
+                </template>
+              </v-tooltip>
+            </template>
           </div>
           
         </div>
@@ -457,11 +455,7 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
               <v-icon>mdi-calendar</v-icon>
               <div class="timeslot-row">
                 <input class="timeslot-rhythm" v-model="(timeslot as any).Rhythmus" placeholder="Rhythmus" type="text" />
-                <select class="timeslot-day" v-model="(timeslot as any).Wochentag">
-                  <option v-for="option in sortedWochentage" :value="option.value" :placeholder="(timeslot as any).Wochentag">
-                    {{ option.title }}
-                  </option>
-                </select>
+                <TimeSlotDaySelect :timeslot="(timeslot as any)" />
                 <input class="timeslot-time" v-model="(timeslot as any).Uhrzeit_Start" placeholder="Start" type="text" />
                 <span>bis</span>
                 <input class="timeslot-time" v-model="(timeslot as any).Uhrzeit_Ende" placeholder="Ende" type="text" />
@@ -588,6 +582,10 @@ input, select, textarea {
   padding: 0px 1px;
   border: 1px solid lightgrey;
   border-radius: 3px;
+  /* form controls otherwise inherit Roboto from Vuetify typography classes
+     (e.g. .text-subtitle-1 on the title col) — pin them to the app font so the
+     edit fields read the same as the rendered card */
+  font-family: 'Quicksand', system-ui, Avenir, Helvetica, Arial, sans-serif;
   /*box-shadow:
     3px 3px 5px rgba(0, 0, 0, 0.2), /* Schatten unten rechts /
     -2px -2px 5px rgba(255, 255, 255, 0.8); /* "Licht" oben links */
@@ -599,6 +597,24 @@ input, textarea {
   max-width: 100%;
 }
 
+/* the category <select> sits in the 20px card-title; pull it back to the 16px used
+   by every other edit field so all input boxes read the same */
+.dialog-title select {
+  font-size: 16px;
+  line-height: 24px;
+}
+
+/* checkboxes must keep their native box size (the width:100% rule above squishes them) */
+input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  appearance: auto;
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
 .dialog-title {
   display: flex;
   text-wrap: initial;
@@ -606,6 +622,9 @@ input, textarea {
   justify-content: space-between;
   column-gap: 16px;
   padding: 15x 15px 15px 15px;
+  overflow: visible;
+  position: relative;
+  z-index: 2;
 }
 
 .dialog-title__icon {
@@ -656,6 +675,14 @@ input, textarea {
   column-gap: 5px;
   align-items: center;
 }
+.subcat-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex: 1 1 auto;
+  column-gap: 5px;
+  min-width: 0;
+}
 .timeslot-row {
   display: flex;
   flex-direction: row;
@@ -670,7 +697,7 @@ input, textarea {
   min-width: 0;
 }
 .timeslot-rhythm {
-  flex: 1 1 0;
+  flex: 0 1 150px;
   min-width: 0;
 }
 .timeslot-time {
