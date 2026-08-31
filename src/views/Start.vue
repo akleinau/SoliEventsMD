@@ -30,7 +30,9 @@ const buttonLabel = "Was genau ist 'Magdeburg teilt!' ?"
                     :buttonLabel="buttonLabel" /> <span></span>
             </div>
         </div>
-        <div class="start-picture pattern-background">
+        <div class="start-picture">
+            <div class="pattern-background">
+            </div>
         </div>
     </div>
 
@@ -44,18 +46,26 @@ const buttonLabel = "Was genau ist 'Magdeburg teilt!' ?"
     padding: 60px 80px;
     gap: 50px;
     flex: 1;
-    height: calc(100dvh - 160px);
-    align-items: center;
+    height: 100dvh;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 767px) {
+    
+.start-container {
+    padding: 40px 25px;
+    gap: 20px;
+}
 }
 
 .start-text {
-    flex: 1 1 0;
+    flex: 40%;
+    height: 100%;
 }
 
 .start-picture {
-    flex: 1;                 /* Nimmt alle verbleibende Breite */
-    min-height: 100%;        /* Füllt die komplette Container-Höhe */
-    border-radius: 8px;      /* Optional: abgerundete Ecken */
+    flex: 40%;                
+    height: auto;        /* Füllt die komplette Container-Höhe */
 }
 
 .start-button {
@@ -72,8 +82,11 @@ const buttonLabel = "Was genau ist 'Magdeburg teilt!' ?"
 
 .pattern-background {
     background-image: url("/src/assets/pattern/Muster_Endlos_Kachel.svg");
-    background-repeat: repeat;
-    background-size: contain;    
+    background-size: cover;    
+    flex: 1;
+    height: auto;
+    border-radius: 8px;
+    order: 1; /* Oder 2, je nach gewünschter Reihenfolge */
 }
 
 </style>
