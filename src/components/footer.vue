@@ -1,8 +1,8 @@
 <script setup lang="ts">
 
 const links = [
-  { text: 'Home', url: '/home', icon: 'mdi-home' },
-  { text: 'Kontaktformular', url: '/kontakt', icon: 'mdi-email' },
+  { text: 'Start', url: '/', icon: 'mdi-home' },
+  { text: 'Feedback', url: '/kontakt', icon: 'mdi-email' },
   { text: 'Impressum', url: '/impressum', icon: 'mdi-information' },
   { text: 'Datenschutz', url: '/datenschutz', icon: 'mdi-shield-lock' },
   { text: 'Sharing in Magdeburg (Telegram)', url: 'https://t.me/sharinginmagdeburg', icon: 'mdi-open-in-new' }
@@ -33,7 +33,7 @@ const links = [
                     v-if="link.url.startsWith('http')" class="visually-hidden"> (öffnet in neuem Fenster)</span>
             </v-btn>
 
-            <div class="footer-credit" style="text-align: end;">
+            <div class="footer-credit">
                 {{ new Date().getFullYear() }} — <strong>ein Projekt von Sharing in Magdeburg</strong>
             </div>
         </div>
@@ -46,12 +46,10 @@ const links = [
 
     .myfooter {
         display: grid;
-        align-content: center;
-        justify-content: center;
         gap: 5px;
-        padding: 5px;
+        padding: 5px 10px;
         border-top: 1px var(--color-text-muted) dotted;
-        max-height: 80px;
+        text-align: center;
     }
 
     .disclaimer,
@@ -60,14 +58,16 @@ const links = [
         opacity: 1;
     }
 
+    /* umbricht, statt die Links übereinander zu schieben */
     .footer_buttons {
-        display: grid;
-        grid-template-columns: repeat(6, auto);
+        display: flex;
+        flex-wrap: wrap;
         gap: 5px;
         align-items: center;
-        justify-items: center;
+        justify-content: center;
         margin: 1px;
     }
+
 
     a {
         color: inherit;
@@ -82,11 +82,26 @@ const links = [
         }
 
         a.v-btn {
-            padding: 0px;
+            --v-btn-height: 28px;
+            padding: 0 6px;
             margin: 0px;
+            font-size: 0.7rem;
+            letter-spacing: 0;
+        }
+
+        a.v-btn :deep(.v-icon) {
+            font-size: 16px;
+            margin-right: 4px !important;
+        }
+
+        .footer_buttons {
+            gap: 2px;
+        }
+
+        .footer-credit {
+            font-size: 0.75rem;
         }
     }
 
 </style>
-
 

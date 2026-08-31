@@ -1,19 +1,30 @@
 <script setup lang="ts">
 
+const props = defineProps<{
+  isHeader: boolean;
+  buttonLabel?: string;
+}>();
 </script>
 
 <template>
     <v-dialog max-width="800" aria-label="Informationen zur Seiten-Nutzung">
         <template v-slot:activator="{ props: activatorProps }">
-            <v-btn
+            <v-btn                
                 v-bind="activatorProps"
-                color="var(--color-anthrazit)"
                 density="comfortable"
                 icon="mdi-information-variant"
                 variant="outlined"
                 aria-label="Informationen zur Seiten-Nutzung anzeigen"
                 title="Informationen zur Seiten-Nutzung anzeigen"
             >
+            </v-btn>
+            <!-- if button not in header, add text-->
+            <v-btn
+                v-if="!isHeader"
+                v-bind="activatorProps"
+                class="normal-button"             
+            >
+            {{ buttonLabel }}
             </v-btn>
         </template>
 
@@ -52,7 +63,7 @@
                     <p>Bitte beachte: Viele Angebote sind an Feiertagen geschlossen!</p>
                     <br>
                     <p>Wenn du eine Frage hast, kannst du eine E-Mail schreiben an: <a href="mailto:kontakt@magdeburg-teilt.de">kontakt@magdeburg-teilt.de</a>
-                    Oder nutze das <router-link to="/kontakt" @click="isActive.value = false">Kontaktformular</router-link>.</p>
+                    Oder nutze das <router-link to="/kontakt" @click="isActive.value = false">Feedback-Formular</router-link>.</p>
                     <br>
                     <p><i>Viel Spaß beim Stöbern wünschen dir
                         <br>
@@ -66,12 +77,10 @@
 
 <style scoped>
 
-.v-card-title {
-  white-space: wrap !important;
-  overflow: visible !important;
-  height: auto !important;
+.normal-button {
+    text-transform: none;
+    box-shadow: none;
 }
-
 </style>
 
 

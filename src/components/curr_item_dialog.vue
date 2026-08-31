@@ -508,7 +508,7 @@ const copyToClipboard = async() => {
                 </v-row>
               </template>
             </v-img>
-            <p style="font-size: 11px"><i>Hinweis: Wenn das Bild ersetzt werden soll, bitte direkt über das <a href="https://cloud.magdeburg.jetzt/apps/forms/embed/sWAy75S2qAq5JeccorqTEQFq" target="_blank">Kontaktformular<span class="visually-hidden"> (öffnet in neuem Fenster)</span></a> hochladen.</i></p>
+            <p style="font-size: 11px"><i>Hinweis: Wenn das Bild ersetzt werden soll, bitte direkt über das <a href="https://cloud.magdeburg.jetzt/apps/forms/embed/sWAy75S2qAq5JeccorqTEQFq" target="_blank">Feedback-Formular<span class="visually-hidden"> (öffnet in neuem Fenster)</span></a> hochladen.</i></p>
           </v-col>
         </v-row>
 
@@ -561,7 +561,7 @@ const copyToClipboard = async() => {
           <div style="text-align: center;">
             <i>
               Schicke die vorbereitete Nachricht komfortabel <b><button type="button" class="link-button" @click="saveEdit">» per Mail «</button></b> ab!
-              <br>Oder kopiere den Text und sende ihn <a href="https://cloud.magdeburg.jetzt/apps/forms/embed/sWAy75S2qAq5JeccorqTEQFq" target="_blank"><b>» per Kontaktformular «</b><span class="visually-hidden"> (öffnet in neuem Fenster)</span></a> ein.
+              <br>Oder kopiere den Text und sende ihn <a href="https://cloud.magdeburg.jetzt/apps/forms/embed/sWAy75S2qAq5JeccorqTEQFq" target="_blank"><b>» per Feedback-Formular «</b><span class="visually-hidden"> (öffnet in neuem Fenster)</span></a> ein.
             </i>
           </div>
           </v-alert>

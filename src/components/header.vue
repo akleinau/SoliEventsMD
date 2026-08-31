@@ -9,12 +9,12 @@ import { brandAssets } from '../constants/brandConfig.ts';
   <header class="header-container">
     <div class="header-top">
       <div class="title-container">        
-        <v-img
+        <img
             :src="brandAssets.bildmarke"
             class="logo"
             alt="Logo von Magdeburg teilt!: eine kantige Sprech-Blase mit einem senkrechten Strich in der Mitte; in der linken Hälfte eine Karotte auf hellem Grund und in der rechten Hälfte ein heller Schrauben-Schlüssel auf farbigem Grund"
         />
-        <h2><router-link to="/alles">Magdeburg <b :style="{ color: brandAssets.color }">teilt!</b></router-link></h2>
+        <h2><router-link to="/">Magdeburg <b :style="{ color: brandAssets.color }">teilt!</b></router-link></h2>
       </div>
 
       <nav class="categories-container" aria-label="Kategorien">
@@ -22,7 +22,8 @@ import { brandAssets } from '../constants/brandConfig.ts';
       </nav>
 
       <div class="dialog-container">
-        <About_dialog />
+        <About_dialog 
+            :isHeader="true" />
         <Translation_dialog />
       </div>
     </div>
@@ -42,7 +43,7 @@ import { brandAssets } from '../constants/brandConfig.ts';
 
 .header-top {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  grid-template-columns: minmax(min-content, 1fr) auto minmax(min-content, 1fr);
   align-items: center;
   column-gap: 12px;
   width: 100%;
@@ -50,7 +51,7 @@ import { brandAssets } from '../constants/brandConfig.ts';
 
 .title-container {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 8fr);
+  grid-template-columns: auto auto;
   gap: 10px;
   margin: 0px;
   justify-content: left;
@@ -61,8 +62,9 @@ import { brandAssets } from '../constants/brandConfig.ts';
 }
 
 .logo {
-  height: 3.75rem;
+  height: 3.2rem;
   min-height: 2.5rem;
+  width: auto;
   flex: 0 0 auto;
 }
 
@@ -96,6 +98,7 @@ a {
   text-decoration: none;
 }
 
+/* zweite Zeile erst, wenn die Icon-Kategorien nicht mehr zwischen Titel und Icons passen (ca. 711px) */
 @media (max-width: 767px) {
   .header-top {
     display: grid;
@@ -109,7 +112,11 @@ a {
   }
 
   .title-container {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 4fr);
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .logo {
+    height: 2.6rem;
   }
 
   .title-container h2 {
