@@ -13,8 +13,10 @@ const selected = computed<string[]>({
 </script>
 
 <template>
-  <v-select placeholder="wählen…" variant="outlined" multiple density="compact" hide-details
-    bg-color="white" :items="items" v-model="selected" class="inline-select subcat-select"
+  <v-select placeholder="wählen…" aria-label="Unterkategorien auswählen (höchstens zwei)"
+    open-text="Unterkategorie-Auswahl öffnen" close-text="Unterkategorie-Auswahl schließen"
+    variant="outlined" multiple density="compact" hide-details
+    bg-color="var(--color-white)" :items="items" v-model="selected" class="inline-select subcat-select"
     :item-props="(item) => ({ disabled: selected.length >= 2 && !selected.includes(item.value) })">
     <template #selection="{ item, index }">
       <span v-if="index < 2" class="sel-text">{{ index > 0 ? ", " : "" }}{{ item.title }}</span>
@@ -29,12 +31,12 @@ const selected = computed<string[]>({
   min-width: 150px;
 }
 .sel-text { white-space: nowrap; }
-.sel-more { white-space: nowrap; color: grey; font-size: 0.8em; align-self: center; }
+.sel-more { white-space: nowrap; color: var(--color-text-muted); font-size: 0.8em; align-self: center; }
 
 /* match the native main-category select next to it */
 .inline-select :deep(.v-field) {
-  background: white;
-  border: 1px solid lightgrey;
+  background: var(--color-white);
+  border: 1px solid var(--color-text-muted);
   border-radius: 3px;
   font-size: inherit;
 }

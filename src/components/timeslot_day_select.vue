@@ -14,8 +14,10 @@ const selectedDays = computed<string[]>({
 </script>
 
 <template>
-  <v-select placeholder="Wochentag" variant="outlined" multiple density="compact" hide-details
-    bg-color="white" :items="items" item-title="title" item-value="value"
+  <v-select placeholder="Wochentag" aria-label="Wochentage auswählen"
+    open-text="Wochentag-Auswahl öffnen" close-text="Wochentag-Auswahl schließen"
+    variant="outlined" multiple density="compact" hide-details
+    bg-color="var(--color-white)" :items="items" item-title="title" item-value="value"
     v-model="selectedDays" class="inline-select timeslot-day-select">
     <template #selection="{ item, index }">
       <span v-if="index < 2" class="sel-text">{{ index > 0 ? ", " : "" }}{{ item.title }}</span>
@@ -30,12 +32,12 @@ const selectedDays = computed<string[]>({
   min-width: 0;
 }
 .sel-text { white-space: nowrap; }
-.sel-more { white-space: nowrap; color: grey; font-size: 0.8em; align-self: center; }
+.sel-more { white-space: nowrap; color: var(--color-text-muted); font-size: 0.8em; align-self: center; }
 
 /* make the field look like the plain text inputs next to it */
 .inline-select :deep(.v-field) {
-  background: white;
-  border: 1px solid lightgrey;
+  background: var(--color-white);
+  border: 1px solid var(--color-text-muted);
   border-radius: 3px;
   font-size: inherit;
 }

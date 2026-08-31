@@ -24,6 +24,7 @@ export interface CategoryDefinition {
   color: string
   icon: string // mdi-icons (automatisch über Vuetify)
   svg: string
+  alt: string
 }
 
 export interface SubCategoryDefinition {
@@ -31,6 +32,7 @@ export interface SubCategoryDefinition {
   path: string
   icon: string // mdi-icons (automatisch über Vuetify)
   svg: string
+  alt: string
 }
 
 export const CATEGORY_CONFIG: Record<string, CategoryDefinition> = {
@@ -40,7 +42,8 @@ export const CATEGORY_CONFIG: Record<string, CategoryDefinition> = {
     textcolor: 'var(--color-purple)', // Textfarbe
     color: 'var(--color-light-purple)', // Hintergrundfarbe
     icon: 'mdi-account-multiple-outline',
-    svg: BegegnungIcon
+    svg: BegegnungIcon,
+    alt: 'Kategorie Begegnung: lilane Sprech-Blase mit lächelndem Gesichtchen drin'
   },
   online: {
     label: 'Online',
@@ -48,7 +51,8 @@ export const CATEGORY_CONFIG: Record<string, CategoryDefinition> = {
     textcolor: 'var(--color-yellow)', // Textfarbe
     color: 'var(--color-light-yellow)', // Hintergrundfarbe
     icon: 'mdi-laptop',
-    svg: OnlineIcon
+    svg: OnlineIcon,
+    alt: 'Kategorie Online: gelber Computermaus-Zeiger'
   },
   lebensmittel: {
     label: 'Lebensmittel',
@@ -56,7 +60,8 @@ export const CATEGORY_CONFIG: Record<string, CategoryDefinition> = {
     textcolor: 'var(--color-orange)', // Textfarbe
     color: 'var(--color-light-orange)', // Hintergrundfarbe
     icon: 'mdi-food-apple-outline',
-    svg: LebensmittelIcon
+    svg: LebensmittelIcon,
+    alt: 'Kategorie Lebensmittel: orange Karotte mit grünen Blättern'
   },
   ressourcen: {
     label: 'Ressourcen',
@@ -64,7 +69,8 @@ export const CATEGORY_CONFIG: Record<string, CategoryDefinition> = {
     textcolor: 'var(--color-green)', // Textfarbe
     color: 'var(--color-light-green)', // Hintergrundfarbe
     icon: 'mdi-recycle',
-    svg: RessourcenIcon
+    svg: RessourcenIcon,
+    alt: 'Kategorie Ressourcen: grüner Schrauben-Schlüssel'
   },
 }
 
@@ -73,37 +79,43 @@ export const SUB_CATEGORY_CONFIG: Record<string, SubCategoryDefinition> = {
     label: 'Aktion',
     path: 'aktion',
     icon: 'mdi-human-handsup',
-    svg: AktionIcon
+    svg: AktionIcon,
+    alt: 'Unterkategorie Aktion: Megafon'
   },
   retten: {
     label: 'retten',
     path: 'retten',
     icon: 'mdi-hand-extended-outline',
-    svg: RettenIcon  // used as generic fallback icon in dataStore
+    svg: RettenIcon,  // used as generic fallback icon in dataStore
+    alt: 'Unterkategorie retten: zwei einfache Pfeile, die im Kreis führen'
   },
   mobilitaet: {
     label: 'Mobilität',
     path: 'mobilitaet',
     icon: 'mdi-bicycle-cargo',
-    svg: MobilitaetIcon
+    svg: MobilitaetIcon,
+    alt: 'Unterkategorie Mobilität: Fahrrad'
   },
   essenausgabe: {
     label: 'Essenausgabe',
     path: 'essenausgabe',
     icon: 'mdi-pot-mix',
-    svg: EssenausgabeIcon
+    svg: EssenausgabeIcon,
+    alt: 'Unterkategorie Essenausgabe: dampfende Suppen-Schüssel'
   },
   futtern: {
     label: 'Futtern',
     path: 'futtern',
     icon: 'mdi-silverware-fork-knife',
-    svg: FutternIcon
+    svg: FutternIcon,
+    alt: 'Unterkategorie Futtern: Messer und Gabel'
   },
   werkstatt: {
     label: 'Werkstatt',
     path: 'werkstatt',
     icon: 'mdi-tools',
-    svg: WerkstattIcon
+    svg: WerkstattIcon,
+    alt: 'Unterkategorie Werkstatt: Handsäge'
   },
   /*schenken: {
     label: 'schenken',
@@ -115,31 +127,36 @@ export const SUB_CATEGORY_CONFIG: Record<string, SubCategoryDefinition> = {
     label: 'spielen',
     path: 'spielen',
     icon: 'mdi-cards-playing-outline',
-    svg: SpielenIcon
+    svg: SpielenIcon,
+    alt: 'Unterkategorie spielen: sechs-seitiger Spiel-Würfel'
   },
   medien: {
     label: 'Medien',
     path: 'medien',
     icon: 'mdi-book-open-variant-outline',
-    svg: MedienIcon
+    svg: MedienIcon,
+    alt: 'Unterkategorie Medien: aufgeschlagenes Buch'
   },
   textilien: {
     label: 'Textilien',
     path: 'textilien',
     icon: 'mdi-tshirt-crew-outline',
-    svg: TextilienIcon
+    svg: TextilienIcon,
+    alt: 'Unterkategorie Textilien: simples T-Shirt'
   },
   moebel: {
     label: 'Möbel',
     path: 'moebel',
     icon: 'mdi-sofa-outline',
-    svg: MoebelIcon
+    svg: MoebelIcon,
+    alt: 'Unterkategorie Möbel: gemütlicher Sessel'
   },
   raum: {
     label: 'Raum',
     path: 'raum',
     icon: 'mdi-home-city-outline',
-    svg: RaumIcon
+    svg: RaumIcon,
+    alt: 'Unterkategorie Raum: Haus mit großer Eingangstür'
   },
 }
 

@@ -36,16 +36,23 @@ const clicked = (itemgroup: any) => {
         <tbody>
           <tr v-for="itemgroup in dataStore.get_grouped_data()" 
             :style="{ 'cursor': 'pointer' }"
-            link @click="clicked(itemgroup)">
+            role="button"
+            tabindex="0"
+            @click="clicked(itemgroup)"
+            @keydown.enter.prevent="clicked(itemgroup)"
+            @keydown.space.prevent="clicked(itemgroup)">
 
             <td class="subcategory-icons__container" :style="{ 'background-color': dataStore.getCardColor(itemgroup.Kategorie ?? '') }">              
                 <template v-for="subcategoryName in dataStore.getSubCategoryNames(itemgroup.Unterkategorie)" :key="subcategoryName">
-                  <v-tooltip :text="dataStore.getSubCategoryName(subcategoryName)" location="top" open-on-click>
+                  <v-tooltip aria-hidden="true" :text="dataStore.getSubCategoryName(subcategoryName)" location="top">
                     <template v-slot:activator="{ props }">
-                      <img v-if="dataStore.getSubCategorySvg(subcategoryName) != ''" v-bind="props" class="subcategory-list__icon" color="var(--color-anthrazit)" :src="dataStore.getSubCategorySvg(subcategoryName)"/>
-                      <v-icon v-else class="subcategory-list__icon" v-bind="props" size="x-large">
-                        {{ dataStore.getSubCategoryIcon(subcategoryName) }}
-                      </v-icon>
+                      <span v-bind="props" class="icon-activator">
+                        <img v-if="dataStore.getSubCategorySvg(subcategoryName) != ''" class="subcategory-list__icon" :src="dataStore.getSubCategorySvg(subcategoryName)" :alt="dataStore.getSubCategoryAlt(subcategoryName)"/>
+                        <v-icon v-else class="subcategory-list__icon" size="x-large"
+                          :aria-label="dataStore.getSubCategoryName(subcategoryName)">
+                          {{ dataStore.getSubCategoryIcon(subcategoryName) }}
+                        </v-icon>
+                      </span>
                     </template>
                   </v-tooltip>
                 </template>
@@ -53,6 +60,7 @@ const clicked = (itemgroup: any) => {
 
             <td :style="{ 'font-weight': 'bold', 'background-color': dataStore.getCardColor(itemgroup.Kategorie ?? '') }">
               {{ itemgroup.Was }}
+              <span class="visually-hidden">, Kategorie {{ dataStore.getCategoryName(itemgroup.Kategorie) }}, Details anzeigen</span>
             </td>
 
             <td>{{ itemgroup.Wer }}</td>
@@ -75,19 +83,26 @@ const clicked = (itemgroup: any) => {
           <tr
             class="empty-card"
             :style="{ 'cursor': 'pointer' }"
-            link @click="clicked(emptyItem)">
+            role="button"
+            tabindex="0"
+            @click="clicked(emptyItem)"
+            @keydown.enter.prevent="clicked(emptyItem)"
+            @keydown.space.prevent="clicked(emptyItem)">
 
             <td>
-              <v-tooltip :text="dataStore.getIconText(emptyItem)" location="top" open-on-click>
+              <v-tooltip aria-hidden="true" :text="dataStore.getIconText(emptyItem)" location="top">
                 <template v-slot:activator="{ props }">
-                  <v-icon class="subcategory-list__icon" v-bind="props" size="x-large" >
-                    {{ dataStore.getIcon(emptyItem) }}
-                  </v-icon>
+                  <span v-bind="props" class="icon-activator">
+                    <v-icon class="subcategory-list__icon" size="x-large"
+                      aria-label="Plus-Symbol: neues Angebot anlegen">
+                      {{ dataStore.getIcon(emptyItem) }}
+                    </v-icon>
+                  </span>
                 </template>
               </v-tooltip>
             </td>
 
-            <td>{{ emptyItem?.Was }}</td>
+            <td>{{ emptyItem?.Was }}<span class="visually-hidden">, neues Angebot anlegen</span></td>
 
             <td>{{ emptyItem?.Wer }}</td>
 
@@ -111,6 +126,16 @@ tbody, tr, td {
 
 th {
   font-weight: bolder !important;
+}
+
+.icon-activator {
+  display: inline-flex;
+  align-items: center;
+}
+
+tbody tr:focus-visible {
+  outline: 3px solid var(--color-orange);
+  outline-offset: -3px;
 }
 
 :deep(.v-table) tr, th, td {

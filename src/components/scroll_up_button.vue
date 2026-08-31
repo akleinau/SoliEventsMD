@@ -33,14 +33,20 @@ onUnmounted(() => {
     v-show="isScrolledDown"
     class="scroll-up-button"
     color="var(--color-anthrazit)"
+    aria-label="Zum Seiten-Anfang springen"
+    title="Zum Seiten-Anfang springen"
     @click="scrollToTop"
     icon
     style="position: fixed; bottom:20px; width:50px; margin: 5% auto; left: 0; right: 0; z-index: 1000;  ">
-    <v-icon color="var(--color-white)">mdi-arrow-up</v-icon>
+    <v-icon class="scroll-up-button__icon">mdi-arrow-up</v-icon>
   </v-btn>
 
 </template>
 
 <style scoped>
+
+.scroll-up-button__icon {
+  color: var(--color-offwhite);
+}
 
 </style>

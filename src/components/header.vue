@@ -6,28 +6,27 @@ import { brandAssets } from '../constants/brandConfig.ts';
 </script>
 
 <template>
-  <div class="header-container">
+  <header class="header-container">
     <div class="header-top">
       <div class="title-container">        
         <v-img
             :src="brandAssets.bildmarke"
             class="logo"
-            height="60"
-            min-height="40"
+            alt="Logo von Magdeburg teilt!: eine kantige Sprech-Blase mit einem senkrechten Strich in der Mitte; in der linken Hälfte eine Karotte auf hellem Grund und in der rechten Hälfte ein heller Schrauben-Schlüssel auf farbigem Grund"
         />
         <h2><router-link to="/alles">Magdeburg <b :style="{ color: brandAssets.color }">teilt!</b></router-link></h2>
       </div>
 
-      <div class="categories-container">
+      <nav class="categories-container" aria-label="Kategorien">
         <Category_menu />
-      </div>
+      </nav>
 
       <div class="dialog-container">
         <About_dialog />
         <Translation_dialog />
       </div>
     </div>
-  </div>
+  </header>
 </template>
 
 <style scoped>
@@ -59,6 +58,12 @@ import { brandAssets } from '../constants/brandConfig.ts';
   padding: 0;
   color: var(--color-anthrazit);
   white-space: nowrap;
+}
+
+.logo {
+  height: 3.75rem;
+  min-height: 2.5rem;
+  flex: 0 0 auto;
 }
 
 .title-container h2 {

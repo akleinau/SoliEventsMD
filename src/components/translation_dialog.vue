@@ -3,7 +3,7 @@
 </script>
 
 <template>
-    <v-dialog max-width="800">
+    <v-dialog max-width="800" aria-label="Sprach-Optionen">
         <template v-slot:activator="{ props: activatorProps }">
             <v-btn
                 v-bind="activatorProps"
@@ -11,6 +11,8 @@
                 density="comfortable"
                 icon="mdi-translate"
                 variant="outlined"
+                aria-label="Sprach-Optionen anzeigen"
+                title="Sprach-Optionen anzeigen"
             >
             </v-btn>
         </template>
@@ -25,6 +27,8 @@
                     color="var(--color-anthrazit)"
                     text="X"
                     variant="outlined"
+                    aria-label="Fenster schließen"
+                    title="Fenster schließen"
                     @click="isActive.value = false"
                     ></v-btn>
                 </template>
@@ -35,7 +39,7 @@
                     <br>
                     <p><b>Information on how to translate in different browsers:</b>
                         <br>
-                        <a href="https://www.online-tech-tips.com/how-to-translate-a-web-page-in-most-any-browser/" target="_blank">https://www.online-tech-tips.com/how-to-translate-a-web-page-in-most-any-browser/</a></p>
+                        <a href="https://www.online-tech-tips.com/how-to-translate-a-web-page-in-most-any-browser/" target="_blank">https://www.online-tech-tips.com/how-to-translate-a-web-page-in-most-any-browser/<span class="visually-hidden"> (öffnet in neuem Fenster)</span></a></p>
                 </v-card-text>
             </v-card>
         </template>
