@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import { computed, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { useDataStore } from '../stores/dataStore.ts'
 import { MAIN_CATEGORIES, type CategoryDefinition } from '../constants/categoryConfig'
 import { useRoute } from 'vue-router';
@@ -19,8 +19,6 @@ const looking_for_options: SelectionOption[] = [
 
 const route = useRoute();
 const looking_for = ref('alles'); // Default value
-
-const isMobile = computed(() => dataStore.isMobile);
 
 // if URL path changes, also change the category class
 watch(
@@ -73,8 +71,8 @@ const apply_filter = () => {
                     'background-color': option.color
                 } as Record<string, string>"
                 @click="toggle">
-              <span v-if="!isMobile" class="category-button__label">{{ option.label }}</span>
-              <v-tooltip v-if="!(option.label == 'Alles' && !isMobile)" :text="option.label" location="bottom" open-on-click>
+              <span class="category-button__label">{{ option.label }}</span>
+              <v-tooltip :text="option.label" location="bottom" open-on-click>
                 <template v-slot:activator="{ props }">
                     <img v-if="option.svg != ''" v-bind="props" class="category-button__icon" color="var(--color-anthrazit)" :src="option.svg"/>
                     <v-icon v-else v-bind="props" class="category-button__icon" color="var(--color-anthrazit)" size="x-large">{{ option.icon }}</v-icon>
@@ -127,7 +125,13 @@ const apply_filter = () => {
 
 
   /* Mobile-Ansicht ToDo: fix code or this section -> use "@media ..."" OR use "".XYZ--mobile" ! */
-  @media (max-width: 767px) {
+  /* gleicher Breakpoint wie die kompakte Kopfzeile in header.vue */
+  @media (max-width: 1249px) {
+    /* nur Icons, damit alle Kategorien in eine Zeile passen */
+    .category-button__label {
+      display: none;
+    }
+
     .v-btn {
       min-width: 0 !important; /* allows the v-btn to be smaller  */
       flex: 1 1 auto;

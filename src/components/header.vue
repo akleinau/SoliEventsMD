@@ -9,11 +9,10 @@ import MainLogo from '/src/assets/logo/Bildmarke_mit_Outlines_grün.svg';
   <div class="header-container">
     <div class="header-top">
       <div class="title-container">        
-        <v-img
+        <img
             :src="MainLogo"
             class="logo"
-            height="60"
-            min-height="40"
+            alt="Magdeburg teilt Logo"
         />
         <h2><router-link to="/">Magdeburg <b style="color: var(--color-green)">teilt!</b></router-link></h2>
       </div>
@@ -44,7 +43,7 @@ import MainLogo from '/src/assets/logo/Bildmarke_mit_Outlines_grün.svg';
 
 .header-top {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  grid-template-columns: minmax(min-content, 1fr) auto minmax(min-content, 1fr);
   align-items: center;
   column-gap: 12px;
   width: 100%;
@@ -52,7 +51,7 @@ import MainLogo from '/src/assets/logo/Bildmarke_mit_Outlines_grün.svg';
 
 .title-container {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 8fr);
+  grid-template-columns: auto auto;
   gap: 10px;
   margin: 0px;
   justify-content: left;
@@ -60,6 +59,11 @@ import MainLogo from '/src/assets/logo/Bildmarke_mit_Outlines_grün.svg';
   padding: 0;
   color: var(--color-anthrazit);
   white-space: nowrap;
+}
+
+.logo {
+  height: 3.2rem;
+  width: auto;
 }
 
 .title-container h2 {
@@ -92,6 +96,7 @@ a {
   text-decoration: none;
 }
 
+/* zweite Zeile erst, wenn die Icon-Kategorien nicht mehr zwischen Titel und Icons passen (ca. 711px) */
 @media (max-width: 767px) {
   .header-top {
     display: grid;
@@ -105,7 +110,11 @@ a {
   }
 
   .title-container {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 4fr);
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .logo {
+    height: 2.6rem;
   }
 
   .title-container h2 {

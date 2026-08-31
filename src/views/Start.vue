@@ -43,29 +43,23 @@ const buttonLabel = "Was genau ist 'Magdeburg teilt!' ?"
 .start-container {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     padding: 60px 80px;
     gap: 50px;
-    flex: 1;
-    height: 100dvh;
-    flex-wrap: wrap;
-}
-
-@media (max-width: 767px) {
-    
-.start-container {
-    padding: 40px 25px;
-    gap: 20px;
-}
+    min-height: 100%;      /* füllt den Bereich zwischen Kopf- und Fußzeile */
+    align-items: center;   /* Text vertikal mittig */
 }
 
 .start-text {
-    flex: 40%;
-    height: 100%;
+    flex: 1 1 380px;
+    min-width: 0;
 }
 
 .start-picture {
-    flex: 40%;                
-    height: auto;        /* Füllt die komplette Container-Höhe */
+    display: flex;
+    flex: 1 1 380px;
+    align-self: stretch;   /* Bild über die volle Höhe */
+    min-height: 200px;     /* nur wirksam, wenn Bild und Text untereinander stehen */
 }
 
 .start-button {
@@ -82,13 +76,25 @@ const buttonLabel = "Was genau ist 'Magdeburg teilt!' ?"
 
 .pattern-background {
     background-image: url("/src/assets/pattern/Muster_Endlos_Kachel.svg");
-    background-size: cover;    
+    background-repeat: repeat;   /* Endlos-Kachel: wiederholen statt eine Kachel aufblasen */
+    background-size: 427px;      /* gleiche Kachelgröße wie im Datenbereich */
     flex: 1;
-    height: auto;
     border-radius: 8px;
-    order: 1; /* Oder 2, je nach gewünschter Reihenfolge */
+}
+
+@media (max-width: 767px) {
+    .start-container {
+        padding: 40px 25px;
+        gap: 20px;
+    }
+
+    .start-picture {
+        min-height: 180px;
+    }
+
+    .pattern-background {
+        background-size: 152px;   /* kleinere Kachel: mehr vom Muster sichtbar */
+    }
 }
 
 </style>
-
-

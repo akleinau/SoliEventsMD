@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import { ref, onMounted, onBeforeUnmount, computed, watch } from 'vue';
+import { ref, onBeforeUnmount, computed, watch } from 'vue';
 import Data_loader from "../components/data_loader.vue";
 import Datatable from "../components/datatable.vue";
 import Datamap from "../components/datamap.vue";
@@ -58,11 +58,6 @@ const onBackdropMouseUp = (e: MouseEvent) => {
   backdropMouseStart.value = null;
 };
 
-onMounted(() => {
-  dataStore.checkIfMobile();
-  window.addEventListener('resize', dataStore.checkIfMobile);
-});
-
 watch([isMobile, isMapOpen], ([mobile, mapOpen]) => {
   if (mobile && mapOpen) {
     document.body.style.overflow = 'hidden';
@@ -73,7 +68,6 @@ watch([isMobile, isMapOpen], ([mobile, mapOpen]) => {
 });
 
 onBeforeUnmount(() => {
-  window.removeEventListener('resize', dataStore.checkIfMobile);
   document.body.style.overflow = '';
 });
 
@@ -117,11 +111,11 @@ onBeforeUnmount(() => {
           :title="isMapOpen ? 'Karte ausblenden' : 'Karte anzeigen'"
           :aria-label="isMapOpen ? 'Karte ausblenden' : 'Karte anzeigen'"
         >
-          <v-icon size="40">{{
-            isMapOpen
-              ? (isMobile ? 'mdi-menu-down' : 'mdi-menu-right')
-              : (isMobile ? 'mdi-menu-up' : 'mdi-menu-left')
-          }}</v-icon>
+          <span v-if="isMobile" class="toggle-map-button__label">
+            <v-icon size="24">mdi-map-marker</v-icon>
+            {{ isMapOpen ? 'Karte schließen' : 'Karte öffnen' }}
+          </span>
+          <v-icon v-else size="40">{{ isMapOpen ? 'mdi-menu-right' : 'mdi-menu-left' }}</v-icon>
         </button>
 
         <!--Datamap /-->
@@ -266,6 +260,16 @@ onBeforeUnmount(() => {
   color: var(--color-offwhite);
 }
 
+.toggle-map-button__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
 .toggle-map-button--mobile {
   top: auto;
   bottom: 10px;
@@ -292,12 +296,20 @@ onBeforeUnmount(() => {
 
 /* Mobile-Ansicht ToDo: fix css-code (in html above) or this css-section -> use "@media ..."" OR use "".XYZ--mobile" ! */
 @media (max-width: 767px) {
+  /* füllt mindestens den ersten Bildschirm; die Seite selbst scrollt */
+  .home-container {
+    height: auto;
+    min-height: 100dvh;
+  }
+
   .content-container {
     flex-direction: column;
+    overflow: visible;   /* sonst kann der Karten-Button nicht "sticky" sein */
   }
 
   .datatable-wrapper {
-    overflow: hidden;
+    overflow: visible;
+    height: auto;
   }
 
   .datamap {
@@ -306,13 +318,20 @@ onBeforeUnmount(() => {
     order: 2;
   }
 
-  .toggle-map-button {
-    position: relative;
+  /* bleibt beim Scrollen am unteren Bildschirmrand, Karte ist immer erreichbar */
+  .toggle-map-button,
+  .toggle-map-button--mobile {
+    position: sticky;
+    top: auto;
+    right: auto;
+    bottom: max(12px, env(safe-area-inset-bottom));
+    transform: none;
     height: 3rem;
     margin-top: 2rem;
     margin-bottom: 1.5rem;
     width: 80vw;
     align-self: center;
+    z-index: 3;
   }
 
   .content-container.map-open.mobile .datatable-wrapper {

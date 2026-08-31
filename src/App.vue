@@ -1,7 +1,21 @@
 <script setup lang="ts">
 
+import { onBeforeUnmount, onMounted } from "vue";
 import Header from "./components/header.vue";
 import Footer from "./components/footer.vue";
+import { useDataStore } from "./stores/dataStore.ts";
+
+const dataStore = useDataStore();
+
+// app-weit, damit auch Seiten ohne Home.vue (z.B. Start) die mobile Ansicht kennen
+onMounted(() => {
+  dataStore.checkIfMobile();
+  window.addEventListener('resize', dataStore.checkIfMobile);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', dataStore.checkIfMobile);
+});
 
 </script>
 
@@ -29,6 +43,14 @@ import Footer from "./components/footer.vue";
 .main-container {
   flex: 1 1 0;
   overflow-y: auto;
+}
+
+/* Mobil: die Seite selbst scrollt, der Footer steht erst am Seitenende */
+@media (max-width: 767px) {
+  .main-container {
+    flex: 1 0 auto;
+    overflow-y: visible;
+  }
 }
 
 </style>
