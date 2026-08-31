@@ -11,7 +11,7 @@ const links = [
 </script>
 
 <template>
-    <v-footer class="d-flex align-center justify-center ga-2 flex-wrap flex-grow-1 py-3 myfooter">
+    <div class="myfooter">
 
         <div class="text-caption font-weight-regular opacity-60">
             Disclaimer: Die auf dieser Website bereitgestellten Informationen und Daten wurden mit größter Sorgfalt zusammengestellt. Dennoch übernehmen wir keine Gewähr für die Richtigkeit, Vollständigkeit oder Aktualität der Angaben.
@@ -19,33 +19,48 @@ const links = [
 
         <v-divider></v-divider>
 
-        <v-btn
-            v-for="link in links"
-            :key="link.text"
-            variant="text"
-            rounded
-            :to="link.url.startsWith('http') ? undefined : link.url"
-            :href="link.url.startsWith('http') ? link.url : undefined"
-            :target="link.url.startsWith('http') ? '_blank' : undefined"
-            class="mx-1"
-        >
-            <v-icon left class="mr-2">{{ link.icon }}</v-icon> {{ link.text }}
-        </v-btn>
+        <div class="footer_buttons">
+            <v-btn
+                v-for="link in links"
+                :key="link.text"
+                variant="text"
+                rounded
+                :to="link.url.startsWith('http') ? undefined : link.url"
+                :href="link.url.startsWith('http') ? link.url : undefined"
+                :target="link.url.startsWith('http') ? '_blank' : undefined"
+            >
+                <v-icon left class="mr-2">{{ link.icon }}</v-icon> {{ link.text }}
+            </v-btn>
 
-        <div class="ma-1" style="color: var(--color-green); text-align: end;">
-            {{ new Date().getFullYear() }} — <strong>ein Projekt von Sharing in Magdeburg</strong>
+            <div style="color: var(--color-green); text-align: end;">
+                {{ new Date().getFullYear() }} — <strong>ein Projekt von Sharing in Magdeburg</strong>
+            </div>
         </div>
 
-    </v-footer>
+    </div>
 
 </template>
 
 <style scoped>
 
     .myfooter {
-        max-height: 100px;
+        display: grid;
+        align-content: center;
+        justify-content: center;
+        gap: 5px;
+        padding: 5px;
+        border-top: 1px var(--color-text-muted) dotted;
+        max-height: 80px;
     }
 
+    .footer_buttons {
+        display: grid;
+        grid-template-columns: repeat(6, auto);
+        gap: 5px;
+        align-items: center;
+        justify-items: center;
+        margin: 1px;
+    }
 
     a {
         color: inherit;

@@ -48,9 +48,9 @@ onMounted(async () => {
 </script>
 
 <template>
-  <v-file-input label="Input the csv here" v-model="files"
+  <!--v-file-input label="Input the csv here" v-model="files"
                 accept=".csv" v-if="dataStore.data == null"
-                @update:modelValue="uploaded"></v-file-input>
+                @update:modelValue="uploaded"></v-file-input-->
 </template>
 
 <style scoped>
