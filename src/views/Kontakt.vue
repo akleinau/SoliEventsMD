@@ -4,7 +4,7 @@
 
 <template>
 
-    <div class="myclass my-5 mx-5 justify-center">
+    <div class="myclass mx-5 justify-center">
         <h1>KONTAKT</h1>
         <div>
             Schreib uns über das folgende Formular. (Bitte warte kurz, falls es dir nicht direkt angezeigt wird.)
@@ -20,7 +20,7 @@
 <style scoped>
 
 .myclass {
-    height: 70vh;
+    height: 65vh;
 }
 
 .myframe {

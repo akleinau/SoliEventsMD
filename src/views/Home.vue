@@ -166,7 +166,7 @@ onBeforeUnmount(() => {
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: 80vh;
+  height: 82vh;
 }
 
 .content-container {

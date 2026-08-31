@@ -4,7 +4,7 @@
 
 <template>
     
-    <div class="my-5 mx-5">
+    <div class="myClass mx-5">
 
         <h1 class="wrap-it">DATENSCHUTZ&shy;ERKLÄRUNG</h1>
 
@@ -61,6 +61,11 @@
 </template>
 
 <style scoped>
+
+.myClass {
+  height: 82vh;
+  overflow: scroll;
+}
 
 .wrap-it {
     word-wrap: break-word;
