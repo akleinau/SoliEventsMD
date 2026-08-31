@@ -2,7 +2,9 @@
 
 import { computed, onMounted, ref, watch } from "vue";
 import { useDataStore } from "../stores/dataStore.ts";
-import { MAIN_CATEGORIES, SUB_CATEGORIES } from "../constants/categoryConfig";
+import { MAIN_CATEGORIES } from "../constants/categoryConfig";
+import SubcategoriesEditor from "./subcategories_editor.vue";
+import TimeSlotDaySelect from "./timeslot_day_select.vue";
 
 const props = withDefaults(defineProps<{
   attachTarget?: string;
@@ -38,6 +40,12 @@ watch(() => active.value, (newValue) => {
 })
 
 const itemgroup = computed(() => dataStore.current_itemgroup)
+
+const dialogLabel = computed(() => {
+  if (isNew.value) return 'Neues Angebot anlegen'
+  const was = itemgroup.value?.Was ?? 'Angebot'
+  return isEditing.value ? 'Angebot bearbeiten: ' + was : 'Angebot: ' + was
+})
 
 const isMobile = computed(() => dataStore.isMobile)
 
@@ -248,14 +256,13 @@ const copyToClipboard = async() => {
   }
 }
 
-const sortedWochentage = dataStore.getSortedWochentageOptionen();
-
 </script>
 
 <template>
   <v-dialog 
     v-model="active" 
     class="dialog-container" 
+    :aria-label="dialogLabel"
     :attach="props.attachTarget" 
     :contained="true" 
     :scrim="false"
@@ -275,20 +282,20 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
         <div class="col-container">
           <span>{{ dataStore.getCategoryName(itemgroup.Kategorie) }}</span>
 
-          <v-tooltip :text="dataStore.getCategoryName(itemgroup.Kategorie ?? '')" location="top" open-on-click>
+          <v-tooltip aria-hidden="true" :text="dataStore.getCategoryName(itemgroup.Kategorie ?? '')" location="top">
             <template v-slot:activator="{ props }">
-                <img v-if="dataStore.getCategorySvg(itemgroup.Kategorie) != ''" v-bind="props" class="dialog-title__icon" color="var(--color-anthrazit)" :src="dataStore.getCategorySvg(itemgroup.Kategorie)"/>
-                <v-icon v-else v-bind="props" size="x-large" color="black" class="dialog-title__icon">{{ dataStore.getCategoryIcon(itemgroup.Kategorie) }}</v-icon>
+                <img v-if="dataStore.getCategorySvg(itemgroup.Kategorie) != ''" v-bind="props" class="dialog-title__icon" color="var(--color-anthrazit)" :src="dataStore.getCategorySvg(itemgroup.Kategorie)" :alt="dataStore.getCategoryAlt(itemgroup.Kategorie)"/>
+                <v-icon v-else v-bind="props" size="x-large" color="black" class="dialog-title__icon" :aria-label="dataStore.getCategoryName(itemgroup.Kategorie ?? '')">{{ dataStore.getCategoryIcon(itemgroup.Kategorie) }}</v-icon>
             </template>
           </v-tooltip>
         </div>
 
         <div class="col-container justify-end" style="display: flex; gap: 8px;">
           <template v-for="subcategoryName in dataStore.getSubCategoryNames(itemgroup.Unterkategorie)" :key="subcategoryName">
-            <v-tooltip :text="dataStore.getSubCategoryName(subcategoryName)" location="top" open-on-click>
+            <v-tooltip aria-hidden="true" :text="dataStore.getSubCategoryName(subcategoryName)" location="top">
               <template v-slot:activator="{ props }">
-                <img v-if="dataStore.getSubCategorySvg(subcategoryName) != ''" v-bind="props" class="dialog-title__icon" color="var(--color-anthrazit)" :src="dataStore.getSubCategorySvg(subcategoryName)"/>
-                <v-icon v-else v-bind="props" size="x-large" color="black" class="dialog-title__icon">
+                <img v-if="dataStore.getSubCategorySvg(subcategoryName) != ''" v-bind="props" class="dialog-title__icon" color="var(--color-anthrazit)" :src="dataStore.getSubCategorySvg(subcategoryName)" :alt="dataStore.getSubCategoryAlt(subcategoryName)"/>
+                <v-icon v-else v-bind="props" size="x-large" color="black" class="dialog-title__icon" :aria-label="dataStore.getSubCategoryName(subcategoryName)">
                   {{ dataStore.getSubCategoryIcon(subcategoryName) }}
                 </v-icon>
               </template>
@@ -319,12 +326,12 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
             
             <div v-if="itemgroup.Kommentar != ''" class="mb-1 col-container"> <v-icon>mdi-comment</v-icon> <div>
               <template v-for="(tok, i) in linkifyComment(itemgroup.Kommentar ?? '')" :key="i">
-                <a v-if="tok.type === 'link'" :href="tok.value" target="_blank" rel="noopener noreferrer">{{ tok.value }}</a>
+                <a v-if="tok.type === 'link'" :href="tok.value" target="_blank" rel="noopener noreferrer">{{ tok.value }}<span class="visually-hidden"> (öffnet in neuem Fenster)</span></a>
                 <template v-else>{{ tok.value }}</template>
               </template>
             </div></div>
             <div v-if="itemgroup.Kontakt != ''" class="mb-1 col-container"> <v-icon>mdi-email</v-icon> <div>{{ itemgroup.Kontakt }}</div></div>
-            <div class="mt-5"> <a :href="itemgroup.Link" target="_blank"> {{ itemgroup.Link }} </a> </div>
+            <div class="mt-5"> <a :href="itemgroup.Link" target="_blank"> {{ itemgroup.Link }} <span class="visually-hidden"> (öffnet in neuem Fenster)</span></a> </div>
           </v-col>
 
           <v-col v-if="showWerbegrafik" cols="12" md="4">
@@ -347,11 +354,11 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
         <v-row class="edit-info-container">
           <p
               v-if="!isVerificationStale"
-              class="text-grey-darken-1"
+              class="verification-note"
           >
             Letzte Überprüfung: {{ verificationLabel ?? 'keine Angabe' }}
           </p>
-          <v-alert class="px-2 py-2"
+          <v-alert class="px-2 py-2 warning-alert"
               v-else
               type="warning"
               variant="tonal"
@@ -387,43 +394,42 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
           'background': dataStore.getCardColor(editableItemGroup.Kategorie)
         }">
         <div class="col-container align-center" style="padding: 0px;">
-          <span style="color: grey;">Kategorie: </span>
-          <select v-model="editableItemGroup.Kategorie">
+          <span class="edit-label">Kategorie: </span>
+          <select v-model="editableItemGroup.Kategorie" aria-label="Kategorie auswählen">
             <option v-for="option in MAIN_CATEGORIES" :value="option.path" :placeholder="editableItemGroup.Kategorie">
               {{ option.label }}
             </option>
           </select>
-          <v-tooltip :text="dataStore.getCategoryName(editableItemGroup.Kategorie ?? '')" location="top" open-on-click>
+          <v-tooltip aria-hidden="true" :text="dataStore.getCategoryName(editableItemGroup.Kategorie ?? '')" location="top">
             <template v-slot:activator="{ props }">
-                <img v-if="dataStore.getCategorySvg(editableItemGroup.Kategorie) != ''" v-bind="props" class="dialog-title__icon" color="var(--color-anthrazit)" :src="dataStore.getCategorySvg(editableItemGroup.Kategorie)"/>
-                <v-icon v-else v-bind="props" size="x-large" color="black" class="dialog-title__icon">{{ dataStore.getCategoryIcon(editableItemGroup.Kategorie) }}</v-icon>
+                <img v-if="dataStore.getCategorySvg(editableItemGroup.Kategorie) != ''" v-bind="props" class="dialog-title__icon" color="var(--color-anthrazit)" :src="dataStore.getCategorySvg(editableItemGroup.Kategorie)" :alt="dataStore.getCategoryAlt(editableItemGroup.Kategorie)"/>
+                <v-icon v-else v-bind="props" size="x-large" color="black" class="dialog-title__icon" :aria-label="dataStore.getCategoryName(editableItemGroup.Kategorie ?? '')">{{ dataStore.getCategoryIcon(editableItemGroup.Kategorie) }}</v-icon>
             </template>
           </v-tooltip>
         </div>
 
         <div class="col3-container justify-end" style="padding: 0px;">
           <div class="row-container align-center">
-            <span style="color: grey;">Inaktiv: </span>
+            <span class="edit-label">Inaktiv: </span>
               <input v-model="editableItemGroup.inaktiv"
+                aria-label="Angebot als inaktiv markieren"
                 type="checkbox"
                 true-value="inaktiv"
                 false-value="aktiv"
                 class="ml-1" />
           </div>
           <div style="width: 10px"></div>
-          <div class="row3-container">
-            <span style="color: grey;">Unterkategorie: </span>
-            <select v-model="editableItemGroup.Unterkategorie">
-              <option v-for="option in SUB_CATEGORIES" :value="option.path" :placeholder="editableItemGroup.Unterkategorie">
-                {{ option.label }}
-              </option>
-            </select>
-            <v-tooltip :text="dataStore.getSubCategoryName(editableItemGroup.Unterkategorie ?? '')" location="top" open-on-click>
-              <template v-slot:activator="{ props }">
-                  <img v-if="dataStore.getSubCategorySvg(editableItemGroup.Unterkategorie) != ''" v-bind="props" class="dialog-title__icon" color="var(--color-anthrazit)" :src="dataStore.getSubCategorySvg(editableItemGroup.Unterkategorie)"/>
-                  <v-icon v-else v-bind="props" size="x-large" color="black" class="dialog-title__icon">{{ dataStore.getSubCategoryIcon(editableItemGroup.Unterkategorie) }}</v-icon>
-              </template>
-            </v-tooltip>
+          <div class="subcat-container">
+            <span class="edit-label">Unterkategorie: </span>
+            <SubcategoriesEditor :editableItemGroup="editableItemGroup" />
+            <template v-for="subcategoryName in dataStore.getSubCategoryNames(editableItemGroup.Unterkategorie)?.filter(Boolean).slice(0, 2)" :key="subcategoryName">
+              <v-tooltip aria-hidden="true" :text="dataStore.getSubCategoryName(subcategoryName)" location="top" open-on-click>
+                <template v-slot:activator="{ props }">
+                  <img v-if="dataStore.getSubCategorySvg(subcategoryName) != ''" v-bind="props" class="dialog-title__icon" color="var(--color-anthrazit)" :src="dataStore.getSubCategorySvg(subcategoryName)" :alt="dataStore.getSubCategoryAlt(subcategoryName)"/>
+                  <v-icon v-else v-bind="props" size="x-large" color="black" class="dialog-title__icon" :aria-label="dataStore.getSubCategoryName(subcategoryName)">{{ dataStore.getSubCategoryIcon(subcategoryName) }}</v-icon>
+                </template>
+              </v-tooltip>
+            </template>
           </div>
           
         </div>
@@ -457,22 +463,21 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
               <v-icon>mdi-calendar</v-icon>
               <div class="timeslot-row">
                 <input class="timeslot-rhythm" v-model="(timeslot as any).Rhythmus" placeholder="Rhythmus" type="text" />
-                <select class="timeslot-day" v-model="(timeslot as any).Wochentag">
-                  <option v-for="option in sortedWochentage" :value="option.value" :placeholder="(timeslot as any).Wochentag">
-                    {{ option.title }}
-                  </option>
-                </select>
+                <TimeSlotDaySelect :timeslot="(timeslot as any)" />
                 <input class="timeslot-time" v-model="(timeslot as any).Uhrzeit_Start" placeholder="Start" type="text" />
                 <span>bis</span>
                 <input class="timeslot-time" v-model="(timeslot as any).Uhrzeit_Ende" placeholder="Ende" type="text" />
                 <span>Uhr</span>
-                <v-icon
+                <button
                   v-if="(editableItemGroup.timeSlots as any[]).length > 1"
-                  size="small"
-                  class="timeslot-remove"
+                  type="button"
+                  class="timeslot-remove-btn"
                   title="Zeit entfernen"
+                  aria-label="Zeit entfernen"
                   @click="removeTimeSlot(index)"
-                >mdi-close-circle</v-icon>
+                >
+                  <v-icon size="small" class="timeslot-remove">mdi-close-circle</v-icon>
+                </button>
               </div>
             </div>
             <div v-if="editableItemGroup.Kategorie != 'online'" class="mb-1 col-container">
@@ -503,18 +508,18 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
                 </v-row>
               </template>
             </v-img>
-            <p style="font-size: 11px"><i>Hinweis: Wenn das Bild ersetzt werden soll, bitte direkt über das <a href="https://cloud.magdeburg.jetzt/apps/forms/embed/sWAy75S2qAq5JeccorqTEQFq" target="_blank">Kontaktformular</a> hochladen.</i></p>
+            <p style="font-size: 11px"><i>Hinweis: Wenn das Bild ersetzt werden soll, bitte direkt über das <a href="https://cloud.magdeburg.jetzt/apps/forms/embed/sWAy75S2qAq5JeccorqTEQFq" target="_blank">Feedback-Formular<span class="visually-hidden"> (öffnet in neuem Fenster)</span></a> hochladen.</i></p>
           </v-col>
         </v-row>
 
         <v-row class="edit-info-container">
           <p
               v-if="!isVerificationStale"
-              class="text-grey-darken-1"
+              class="verification-note"
           >
             Letzte Überprüfung: {{ verificationLabel ?? 'keine Angabe' }}
           </p>
-          <v-alert class="px-2 py-2"
+          <v-alert class="px-2 py-2 warning-alert"
               v-else
               type="warning"
               variant="tonal"
@@ -533,12 +538,14 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
             <textarea
               v-model="copyEditInfos"
               class="copyable-textarea"
+              aria-label="Vorbereitete Nachricht zum Kopieren"
               style="font-size: 12px;"
             ></textarea>
             <button
               @click="copyToClipboard"
               class="copy-button"
-              :title="copied ? 'Kopiert!' : 'Kopieren'"
+              :title="copied ? 'Kopiert!' : 'Text kopieren'"
+              :aria-label="copied ? 'Kopiert!' : 'Text kopieren'"
             >
               {{ copied ? "✓" : "📋" }}
             </button>
@@ -553,8 +560,8 @@ const sortedWochentage = dataStore.getSortedWochentageOptionen();
           >
           <div style="text-align: center;">
             <i>
-              Schicke die vorbereitete Nachricht komfortabel <b><u style="cursor: pointer;" @click="saveEdit">» per Mail «</u></b> ab!
-              <br>Oder kopiere den Text und sende ihn <a href="https://cloud.magdeburg.jetzt/apps/forms/embed/sWAy75S2qAq5JeccorqTEQFq" target="_blank"><b>» per Kontaktformular «</b></a> ein.
+              Schicke die vorbereitete Nachricht komfortabel <b><button type="button" class="link-button" @click="saveEdit">» per Mail «</button></b> ab!
+              <br>Oder kopiere den Text und sende ihn <a href="https://cloud.magdeburg.jetzt/apps/forms/embed/sWAy75S2qAq5JeccorqTEQFq" target="_blank"><b>» per Feedback-Formular «</b><span class="visually-hidden"> (öffnet in neuem Fenster)</span></a> ein.
             </i>
           </div>
           </v-alert>
@@ -583,11 +590,45 @@ a {
   color: inherit;
 }
 
+.link-button {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.timeslot-remove-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+}
+
+.warning-alert,
+.warning-alert :deep(.v-alert__content),
+.warning-alert :deep(.v-icon) {
+  color: var(--color-orange-text) !important;
+}
+
+.edit-label,
+.verification-note {
+  color: var(--color-anthrazit);
+}
+
 input, select, textarea {
   background-color: white;
   padding: 0px 1px;
   border: 1px solid lightgrey;
   border-radius: 3px;
+  /* form controls otherwise inherit Roboto from Vuetify typography classes
+     (e.g. .text-subtitle-1 on the title col) — pin them to the app font so the
+     edit fields read the same as the rendered card */
+  font-family: 'Quicksand', system-ui, Avenir, Helvetica, Arial, sans-serif;
   /*box-shadow:
     3px 3px 5px rgba(0, 0, 0, 0.2), /* Schatten unten rechts /
     -2px -2px 5px rgba(255, 255, 255, 0.8); /* "Licht" oben links */
@@ -599,13 +640,36 @@ input, textarea {
   max-width: 100%;
 }
 
+/* the category <select> sits in the 20px card-title; pull it back to the 16px used
+   by every other edit field so all input boxes read the same */
+.dialog-title select {
+  font-size: 16px;
+  line-height: 24px;
+}
+
+/* checkboxes must keep their native box size (the width:100% rule above squishes them) */
+input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  appearance: auto;
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
 .dialog-title {
   display: flex;
+  flex-wrap: wrap;
   text-wrap: initial;
   align-items: center;
   justify-content: space-between;
   column-gap: 16px;
+  row-gap: 8px;
   padding: 15x 15px 15px 15px;
+  overflow: visible;
+  position: relative;
+  z-index: 2;
 }
 
 .dialog-title__icon {
@@ -637,24 +701,44 @@ input, textarea {
 .col-container, .col3-container {
   display: flex;
   flex-direction: row;
-  flex: 1 1 0;
+  flex: 1 1 auto;
   column-gap: 5px;
   align-items: center;
 }
 .row-container {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: auto 1fr;
   flex-direction: row;
   flex: 1 1 0;
   column-gap: 5px;
 }
 .row3-container {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: auto minmax(8rem, 1fr) auto;
   flex-direction: row;
   flex: 1 1 0;
   column-gap: 5px;
   align-items: center;
+}
+
+.edit-label {
+  white-space: nowrap;
+  overflow-wrap: normal;
+  word-break: keep-all;
+}
+
+.row3-container select,
+.col-container select {
+  min-width: 0;
+  max-width: 100%;
+}
+.subcat-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex: 1 1 auto;
+  column-gap: 5px;
+  min-width: 0;
 }
 .timeslot-row {
   display: flex;
@@ -670,7 +754,7 @@ input, textarea {
   min-width: 0;
 }
 .timeslot-rhythm {
-  flex: 1 1 0;
+  flex: 0 1 150px;
   min-width: 0;
 }
 .timeslot-time {

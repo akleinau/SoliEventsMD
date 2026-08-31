@@ -157,36 +157,39 @@ export const useDataStore = defineStore('dataStore', {
                 const isWeekday = dayOfWeek >= 1 && dayOfWeek <= 5;
                 const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
                 
+                // Ein Wochentag-Feld kann mehrere Tage enthalten ("51 Montag; 55 Freitag"),
+                // daher reicht es, wenn einer der Tage auf heute passt.
                 filteredData = filteredData.filter(item => {
-                    const wochentag = item.Wochentag ?? '';
-                    const itemDayName = this.extractDayName(wochentag);
-                    
-                    // Exclude events without a specific schedule
-                    if (itemDayName === 'wenn geöffnet') {
+                    return this.splitWochentage(item.Wochentag).some(part => {
+                        const itemDayName = this.extractDayName(part);
+
+                        // Exclude events without a specific schedule
+                        if (itemDayName === 'wenn geöffnet') {
+                            return false;
+                        }
+
+                        // Include "alle Tage" events
+                        if (itemDayName === 'alletage' || itemDayName === 'alle tage') {
+                            return true;
+                        }
+
+                        // Check if the event happens on today's weekday
+                        if (itemDayName === todayName) {
+                            return true;
+                        }
+
+                        // "werktags" matches if today is a weekday
+                        if (itemDayName === 'werktags' && isWeekday) {
+                            return true;
+                        }
+
+                        // "wochenende" matches if today is a weekend day
+                        if (itemDayName === 'wochenende' && isWeekend) {
+                            return true;
+                        }
+
                         return false;
-                    }
-                    
-                    // Include "alle Tage" events
-                    if (itemDayName === 'alletage' || itemDayName === 'alle tage') {
-                        return true;
-                    }
-                    
-                    // Check if the event happens on today's weekday
-                    if (itemDayName === todayName) {
-                        return true;
-                    }
-                    
-                    // "werktags" matches if today is a weekday
-                    if (itemDayName === 'werktags' && isWeekday) {
-                        return true;
-                    }
-                    
-                    // "wochenende" matches if today is a weekend day
-                    if (itemDayName === 'wochenende' && isWeekend) {
-                        return true;
-                    }
-                    
-                    return false;
+                    });
                 });
             }
             
@@ -354,6 +357,15 @@ export const useDataStore = defineStore('dataStore', {
         getEmptyItem() : DataRow | null {
             return this.empty_item;
         },
+        // Ein Wochentag-Feld kann eine Aufzählung sein ("51 Montag; 55 Freitag").
+        // Liefert die einzelnen Tage; leere Felder ergeben eine leere Liste.
+        splitWochentage(wochentag?: string | null): string[] {
+            return (wochentag ?? '')
+                .split(/[;,]/)
+                .map(part => part.trim())
+                .filter(part => part !== '');
+        },
+
         // Helper to extract the day name from Wochentag (removes number prefix)
         extractDayName(wochentag: string): string {
             const firstSpaceIndex = wochentag.indexOf(' ');
@@ -385,9 +397,16 @@ export const useDataStore = defineStore('dataStore', {
             return sortedWochentage;
         },
         
-        // Check if a Wochentag value matches any of the selected filter values
-        // Handles edge cases like "alle Tage", "werktags", "Wochenende"
+        // Check if a Wochentag value matches any of the selected filter values.
+        // Das Feld kann mehrere Tage aufzählen — es genügt, wenn einer davon passt.
         matchesWochentagFilter(itemWochentag: string, filterValues: string[]): boolean {
+            return this.splitWochentage(itemWochentag)
+                .some(part => this.matchesSingleWochentagFilter(part, filterValues));
+        },
+
+        // Check if a single Wochentag value matches any of the selected filter values
+        // Handles edge cases like "alle Tage", "werktags", "Wochenende"
+        matchesSingleWochentagFilter(itemWochentag: string, filterValues: string[]): boolean {
             // Direct match
             if (filterValues.includes(itemWochentag)) {
                 return true;
@@ -563,10 +582,13 @@ export const useDataStore = defineStore('dataStore', {
             return getCategoryDefinition(category)?.label ?? 'Neu';
         },
         getCategoryIcon(category?: string | null): string | undefined {
-            return getCategoryDefinition(category)?.icon ?? 'mdi-new-box';
+            return getCategoryDefinition(category)?.icon ?? 'mdi-plus-box';
         },
         getCategorySvg(category?: string | null): string | undefined {
             return getCategoryDefinition(category)?.svg ?? FallbackCategoryIcon;
+        },
+        getCategoryAlt(category?: string | null): string {
+            return getCategoryDefinition(category)?.alt ?? '';
         },
 
         getSubCategoryName(subcategory?: string | null): string | undefined {
@@ -577,6 +599,11 @@ export const useDataStore = defineStore('dataStore', {
         },
         getSubCategorySvg(subcategory?: string | null): string | undefined {
             return getSubCategoryDefinition(subcategory)?.svg ?? getSubCategoryDefinition('retten')?.svg;
+        },
+        getSubCategoryAlt(subcategory?: string | null): string {
+            return getSubCategoryDefinition(subcategory)?.alt
+                ?? getSubCategoryDefinition('retten')?.alt
+                ?? '';
         },
         getSubCategoryNames(subcategories?: string) : string[] | undefined {
             return subcategories?.split(';').map(s => s.trim());

@@ -2,9 +2,30 @@
 
 import { useDataStore } from "../stores/dataStore.ts";
 import { getSubCategoryDefinition } from "../constants/categoryConfig.ts"
-import { ref, computed } from "vue";
+import { ref, computed, onMounted, onUpdated } from "vue";
 
 const dataStore = useDataStore();
+
+const controlBar = ref<HTMLElement | null>(null);
+let labelCounter = 0;
+
+const fixFieldSemantics = () => {
+  controlBar.value?.querySelectorAll('.filter-select').forEach((wrap) => {
+    const label = wrap.querySelector('label');
+    const combobox = wrap.querySelector('[role="combobox"]');
+    if (!label || !combobox) return;
+    if (!label.id) label.id = `filter-label-${++labelCounter}`;
+    combobox.setAttribute('aria-labelledby', label.id);
+    combobox.removeAttribute('aria-label');
+  });
+
+  const searchField = controlBar.value?.querySelector('.control-bar__search .v-field');
+  if (searchField && !searchField.getAttribute('role')) {
+    searchField.setAttribute('role', 'presentation');
+  }
+};
+onMounted(fixFieldSemantics);
+onUpdated(fixFieldSemantics);
 
 // --- Mobile: collapsible secondary filters ---
 const isMobile = computed(() => dataStore.isMobile);
@@ -133,7 +154,7 @@ const resetFilters = () => {
 </script>
 
 <template>
-  <div class="control-bar" style="background: var(--color-offwhite);">
+  <div class="control-bar" ref="controlBar" style="background: var(--color-offwhite);">
 
     <!-- ═══ Row 1: main controls ═══ -->
     <div class="control-bar__row">
@@ -144,6 +165,8 @@ const resetFilters = () => {
         class="control-bar__btn control-bar__filter-toggle"
         :class="{ 'control-bar__btn--active': activeFilterCount > 0 || dataStore.searchTerm.trim() !== '' }"
         variant="outlined"
+        :aria-label="expanded ? 'Filter-Auswahl ausblenden' : 'Filter-Auswahl anzeigen'"
+        :aria-expanded="expanded"
         @click="expanded = !expanded"
       >
         <div class="control-bar__sort-icon">
@@ -168,16 +191,16 @@ const resetFilters = () => {
         class="control-bar__search"
         v-model="dataStore.searchTerm"
         prepend-inner-icon="mdi-magnify"
-        label="Suche…"
+        label="Suche"
         variant="outlined"
         density="compact"
         hide-details
         bg-color="var(--color-white)"
-        single-line
       />
 
       <div class="filter-select">
         <v-select label="Unterkategorie"
+          open-text="Unterkategorie-Filter öffnen" close-text="Unterkategorie-Filter schließen"
           variant="outlined" multiple density="compact" hide-details bg-color="var(--color-white)"
           :items="unterkategorien" v-model="unterkategorieFilter"
           @update:modelValue="dataStore.add_filter('Unterkategorie', unterkategorieFilter)">
@@ -185,7 +208,7 @@ const resetFilters = () => {
             <v-chip v-if="index < 1">
               <span>{{ item.title }}</span>
             </v-chip>
-            <span v-if="index === 1" class="text-grey text-caption align-self-center" style="white-space: nowrap;">
+            <span v-if="index === 1" class="filter-select__more text-caption align-self-center" style="white-space: nowrap;">
               (+{{ unterkategorieFilter.length - 1 }})
             </span>
           </template>
@@ -194,12 +217,13 @@ const resetFilters = () => {
 
       <div class="filter-select">
         <v-select label="Nutzung"
+          open-text="Nutzungs-Filter öffnen" close-text="Nutzungs-Filter schließen"
           variant="outlined" multiple density="compact" hide-details bg-color="var(--color-white)"
           :items="nutzungen" v-model="nutzungFilter"
           @update:modelValue="dataStore.add_filter('Nutzung', nutzungFilter)">
           <template v-slot:selection="{ item, index }">
             <v-chip v-if="index < 1"><span>{{ item.title }}</span></v-chip>
-            <span v-if="index === 1" class="text-grey text-caption align-self-center" style="white-space: nowrap;">
+            <span v-if="index === 1" class="filter-select__more text-caption align-self-center" style="white-space: nowrap;">
               (+{{ nutzungFilter.length - 1 }})
             </span>
           </template>
@@ -208,12 +232,13 @@ const resetFilters = () => {
 
       <div class="filter-select">
         <v-select label="Wochentag"
+          open-text="Wochentags-Filter öffnen" close-text="Wochentags-Filter schließen"
           variant="outlined" multiple density="compact" hide-details bg-color="var(--color-white)"
           :items="wochentage" v-model="wochentagFilter"
           @update:modelValue="onWochentagFilterChange">
           <template v-slot:selection="{ item, index }">
             <v-chip v-if="index < 1"><span>{{ item.title }}</span></v-chip>
-            <span v-if="index === 1" class="text-grey text-caption align-self-center" style="white-space: nowrap;">
+            <span v-if="index === 1" class="filter-select__more text-caption align-self-center" style="white-space: nowrap;">
               (+{{ wochentagFilter.length - 1 }})
             </span>
           </template>
@@ -227,6 +252,7 @@ const resetFilters = () => {
             class="control-bar__btn control-bar__btn--sort"
             :class="{ 'control-bar__btn--active': dataStore.sortLevels.length > 0 }"
             variant="outlined"
+            aria-label="Sortieren: Optionen anzeigen"
             v-bind="props"
           >
             <div class="control-bar__sort-icon">
@@ -270,6 +296,8 @@ const resetFilters = () => {
         v-if="hasActiveControls"
         class="control-bar__btn control-bar__clear-btn"
         variant="outlined"
+        aria-label="Suche, Filter und Sortierung zurücksetzen"
+        title="Suche, Filter und Sortierung zurücksetzen"
         @click="resetFilters"
       >
         <v-icon>mdi-close-circle-outline</v-icon>
@@ -280,15 +308,22 @@ const resetFilters = () => {
       <!-- View mode toggle -->
       <v-btn-toggle
         class="control-bar__view-toggle"
+        aria-label="Ansicht wechseln"
         :model-value="dataStore.getViewMode()"
         mandatory
         density="compact"
         variant="outlined"
       >
-        <v-btn class="control-bar__btn" value="cards" @click="dataStore.viewMode !== 'cards' && dataStore.switchViewMode()">
+        <v-btn class="control-bar__btn" value="cards"
+          aria-label="Raster-Ansicht: Angebote als Kacheln anzeigen"
+          title="Raster-Ansicht"
+          @click="dataStore.viewMode !== 'cards' && dataStore.switchViewMode()">
           <v-icon>mdi-view-grid</v-icon>
         </v-btn>
-        <v-btn class="control-bar__btn" value="list" @click="dataStore.viewMode !== 'list' && dataStore.switchViewMode()">
+        <v-btn class="control-bar__btn" value="list"
+          aria-label="Listen-Ansicht: Angebote als Liste anzeigen"
+          title="Listen-Ansicht"
+          @click="dataStore.viewMode !== 'list' && dataStore.switchViewMode()">
           <v-icon>mdi-view-list</v-icon>
         </v-btn>
       </v-btn-toggle>
@@ -305,6 +340,11 @@ const resetFilters = () => {
   --control-btn-height: 36px;
   --control-btn-bg: var(--color-white);
   --control-btn-border: rgba(0, 0, 0, 0.38);
+}
+
+.control-bar :deep(.v-field-label) {
+  color: var(--color-anthrazit);
+  opacity: 1;
 }
 
 .control-bar__row {
@@ -407,6 +447,10 @@ const resetFilters = () => {
 
 .control-bar__view-toggle :deep(.v-btn) {
   min-height: var(--control-btn-height);
+}
+
+.filter-select__more {
+  color: var(--color-anthrazit);
 }
 
 .filter-select {

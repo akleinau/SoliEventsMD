@@ -77,26 +77,34 @@ const clicked = (itemgroup: any) => {
         width="350"
         max-height="180"
         color="var(--color-white)"
-        link @click="clicked(itemgroup)">
+        role="button"
+        tabindex="0"
+        @click="clicked(itemgroup)"
+        @keydown.enter.prevent="clicked(itemgroup)"
+        @keydown.space.prevent="clicked(itemgroup)">
         <div class="category-card__header" :style="{'background-color' : dataStore.getCardColor(itemgroup.Kategorie)}">
           <v-card-title class="category-card__title"            
           >{{ itemgroup.Was }}</v-card-title>
 
           <div class="subcategory-icons__container">
             <template v-for="subcategoryName in dataStore.getSubCategoryNames(itemgroup.Unterkategorie)" :key="subcategoryName">
-              <v-tooltip :text="dataStore.getSubCategoryName(subcategoryName)" location="top" open-on-click>
+              <v-tooltip aria-hidden="true" :text="dataStore.getSubCategoryName(subcategoryName)" location="top">
                 <template v-slot:activator="{ props }">
-                  <img v-if="dataStore.getSubCategorySvg(subcategoryName) != ''" v-bind="props" class="subcategory-card__icon" color="var(--color-anthrazit)" :src="dataStore.getSubCategorySvg(subcategoryName)"/>
-                  <v-icon v-else class="subcategory-card__icon" v-bind="props" size="x-large">
-                    {{ dataStore.getSubCategoryIcon(subcategoryName) }}
-                  </v-icon>
+                  <span v-bind="props" class="icon-activator">
+                    <img v-if="dataStore.getSubCategorySvg(subcategoryName) != ''" class="subcategory-card__icon" :src="dataStore.getSubCategorySvg(subcategoryName)" :alt="dataStore.getSubCategoryAlt(subcategoryName)"/>
+                    <v-icon v-else class="subcategory-card__icon" size="x-large"
+                      :aria-label="dataStore.getSubCategoryName(subcategoryName)">
+                      {{ dataStore.getSubCategoryIcon(subcategoryName) }}
+                    </v-icon>
+                  </span>
                 </template>
               </v-tooltip>
             </template>
           </div>
         </div>
 
-        <v-card-subtitle :style="{'padding-top' : '5px'}">{{ itemgroup.Wer }}</v-card-subtitle>
+        <span class="visually-hidden">Kategorie {{ dataStore.getCategoryName(itemgroup.Kategorie) }}, Details anzeigen</span>
+        <v-card-subtitle class="category-card__provider" :style="{'padding-top' : '5px'}">{{ itemgroup.Wer }}</v-card-subtitle>
         <v-card-text v-if="itemgroup.Kategorie != 'online'">
           <p class="mb-1"> <v-icon>mdi-map-marker</v-icon> {{ itemgroup.Wo }}</p>
           <div class="mb-1 opening-hours"> <v-icon>mdi-calendar</v-icon> {{ listTimeSlots(itemgroup.timeSlots) }}</div>
@@ -114,7 +122,11 @@ const clicked = (itemgroup: any) => {
         max-height="180"
         min-height="150"
         color="var(--color-white)"
-        link @click="clicked(emptyItem)">
+        role="button"
+        tabindex="0"
+        @click="clicked(emptyItem)"
+        @keydown.enter.prevent="clicked(emptyItem)"
+        @keydown.space.prevent="clicked(emptyItem)">
         <div class="category-card__header" 
              style="border-bottom: 1px solid var(--color-button-grey);">
           <v-card-title class="category-card__title"            
@@ -122,16 +134,20 @@ const clicked = (itemgroup: any) => {
 
           <div class="subcategory-icons__container">
             <div v-if="dataStore.getCategoryIcon(emptyItem?.Kategorie)">
-              <v-tooltip :text="dataStore.getIconText(emptyItem)" location="top" open-on-click>
+              <v-tooltip aria-hidden="true" :text="dataStore.getIconText(emptyItem)" location="top">
                 <template v-slot:activator="{ props }">
-                  <v-icon class="subcategory-card__icon" v-bind="props" size="x-large">
-                    {{ dataStore.getIcon(emptyItem) }}
-                  </v-icon>
+                  <span v-bind="props" class="icon-activator">
+                    <v-icon class="subcategory-card__icon" size="x-large"
+                      aria-label="Plus-Symbol: neues Angebot anlegen">
+                      {{ dataStore.getIcon(emptyItem) }}
+                    </v-icon>
+                  </span>
                 </template>
               </v-tooltip>          
             </div>
           </div>
         </div>
+        <span class="visually-hidden">Neues Angebot anlegen</span>
         <div class="pattern-background">
         </div>
     </v-card>
@@ -143,6 +159,23 @@ const clicked = (itemgroup: any) => {
 .category-card {
   position: relative;
   overflow: hidden;
+  cursor: pointer;
+}
+
+.icon-activator {
+  display: inline-flex;
+  align-items: center;
+  align-self: start;
+}
+
+.category-card:focus-visible {
+  outline: 3px solid var(--color-orange);
+  outline-offset: 2px;
+}
+
+.category-card__provider {
+  color: var(--color-anthrazit);
+  opacity: 1;
 }
 
 .empty-card {

@@ -142,7 +142,8 @@ const addMarker = async (item: any) => {
   });
 
   // Marker mit Icon hinzufügen
-  const marker = L.marker([coords.lat, coords.lng], { icon: originalIcon })
+  const markerLabel = `${item.Was}, ${item.Wer}, ${item.Wo}`;
+  const marker = L.marker([coords.lat, coords.lng], { icon: originalIcon, title: markerLabel, alt: markerLabel })
     // Kurzinfos als Tooltip: erscheint beim Hovern, nicht beim Klick
     .bindTooltip(`
       <b>${item.Was}</b><br>
@@ -182,16 +183,34 @@ const initMap = () => {
   if (!mapElement.value) return;
   
   // Karte initialisieren
-  map.value = L.map(mapElement.value).setView([52.1250, 11.6390], 12); // Zentrum: Magdeburg
+  const leafletMap = L.map(mapElement.value, {
+    zoomControl: false,
+    attributionControl: false,
+  }).setView([52.1250, 11.6390], 12); // Zentrum: Magdeburg
+
+  L.control.zoom({
+    zoomInTitle: 'In die Karte rein-zoomen',
+    zoomOutTitle: 'Aus der Karte raus-zoomen',
+  }).addTo(leafletMap);
+
+  map.value = leafletMap;
 
   // OpenStreetMap-Kacheln hinzufügen
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-  }).addTo(map.value);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map.value);
 
   // MarkerClusterGroup zur Karte hinzufügen (nur einmalig)
   if (!map.value) return;
-  markersClusterGroup.value = L.markerClusterGroup();
+  markersClusterGroup.value = L.markerClusterGroup({
+    iconCreateFunction: (cluster) => {
+      const count = cluster.getChildCount();
+      const size = count < 10 ? 'small' : count < 100 ? 'medium' : 'large';
+      return L.divIcon({
+        html: `<div role="img" aria-label="${count} Angebote in diesem Bereich – zum Aufklappen auswählen"><span>${count}</span></div>`,
+        className: `marker-cluster marker-cluster-${size}`,
+        iconSize: L.point(40, 40),
+      });
+    },
+  });
   map.value.addLayer(markersClusterGroup.value);
 
   // Marker basierend auf der aktuellen Filterung hinzufügen
@@ -309,13 +328,39 @@ defineExpose({
     <div
       ref="mapElement"
       class="map"
+      role="application"
+      aria-label="Karte mit den Angeboten in Magdeburg"
     ></div>
+
+    <p class="map-credit">
+      <a href="https://leafletjs.com" target="_blank" rel="noopener noreferrer">Leaflet<span class="visually-hidden"> (öffnet in neuem Fenster)</span></a>
+      |
+      &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap<span class="visually-hidden"> (öffnet in neuem Fenster)</span></a>-Mitwirkende
+    </p>
   </div>
 </template>
 
 <style scoped>
 
+.map-credit {
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 400;
+  margin: 0;
+  padding: 0 5px;
+  background: rgba(255, 255, 255, 0.8);
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--color-anthrazit);
+}
+
+.map-credit a {
+  color: #05628a;
+}
+
 .map-container {
+  position: relative;
   padding: 1rem; /* gleiche Größe wie im Container in databable.vue*/
   border-left: 1px var(--color-anthrazit) solid;
   height: 100vh;

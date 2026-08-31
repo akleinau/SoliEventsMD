@@ -13,7 +13,7 @@ const links = [
 <template>
     <div class="myfooter">
 
-        <div class="text-caption font-weight-regular opacity-60">
+        <div class="text-caption font-weight-regular disclaimer">
             Disclaimer: Die auf dieser Website bereitgestellten Informationen und Daten wurden mit größter Sorgfalt zusammengestellt. Dennoch übernehmen wir keine Gewähr für die Richtigkeit, Vollständigkeit oder Aktualität der Angaben.
         </div>
 
@@ -29,10 +29,11 @@ const links = [
                 :href="link.url.startsWith('http') ? link.url : undefined"
                 :target="link.url.startsWith('http') ? '_blank' : undefined"
             >
-                <v-icon left class="mr-2">{{ link.icon }}</v-icon> {{ link.text }}
+                <v-icon left class="mr-2" aria-hidden="true">{{ link.icon }}</v-icon> {{ link.text }}<span
+                    v-if="link.url.startsWith('http')" class="visually-hidden"> (öffnet in neuem Fenster)</span>
             </v-btn>
 
-            <div class="footer_note">
+            <div class="footer-credit">
                 {{ new Date().getFullYear() }} — <strong>ein Projekt von Sharing in Magdeburg</strong>
             </div>
         </div>
@@ -51,6 +52,12 @@ const links = [
         text-align: center;
     }
 
+    .disclaimer,
+    .footer-credit {
+        color: var(--color-anthrazit);
+        opacity: 1;
+    }
+
     /* umbricht, statt die Links übereinander zu schieben */
     .footer_buttons {
         display: flex;
@@ -61,9 +68,6 @@ const links = [
         margin: 1px;
     }
 
-    .footer_note {
-        color: var(--color-green);
-    }
 
     a {
         color: inherit;
@@ -94,7 +98,7 @@ const links = [
             gap: 2px;
         }
 
-        .footer_note {
+        .footer-credit {
             font-size: 0.75rem;
         }
     }

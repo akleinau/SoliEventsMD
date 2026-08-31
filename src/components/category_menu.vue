@@ -13,7 +13,7 @@ const looking_for_options: SelectionOption[] = [
   { label: 'Alles', path: 'alles', textcolor: 'var(--color-anthrazit)', color: 'var(--color-offwhite)', 
   icon: 'mdi-grid-large', 
   //icon: 'mdi-format-text-variant', // Alternatives Icon: Buchstabe 'A'
-  svg: ''},  
+  svg: '', alt: ''},
   ...MAIN_CATEGORIES,
 ]
 
@@ -67,15 +67,20 @@ const apply_filter = () => {
                 variant="elevated"
                 :class="{ 'category-button--selected': isSelected }"
                 :to="'/' + option.path"                                
+                :aria-label="option.label === 'Alles'
+                  ? 'Alles: alle Angebote anzeigen'
+                  : 'Nur Angebote der Kategorie ' + option.label + ' anzeigen'"
                 :style="{
                     'background-color': option.color
                 } as Record<string, string>"
                 @click="toggle">
               <span class="category-button__label">{{ option.label }}</span>
-              <v-tooltip :text="option.label" location="bottom" open-on-click>
+              <v-tooltip aria-hidden="true" :text="option.label" location="bottom" open-on-click>
                 <template v-slot:activator="{ props }">
-                    <img v-if="option.svg != ''" v-bind="props" class="category-button__icon" color="var(--color-anthrazit)" :src="option.svg"/>
-                    <v-icon v-else v-bind="props" class="category-button__icon" color="var(--color-anthrazit)" size="x-large">{{ option.icon }}</v-icon>
+                    <span v-bind="props" class="category-button__icon-wrap">
+                      <img v-if="option.svg != ''" class="category-button__icon" :src="option.svg" alt=""/>
+                      <v-icon v-else class="category-button__icon" color="var(--color-anthrazit)" size="x-large" aria-hidden="true">{{ option.icon }}</v-icon>
+                    </span>
                 </template>
               </v-tooltip>
             </v-btn>
@@ -105,6 +110,11 @@ const apply_filter = () => {
     }
 
     .category-button__label {
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .category-button__icon-wrap {
         display: inline-flex;
         align-items: center;
     }

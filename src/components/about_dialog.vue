@@ -7,13 +7,15 @@ const props = defineProps<{
 </script>
 
 <template>
-    <v-dialog max-width="800">
+    <v-dialog max-width="800" aria-label="Informationen zur Seiten-Nutzung">
         <template v-slot:activator="{ props: activatorProps }">
             <v-btn                
                 v-bind="activatorProps"
                 density="comfortable"
                 icon="mdi-information-variant"
                 variant="outlined"
+                aria-label="Informationen zur Seiten-Nutzung anzeigen"
+                title="Informationen zur Seiten-Nutzung anzeigen"
             >
             </v-btn>
             <!-- if button not in header, add text-->
@@ -36,6 +38,8 @@ const props = defineProps<{
                     color="var(--color-anthrazit)"
                     text="X"
                     variant="outlined"
+                    aria-label="Fenster schließen"
+                    title="Fenster schließen"
                     @click="isActive.value = false"
                     ></v-btn>
                 </template>
@@ -59,7 +63,7 @@ const props = defineProps<{
                     <p>Bitte beachte: Viele Angebote sind an Feiertagen geschlossen!</p>
                     <br>
                     <p>Wenn du eine Frage hast, kannst du eine E-Mail schreiben an: <a href="mailto:kontakt@magdeburg-teilt.de">kontakt@magdeburg-teilt.de</a>
-                    Oder nutze das <router-link to="/kontakt" @click="isActive.value = false">Kontaktformular</router-link>.</p>
+                    Oder nutze das <router-link to="/kontakt" @click="isActive.value = false">Feedback-Formular</router-link>.</p>
                     <br>
                     <p><i>Viel Spaß beim Stöbern wünschen dir
                         <br>

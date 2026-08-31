@@ -2,24 +2,24 @@
 import Category_menu from "./category_menu.vue";
 import About_dialog from "./about_dialog.vue";
 import Translation_dialog from "./translation_dialog.vue";
-import MainLogo from '/src/assets/logo/Bildmarke_mit_Outlines_grün.svg';
+import { brandAssets } from '../constants/brandConfig.ts';
 </script>
 
 <template>
-  <div class="header-container">
+  <header class="header-container">
     <div class="header-top">
       <div class="title-container">        
         <img
-            :src="MainLogo"
+            :src="brandAssets.bildmarke"
             class="logo"
-            alt="Magdeburg teilt Logo"
+            alt="Logo von Magdeburg teilt!: eine kantige Sprech-Blase mit einem senkrechten Strich in der Mitte; in der linken Hälfte eine Karotte auf hellem Grund und in der rechten Hälfte ein heller Schrauben-Schlüssel auf farbigem Grund"
         />
-        <h2><router-link to="/">Magdeburg <b style="color: var(--color-green)">teilt!</b></router-link></h2>
+        <h2><router-link to="/">Magdeburg <b :style="{ color: brandAssets.color }">teilt!</b></router-link></h2>
       </div>
 
-      <div class="categories-container">
+      <nav class="categories-container" aria-label="Kategorien">
         <Category_menu />
-      </div>
+      </nav>
 
       <div class="dialog-container">
         <About_dialog 
@@ -27,7 +27,7 @@ import MainLogo from '/src/assets/logo/Bildmarke_mit_Outlines_grün.svg';
         <Translation_dialog />
       </div>
     </div>
-  </div>
+  </header>
 </template>
 
 <style scoped>
@@ -63,7 +63,9 @@ import MainLogo from '/src/assets/logo/Bildmarke_mit_Outlines_grün.svg';
 
 .logo {
   height: 3.2rem;
+  min-height: 2.5rem;
   width: auto;
+  flex: 0 0 auto;
 }
 
 .title-container h2 {
