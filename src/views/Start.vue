@@ -15,8 +15,8 @@ const buttonLabel = "Was genau ist 'Magdeburg teilt!' ?"
             </h1>
             <br>
             <h3>
-                Hier findest du lokale Angebote und Ressourcen.<br>
-                Von Essensausgaben und Umsonstläden <br>bis zu Büchertauschorten und Werkstätten ist alles dabei.
+                Hier findest du Angebote und Hilfsmittel in Magdeburg.<br>
+                Von Essens-Ausgaben und Umsonst-Läden <br>bis zu Bücher-Tausch-Orten und Werkstätten ist alles dabei.
             </h3>
             <br>
             <v-btn class="start-button" size="x-large" to="/alles">
