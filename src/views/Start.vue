@@ -19,7 +19,8 @@ const buttonLabel = "Was genau ist 'Magdeburg teilt!' ?"
                 Von Essensausgaben und Umsonstläden <br>bis zu Büchertauschorten und Werkstätten ist alles dabei.
             </h3>
             <br>
-            <v-btn class="start-button" size="x-large" to="/alles">
+            <v-btn class="start-button" size="x-large" to="/alles"
+                aria-label="Angebote entdecken: zur Übersicht aller Angebote">
                 Angebote entdecken
             </v-btn>
             <br>
@@ -27,11 +28,13 @@ const buttonLabel = "Was genau ist 'Magdeburg teilt!' ?"
             <div class="start-info">
                 <About_dialog
                     :isHeader="false"
-                    :buttonLabel="buttonLabel" /> <span></span>
+                    :buttonLabel="buttonLabel"
+                    :buttonAriaLabel="buttonLabel + ' Erklärung zu dieser Webseite'" /> <span></span>
             </div>
         </div>
         <div class="start-picture">
-            <div class="pattern-background">
+            <div class="pattern-background" role="img"
+                aria-label="Symbole aller Kategorien und Unter-Kategorien in sich wiederholendem Muster wie auf einer Tapete angeordnet">
             </div>
         </div>
     </div>
