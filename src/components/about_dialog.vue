@@ -5,6 +5,8 @@ const props = defineProps<{
   buttonLabel?: string;
   buttonAriaLabel?: string;
 }>();
+
+const icon = "mdi-help"
 </script>
 
 <template>
@@ -13,7 +15,7 @@ const props = defineProps<{
             <v-btn                
                 v-bind="activatorProps"
                 density="comfortable"
-                icon="mdi-information-variant"
+                :icon=icon
                 variant="outlined"
                 aria-label="Informationen zur Seiten-Nutzung anzeigen"
                 title="Informationen zur Seiten-Nutzung anzeigen"
@@ -33,7 +35,7 @@ const props = defineProps<{
         <template v-slot:default="{ isActive }">
             <v-card class="card" title="Die Idee ">
                 <template v-slot:prepend>
-                    <v-icon size="x-large"> mdi-information-variant </v-icon>
+                    <v-icon size="x-large"> {{ icon }} </v-icon>
                 </template>
                 <template v-slot:append>
                     <v-btn
@@ -53,12 +55,12 @@ const props = defineProps<{
                         Oder wenn du etwas teilen oder verschenken willst. Oder um etwas auszuleihen.</p>
                     <p>Es gibt zum Beispiel Angebote für Essen, für Kleidung, für Bücher, für Räume, für Werkzeug und vieles andere.</p>
                     <br>
-                    <h3>Und wie funktioniert es?</h3>
+                    <h3>Und wie funktioniert's?</h3>
                     <p>Mit den <b>Filtern</b> kannst du die Übersicht nach deinen Wünschen anpassen und zum Beispiel nach bestimmten Tagen suchen.</p>
                     <p>Auf der <b>Karte</b> siehst du, wo genau die Angebote in Magdeburg sind.</p>
-                    <p>Wenn du zu einem <b>Angebot</b> noch mehr wissen willst, klicke auf den Eintrag.</p>
+                    <p>Wenn du <b>mehr Informationen zu einem Angebot</b> wissen willst, klicke auf den Eintrag.</p>
                     <p>Du kannst <b>Einträge verbessern</b>, wenn du einen Fehler siehst. Klicke dafür auf „Bearbeiten“, wenn du einen Eintrag geöffnet hast.</p>
-                    <p>Oder du kannst ein neues <b>Angebot hinzufügen</b>, wenn es dazu noch keinen Eintrag in der Übersicht gibt. Nutze dafür den Muster-Eintrag ganz unten.</p>
+                    <p>Oder du kannst einen <b>neuen Eintrag hinzufügen</b>, wenn es dieses Angebot noch nicht in der Übersicht gibt. Nutze dafür den Muster-Eintrag ganz unten.</p>
                     <p>Die Übersicht wird besser, wenn wir alle sie pflegen.</p>
                     <br>
                     <h3>Hinweis</h3>
