@@ -449,7 +449,7 @@ const copyToClipboard = async() => {
             </div>
             <div v-if="editableItemGroup.Kategorie != 'online'" class="mb-1 col-container">
               <v-icon>mdi-map-marker</v-icon> 
-              <div class="row-container">
+              <div class="row-container location-row">
                 <p class="col-container">
                   <textarea v-model="editableItemGroup.Wo" placeholder="Wo" type="text" :rows="isMobile ? '2' : '1'" />
                 </p> 
@@ -800,12 +800,26 @@ input[type="checkbox"] {
     display: flex;
     flex-wrap: wrap;
   }
+  .location-row {
+    grid-template-columns: 1fr;
+    row-gap: 5px;
+  }
   .timeslot-row {
     flex-wrap: wrap;
     row-gap: 5px;
   }
-  .timeslot-day, .timeslot-rhythm, .timeslot-time {
-    flex: 1 1 auto;
+  .timeslot-rhythm, .timeslot-row .timeslot-day-select {
+    flex: 1 1 100%;
+  }
+  .subcat-container {
+    flex-wrap: wrap;
+    row-gap: 5px;
+  }
+  .subcat-container .edit-label {
+    flex: 1 1 100%;
+  }
+  .subcat-container .subcat-select {
+    flex: 1 1 0;
   }
 }
 

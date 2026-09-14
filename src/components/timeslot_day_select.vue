@@ -50,6 +50,8 @@ const selectedDays = computed<string[]>({
   --v-input-chips-margin-bottom: 0;
   flex-wrap: nowrap;
 }
+.inline-select :deep(.v-field__input) { opacity: 1; }
+.inline-select :deep(.v-field__input input::placeholder) { color: #757575; opacity: 1; }
 .inline-select :deep(.v-field__append-inner) {
   padding-top: 0;
   align-items: center;

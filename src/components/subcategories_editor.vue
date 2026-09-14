@@ -49,6 +49,12 @@ const selected = computed<string[]>({
   --v-input-chips-margin-bottom: 0;
   flex-wrap: nowrap;
 }
+.inline-select :deep(.v-field__input) { opacity: 1; }
+.inline-select :deep(.v-field__input input::placeholder) { color: #757575; opacity: 1; }
+/* mobile: let two long names wrap instead of being cut off */
+@media (max-width: 767px) {
+  .inline-select :deep(.v-field__input) { flex-wrap: wrap; }
+}
 .inline-select :deep(.v-field__append-inner) {
   padding-top: 0;
   align-items: center;

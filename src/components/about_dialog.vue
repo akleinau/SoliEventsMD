@@ -3,6 +3,7 @@
 const props = defineProps<{
   isHeader: boolean;
   buttonLabel?: string;
+  buttonAriaLabel?: string;
 }>();
 </script>
 
@@ -22,7 +23,8 @@ const props = defineProps<{
             <v-btn
                 v-if="!isHeader"
                 v-bind="activatorProps"
-                class="normal-button"             
+                class="normal-button"
+                :aria-label="buttonAriaLabel"
             >
             {{ buttonLabel }}
             </v-btn>
