@@ -5,6 +5,7 @@ import Home from '../views/Home.vue'
 import Kontakt from '../views/Kontakt.vue'
 import Datenschutz from '../views/Datenschutz.vue'
 import Impressum from '../views/Impressum.vue'
+import Nachbau from '../views/Nachbau.vue'
 
 const routes = [
   // ... bestehende Routen
@@ -14,6 +15,7 @@ const routes = [
   { path: '/kontakt', name: 'Kontakt', component: Kontakt },
   { path: '/datenschutz', name: 'Datenschutz', component: Datenschutz },
   { path: '/impressum', name: 'Impressum', component: Impressum },
+  { path: '/nachbauen', name: 'Nachbau', component: Nachbau },
 ];
 
 const router = createRouter({

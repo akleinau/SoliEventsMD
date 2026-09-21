@@ -3,6 +3,7 @@
 const links = [
   { text: 'Start', url: '/', icon: 'mdi-home' },
   { text: 'Feedback', url: '/kontakt', icon: 'mdi-email' },
+  { text: 'Seite nachbauen', url: '/nachbauen', icon: 'mdi-content-copy' },
   { text: 'Impressum', url: '/impressum', icon: 'mdi-information' },
   { text: 'Datenschutz', url: '/datenschutz', icon: 'mdi-shield-lock' },
   { text: 'Sharing in Magdeburg (Telegram)', url: 'https://t.me/sharinginmagdeburg', icon: 'mdi-open-in-new' }
