@@ -1,11 +1,12 @@
 <script setup lang="ts">
+import { siteConfig } from '../constants/siteConfig.ts';
 
 const links = [
   { text: 'Start', url: '/', icon: 'mdi-home' },
   { text: 'Feedback', url: '/kontakt', icon: 'mdi-email' },
   { text: 'Impressum', url: '/impressum', icon: 'mdi-information' },
   { text: 'Datenschutz', url: '/datenschutz', icon: 'mdi-shield-lock' },
-  { text: 'Sharing in Magdeburg (Telegram)', url: 'https://t.me/sharinginmagdeburg', icon: 'mdi-open-in-new' }
+  ...siteConfig.organizer.socialLinks.map(link => ({ ...link, icon: 'mdi-open-in-new' }))
 ];
 
 </script>
@@ -34,7 +35,7 @@ const links = [
             </v-btn>
 
             <div class="footer-credit">
-                {{ new Date().getFullYear() }} — <strong>ein Projekt von Sharing in Magdeburg</strong>
+                {{ new Date().getFullYear() }} — <strong>ein Projekt von {{ siteConfig.organizer.name }}</strong>
             </div>
         </div>
 

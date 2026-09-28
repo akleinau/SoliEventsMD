@@ -3,6 +3,7 @@ import Category_menu from "./category_menu.vue";
 import About_dialog from "./about_dialog.vue";
 import Translation_dialog from "./translation_dialog.vue";
 import { brandAssets } from '../constants/brandConfig.ts';
+import { siteConfig, siteName } from '../constants/siteConfig.ts';
 </script>
 
 <template>
@@ -12,9 +13,9 @@ import { brandAssets } from '../constants/brandConfig.ts';
         <img
             :src="brandAssets.bildmarke"
             class="logo"
-            alt="Logo von Magdeburg teilt!: eine kantige Sprech-Blase mit einem senkrechten Strich in der Mitte; in der linken Hälfte eine Karotte auf hellem Grund und in der rechten Hälfte ein heller Schrauben-Schlüssel auf farbigem Grund"
+            :alt="`Logo von ${siteName}: eine kantige Sprech-Blase mit einem senkrechten Strich in der Mitte; in der linken Hälfte eine Karotte auf hellem Grund und in der rechten Hälfte ein heller Schrauben-Schlüssel auf farbigem Grund`"
         />
-        <h2><router-link to="/">Magdeburg <b :style="{ color: brandAssets.color }">teilt!</b></router-link></h2>
+        <h2><router-link to="/">{{ siteConfig.city }} <b :style="{ color: brandAssets.color }">teilt!</b></router-link></h2>
       </div>
 
       <nav class="categories-container" aria-label="Kategorien">

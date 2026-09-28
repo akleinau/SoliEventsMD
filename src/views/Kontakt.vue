@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { siteConfig } from '../constants/siteConfig.ts';
 
 </script>
 
@@ -9,10 +10,10 @@
         <div>
             Schreib uns über das folgende Formular. (Bitte warte kurz, falls es dir nicht direkt angezeigt wird.)
             <br>
-            ...oder an kontakt@magdeburg-teilt.de        
+            ...oder an {{ siteConfig.email.contact }}        
         </div>
 
-        <iframe class="myframe" title="Kontakt-Formular von Sharing in Magdeburg" src="https://cloud.magdeburg.jetzt/apps/forms/embed/sWAy75S2qAq5JeccorqTEQFq"></iframe>
+        <iframe class="myframe" :title="`Kontakt-Formular von ${siteConfig.organizer.name}`" :src="siteConfig.feedbackFormUrl"></iframe>
     </div>
 
 </template>

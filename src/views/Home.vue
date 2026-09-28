@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { siteConfig } from '../constants/siteConfig.ts';
 
 import { ref, onBeforeUnmount, computed, watch } from 'vue';
 import Data_loader from "../components/data_loader.vue";
@@ -76,7 +77,7 @@ onBeforeUnmount(() => {
 <template>
 
   <div class="home-container">
-    <h1 class="visually-hidden">Soli-Angebote in Magdeburg</h1>
+    <h1 class="visually-hidden">Soli-Angebote in {{ siteConfig.city }}</h1>
 
     <!--Prepare data /-->
     <Data_loader />

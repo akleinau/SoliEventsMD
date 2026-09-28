@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { siteConfig } from '../constants/siteConfig.ts';
 
 </script>
 
@@ -11,12 +12,10 @@
         <h2>Verantwortlicher</h2>
 
         <div>
-            Benjamin Parske<br></br>
-            c/o Netzwerk Zukunft Sachsen-Anhalt e.V.<br></br>
-            Olvenstedter Str. 10<br></br>
-            39108 Magdeburg<br></br>
-            E-Mail: datenschutz@magdeburg-teilt.de<br></br>
-            Website: https://magdeburg-teilt.de/<br></br>
+            {{ siteConfig.legal.name }}<br>
+            <template v-for="line in siteConfig.legal.addressLines" :key="line">{{ line }}<br></template>
+            E-Mail: {{ siteConfig.email.privacy }}<br>
+            Website: {{ siteConfig.websiteUrl }}<br>
             <br></br>
             Je nachdem, welche Funktionen unserer Website du in Anspruch nimmst, verarbeiten wir verschiedene Daten auf verschiedene Weise.
         </div>
