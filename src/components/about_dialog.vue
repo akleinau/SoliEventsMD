@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { siteConfig } from '../constants/siteConfig.ts';
 
 const props = defineProps<{
   isHeader: boolean;
@@ -49,15 +50,15 @@ const icon = "mdi-help"
                 </template>
                 <v-card-text>
                     <h3>Warum gibt es die Seite?</h3>
-                    <p>Auf "magdeburg-teilt.de" geht es darum, Dinge in Magdeburg miteinander zu teilen. 
-                        Diese Seite bietet dir eine Übersicht über solidarische Angebote in der Stadt Magdeburg und der Umgebung.</p>
+                    <p>Auf "{{ siteConfig.domain }}" geht es darum, Dinge in {{ siteConfig.city }} miteinander zu teilen. 
+                        Diese Seite bietet dir eine Übersicht über solidarische Angebote in der Stadt {{ siteConfig.city }} und der Umgebung.</p>
                     <p>Die Angebote kannst du nutzen, wenn du etwas kostenlos brauchst (oder für nur wenig Geld). 
                         Oder wenn du etwas teilen oder verschenken willst. Oder um etwas auszuleihen.</p>
                     <p>Es gibt zum Beispiel Angebote für Essen, für Kleidung, für Bücher, für Räume, für Werkzeug und vieles andere.</p>
                     <br>
                     <h3>Und wie funktioniert's?</h3>
                     <p>Mit den <b>Filtern</b> kannst du die Übersicht nach deinen Wünschen anpassen und zum Beispiel nach bestimmten Tagen suchen.</p>
-                    <p>Auf der <b>Karte</b> siehst du, wo genau die Angebote in Magdeburg sind.</p>
+                    <p>Auf der <b>Karte</b> siehst du, wo genau die Angebote in {{ siteConfig.city }} sind.</p>
                     <p>Wenn du <b>mehr Informationen zu einem Angebot</b> wissen willst, klicke auf den Eintrag.</p>
                     <p>Du kannst <b>Einträge verbessern</b>, wenn du einen Fehler siehst. Klicke dafür auf „Bearbeiten“, wenn du einen Eintrag geöffnet hast.</p>
                     <p>Oder du kannst einen <b>neuen Eintrag hinzufügen</b>, wenn es dieses Angebot noch nicht in der Übersicht gibt. Nutze dafür den Muster-Eintrag ganz unten.</p>
@@ -66,12 +67,12 @@ const icon = "mdi-help"
                     <h3>Hinweis</h3>
                     <p>Bitte beachte: Viele Angebote sind an Feiertagen geschlossen!</p>
                     <br>
-                    <p>Wenn du eine Frage hast, kannst du eine E-Mail schreiben an: <a href="mailto:kontakt@magdeburg-teilt.de">kontakt@magdeburg-teilt.de</a>
+                    <p>Wenn du eine Frage hast, kannst du eine E-Mail schreiben an: <a :href="`mailto:${siteConfig.email.contact}`">{{ siteConfig.email.contact }}</a>
                     Oder nutze das <router-link to="/kontakt" @click="isActive.value = false">Feedback-Formular</router-link>.</p>
                     <br>
                     <p><i>Viel Spaß beim Stöbern wünschen dir
                         <br>
-                    Anna, Benni, Ina und Jonas :)</i></p>
+                    {{ siteConfig.teamSignature }}</i></p>
                 </v-card-text>
             </v-card>
         </template>

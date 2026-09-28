@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { siteConfig } from '../constants/siteConfig.ts';
 
 import L from 'leaflet';
 import 'leaflet.markercluster';
@@ -58,7 +59,7 @@ const itemKey = (group: any): string => `${group?.Was}|${group?.Wer}|${group?.Wo
 const getCoordinates = async (location: string): Promise<{ lat: number; lng: number } | null> => {
  // OPTION 1: load from openstreetmap coordinates via nominatim
   /*try {
-    const city = "Magdeburg"; // Ersetze durch deine Stadt
+    const city = siteConfig.city;
     const fullAddress = location.includes(city) ? location : `${location}, ${city}`;
     const response = await fetch(
       `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(fullAddress)}`
@@ -186,7 +187,7 @@ const initMap = () => {
   const leafletMap = L.map(mapElement.value, {
     zoomControl: false,
     attributionControl: false,
-  }).setView([52.1250, 11.6390], 12); // Zentrum: Magdeburg
+  }).setView(siteConfig.map.center, siteConfig.map.zoom);
 
   L.control.zoom({
     zoomInTitle: 'In die Karte rein-zoomen',
@@ -329,7 +330,7 @@ defineExpose({
       ref="mapElement"
       class="map"
       role="application"
-      aria-label="Karte mit den Angeboten in Magdeburg"
+      :aria-label="`Karte mit den Angeboten in ${siteConfig.city}`"
     ></div>
 
     <p class="map-credit">

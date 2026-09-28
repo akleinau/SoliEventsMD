@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import About_dialog from "../components/about_dialog.vue"
+import { siteConfig, siteName } from '../constants/siteConfig.ts';
 
-const buttonLabel = "Was genau ist 'Magdeburg teilt!' ?"
+const buttonLabel = `Was genau ist '${siteName}' ?`
 
 </script>
 
@@ -11,11 +12,11 @@ const buttonLabel = "Was genau ist 'Magdeburg teilt!' ?"
             <h1>
                 Teilen<br>
                 verbindet<br>
-                Magdeburg<br>
+                {{ siteConfig.city }}<br>
             </h1>
             <br>
             <h3>
-                Hier findest du Angebote und Hilfsmittel in Magdeburg.<br>
+                Hier findest du Angebote und Hilfsmittel in {{ siteConfig.city }}.<br>
                 Von Essens-Ausgaben und Umsonst-Läden <br>bis zu Bücher-Tausch-Orten und Werkstätten ist alles dabei.
             </h3>
             <br>

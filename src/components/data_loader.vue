@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { siteConfig } from '../constants/siteConfig.ts';
 
 import * as d3 from 'd3'
 import {onMounted, ref} from "vue";
@@ -20,7 +21,7 @@ function uploaded(files: any) {
 const load_dataset = async () => {
   // Load CSV URL from .env so the local CSV can be a different one. 
   // # Attention! Be aware that this could be the reason for "outdated" content!
-  const csvFile = import.meta.env.VITE_CSV_URL + 'dataset/SoliAngeboteMD-2026-07-06.csv';
+  const csvFile = import.meta.env.VITE_CSV_URL + siteConfig.dataFile;
   
   // Check which env mode and URL is used for the CSV import
   //console.log('Mode ', import.meta.env)

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { siteConfig } from '../constants/siteConfig.ts';
 
 </script>
 
@@ -7,10 +8,8 @@
     <div class="mx-5">
         <h1>IMPRESSUM</h1>
         <div>
-            Benjamin Parske<br>
-            c/o Netzwerk Zukunft Sachsen-Anhalt e.V.<br>
-            Olvenstedter Str. 10<br>
-            39108 Magdeburg<br>
+            {{ siteConfig.legal.name }}<br>
+            <template v-for="line in siteConfig.legal.addressLines" :key="line">{{ line }}<br></template>
         </div>
     </div>
 
