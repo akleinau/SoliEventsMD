@@ -36,7 +36,7 @@ export const siteConfig = {
     },
 
     /** CSV file with the offers, relative to VITE_CSV_URL */
-    dataFile: 'dataset/SoliAngeboteMD-2026-07-06.csv',
+    dataFile: 'dataset/SoliAngeboteMD-2026-10-12.csv',
 
     /** Responsible person for Impressum and Datenschutz */
     legal: {
