@@ -8,7 +8,7 @@ import 'leaflet.markercluster/dist/MarkerCluster.css';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 
 
-import { useDataStore } from "../stores/dataStore.ts";
+import { useDataStore, groupKey } from "../stores/dataStore.ts";
 import { ref, onMounted, watch, nextTick } from 'vue';
 
 // "Klecks"-Formen (organische Hintergrund-Blobs) – als Maske genutzt, damit sie
@@ -49,10 +49,10 @@ const markers = ref<Map<string, { marker: L.Marker; originalIcon: L.DivIcon; hig
 const markersClusterGroup = ref<L.MarkerClusterGroup | null>(null);
 const highlightedKey = ref<string | null>(null);
 
-// Stable key for an itemgroup (mirrors the grouping key in dataStore.get_grouped_data()).
+// Stable key for an itemgroup (the grouping key from dataStore.get_grouped_data()).
 // Used to match markers to itemgroups by content, since get_grouped_data() returns fresh
 // objects on every call and object identity can therefore not be relied upon.
-const itemKey = (group: any): string => `${group?.Was}|${group?.Wer}|${group?.Wo}`;
+const itemKey = groupKey;
 
 
 // Adresse in Koordinaten umwandeln

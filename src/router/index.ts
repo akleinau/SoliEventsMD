@@ -10,7 +10,7 @@ const routes = [
   // ... bestehende Routen
   { path: '', name: 'Main', component: Start },
   { path: '/', name: 'Start', component: Start },  
-  { path: '/:category', component: Home },
+  { path: '/:category/:id?', component: Home },
   { path: '/kontakt', name: 'Kontakt', component: Kontakt },
   { path: '/datenschutz', name: 'Datenschutz', component: Datenschutz },
   { path: '/impressum', name: 'Impressum', component: Impressum },
