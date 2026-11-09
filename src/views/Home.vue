@@ -2,6 +2,7 @@
 import { siteConfig } from '../constants/siteConfig.ts';
 
 import { ref, onBeforeUnmount, computed, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import Data_loader from "../components/data_loader.vue";
 import Datatable from "../components/datatable.vue";
 import Datamap from "../components/datamap.vue";
@@ -10,7 +11,7 @@ import Filter_menu from "../components/filter_menu.vue";
 
 //const reduced_columns = ['Was', 'Wer', 'Wo', 'Uhrzeit', 'Wochentag']
 
-import { useDataStore } from "../stores/dataStore.ts";
+import { useDataStore, groupUrlParam, groupIdFromUrlParam } from "../stores/dataStore.ts";
 
 const dataStore = useDataStore();
 const datamap = ref<InstanceType<typeof Datamap> | null>(null);
@@ -58,6 +59,33 @@ const onBackdropMouseUp = (e: MouseEvent) => {
   
   backdropMouseStart.value = null;
 };
+
+// Card links (#/<category>/<title-slug>-<id>): open the card from the URL once the data is loaded
+const route = useRoute();
+const router = useRouter();
+
+watch([() => route.params.id, () => dataStore.data], ([param]) => {
+  if (!param || typeof param !== 'string') return;
+  const id = groupIdFromUrlParam(param);
+  if ((dataStore.current_itemgroup as any)?.id === id) return;
+  if (dataStore.data.length === 0) return;
+
+  const itemgroup = dataStore.find_itemgroup_by_id(id);
+  if (itemgroup) {
+    dataStore.set_current_itemgroup(itemgroup);
+  } else {
+    // unknown id (e.g. entry was edited or removed): just show the category
+    router.replace(`/${route.params.category}`);
+  }
+}, { immediate: true });
+
+// Keep the URL in sync with the opened card, so it can be copied and shared
+// (also corrects old links, e.g. id-only or with an outdated title)
+watch(() => dataStore.current_itemgroup, (itemgroup) => {
+  const param = (itemgroup as any)?.id ? groupUrlParam(itemgroup) : undefined;
+  if ((route.params.id || undefined) === param) return;
+  router.replace(param ? `/${route.params.category}/${param}` : `/${route.params.category}`);
+});
 
 watch([isMobile, isMapOpen], ([mobile, mapOpen]) => {
   if (mobile && mapOpen) {

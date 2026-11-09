@@ -64,6 +64,44 @@ export interface Filter {
 
 export type DataRow = Record<string, string | undefined>;
 
+// Key used to merge duplicate CSV rows (e.g. one row per weekday) into one card.
+export const groupKey = (item: any): string => `${item?.Was}|${item?.Wer}|${item?.Wo}`;
+
+// Key for URLs
+export const groupId = (item: any): string => {
+    const key = groupKey(item);
+    let hash = 0x811c9dc5;
+    for (let i = 0; i < key.length; i++) {
+        hash ^= key.charCodeAt(i);
+        hash = Math.imul(hash, 0x01000193);
+    }
+    return (hash >>> 0).toString(36);
+};
+
+// Readable URL part from a title, e.g. "Das Lädchen (Spenden)" -> "das-laedchen-spenden"
+const slugify = (text: string, maxLength = 50): string => {
+    const slug = text
+        .toLowerCase()
+        .replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss')
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+    if (slug.length <= maxLength) return slug;
+    // cut at a word boundary
+    const cut = slug.slice(0, maxLength + 1);
+    return cut.slice(0, cut.lastIndexOf('-') > 0 ? cut.lastIndexOf('-') : maxLength);
+};
+
+// URL part for a card: "<title-slug>-<groupId>". Only the id is used for the lookup,
+// so links stay valid if the title is shortened differently later.
+export const groupUrlParam = (item: any): string => {
+    const slug = slugify(item?.Was ?? '');
+    return slug ? `${slug}-${groupId(item)}` : groupId(item);
+};
+
+// Extract the groupId from a URL part (the id is base36, so it never contains "-")
+export const groupIdFromUrlParam = (param: string): string => param.slice(param.lastIndexOf('-') + 1);
+
 export const useDataStore = defineStore('dataStore', {
   state: () => ({
       data: [] as DataRow[],
@@ -259,15 +297,22 @@ export const useDataStore = defineStore('dataStore', {
             return filteredData;
         },
         get_grouped_data() {
-            const filtered = this.get_filtered_data();
+            return this.group_rows(this.get_filtered_data());
+        },
+        // Find a card by its groupId in the unfiltered data, so a card link always shows all time slots
+        find_itemgroup_by_id(id: string) {
+            return this.group_rows(this.data).find((group: any) => group.id === id) ?? null;
+        },
+        group_rows(rows: DataRow[]) {
             const groups = {} as any;
     
-            filtered.forEach(item => {
-                // Gruppierung nach Was + Wer (für Ihren Fall identisch)
-                const key = `${item.Was}|${item.Wer}|${item.Wo}`;
+            rows.forEach(item => {
+                // Gruppierung nach Was + Wer + Wo
+                const key = groupKey(item);
                 
                 if (!groups[key]) {
                     groups[key] = {
+                    id: groupId(item),
                     Was: item.Was,
                     Kategorie: item.Kategorie,
                     Unterkategorie: item.Unterkategorie,
