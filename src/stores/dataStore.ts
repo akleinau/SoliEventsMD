@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { getCategoryDefinition, getSubCategoryDefinition } from "../constants/categoryConfig";
+import { assignStadtteile, STADTTEIL_NAMES } from "../utils/stadtteil.ts";
 import FallbackCategoryIcon from '/src/assets/icons/backgrounds/HG_01.svg';// used as generic fallback category icon
 
 export interface SortLevel {
@@ -92,10 +93,14 @@ const slugify = (text: string, maxLength = 50): string => {
     return cut.slice(0, cut.lastIndexOf('-') > 0 ? cut.lastIndexOf('-') : maxLength);
 };
 
-// URL part for a card: "<title-slug>-<groupId>". Only the id is used for the lookup,
-// so links stay valid if the title is shortened differently later.
+// URL part for a card: "<title-slug>-<stadtteil-slug>-<groupId>". Only the id is used for the lookup,
+// so links stay valid if the title or Stadtteil changes later. Only real districts go into the link
+// (not "online" or the "outside the city" label), and not if the title already names it (e.g. Bücherschrank „Buckau“).
 export const groupUrlParam = (item: any): string => {
-    const slug = slugify(item?.Was ?? '');
+    const title = slugify(item?.Was ?? '');
+    let stadtteil = STADTTEIL_NAMES.includes(item?.Stadtteil) ? slugify(item.Stadtteil) : '';
+    if (`-${title}-`.includes(`-${stadtteil}-`)) stadtteil = '';
+    const slug = [title, stadtteil].filter(Boolean).join('-');
     return slug ? `${slug}-${groupId(item)}` : groupId(item);
 };
 
@@ -141,7 +146,7 @@ export const useDataStore = defineStore('dataStore', {
             //entries who are inactive should be hidden by default: d["inaktiv"] != "inaktiv")
             newData = newData.filter((d: DataRow) => d["inaktiv"] != "inaktiv");
 
-            this.data = newData;            
+            this.data = assignStadtteile(newData);            
         },
         // not needed at the moment since the raw data should already be sorted before (using a spreadsheet app with filters)
         /*sort_data() {
@@ -242,6 +247,11 @@ export const useDataStore = defineStore('dataStore', {
                             return this.matchesWochentagFilter(value, f.values);
                         }
 
+                        // Stadtteile exakt vergleichen ("Neustadt" darf nicht "Alte Neustadt" treffen)
+                        if (f.column === 'Stadtteil') {
+                            return f.values.includes(value);
+                        }
+
                         // ALT: Prüft nur, ob die Filterwerte den Datensatz-Wert enthalten
                         //return f.values.includes(value);
 
@@ -261,7 +271,7 @@ export const useDataStore = defineStore('dataStore', {
             if (term) {
                 const normalizedTerm = normalizeSearchText(term);
                 filteredData = filteredData.filter(item => {
-                    const searchFields = ['Was', 'Wer', 'Wo', 'Rhythmus', 'Link'];
+                    const searchFields = ['Was', 'Wer', 'Wo', 'Stadtteil', 'Rhythmus', 'Link'];
                     return searchFields.some(field => {
                         const value = item[field] ?? '';
                         return normalizeSearchText(value).includes(normalizedTerm);
@@ -319,6 +329,7 @@ export const useDataStore = defineStore('dataStore', {
                     Nutzung: item.Nutzung,
                     timeSlots: [],
                     Wo: item.Wo,
+                    Stadtteil: item.Stadtteil,
                     Koordinaten: item.Koordinaten,
                     Wer: item.Wer,
                     Link: item.Link,

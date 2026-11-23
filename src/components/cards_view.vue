@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { STADTTEIL_ONLINE } from "../utils/stadtteil.ts";
 
 import { computed } from "vue";
 import { useDataStore } from "../stores/dataStore.ts";
@@ -106,7 +107,7 @@ const clicked = (itemgroup: any) => {
         <span class="visually-hidden">Kategorie {{ dataStore.getCategoryName(itemgroup.Kategorie) }}, Details anzeigen</span>
         <v-card-subtitle class="category-card__provider" :style="{'padding-top' : '5px'}">{{ itemgroup.Wer }}</v-card-subtitle>
         <v-card-text v-if="itemgroup.Kategorie != 'online'">
-          <p class="mb-1"> <v-icon>mdi-map-marker</v-icon> {{ itemgroup.Wo }}</p>
+          <p class="mb-1"> <v-icon>mdi-map-marker</v-icon> {{ itemgroup.Wo }}<template v-if="itemgroup.Stadtteil && itemgroup.Stadtteil !== STADTTEIL_ONLINE"> · {{ itemgroup.Stadtteil }}</template></p>
           <div class="mb-1 opening-hours"> <v-icon>mdi-calendar</v-icon> {{ listTimeSlots(itemgroup.timeSlots) }}</div>
         </v-card-text>
         <v-card-text v-if="itemgroup.Kategorie == 'online'">

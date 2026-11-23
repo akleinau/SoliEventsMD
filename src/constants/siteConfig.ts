@@ -35,6 +35,18 @@ export const siteConfig = {
         zoom: 12,
     },
 
+    /** Stadtteile (districts), shown on cards, in card links and as a filter.*/
+    districts: {
+        /** OSM relation id of the city, see https://www.openstreetmap.org/relation/62481 */
+        osmRelationId: 62481,
+        /** OSM admin_level(s) of the districts inside the city (Magdeburg: most are 10, three are 9) */
+        adminLevels: ['10', '9'],
+        /** Number of districts the script must find, as a sanity check */
+        count: 40,
+        /** Label for offers whose coordinates lie outside every district */
+        outsideLabel: 'außerhalb Magdeburgs',
+    },
+
     /** CSV file with the offers, relative to VITE_CSV_URL */
     dataFile: 'dataset/SoliAngeboteMD-2026-10-12.csv',
 

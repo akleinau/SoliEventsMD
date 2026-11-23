@@ -2,6 +2,7 @@
 
 import { useDataStore } from "../stores/dataStore.ts";
 import { getSubCategoryDefinition } from "../constants/categoryConfig.ts"
+import { stadtteilOptions } from "../utils/stadtteil.ts";
 import { ref, computed, onMounted, onUpdated } from "vue";
 
 const dataStore = useDataStore();
@@ -94,6 +95,10 @@ const onWochentagFilterChange = (newFilter: string[]) => {
   dataStore.add_filter('Wochentag', regularFilter);
 };
 
+// --- Stadtteil ---
+const stadtteilFilter = ref<string[]>([]);
+const stadtteile = computed(() => stadtteilOptions(dataStore.data ?? []));
+
 // --- Sort categories (tri-state cycling) ---
 const sortCategories = [
   { key: 'Letzte_Ueberpruefung', label: '* Neuste *' },
@@ -146,6 +151,7 @@ const resetFilters = () => {
   unterkategorieFilter.value = [];
   nutzungFilter.value = [];
   wochentagFilter.value = [];
+  stadtteilFilter.value = [];
   heuteFilterActive.value = false;
   dataStore.setHeuteFilter(false);
   dataStore.setSearchTerm('');
@@ -198,7 +204,7 @@ const resetFilters = () => {
         bg-color="var(--color-white)"
       />
 
-      <div class="filter-select">
+      <div class="filter-select filter-select--wide">
         <v-select label="Unterkategorie"
           open-text="Unterkategorie-Filter öffnen" close-text="Unterkategorie-Filter schließen"
           variant="outlined" multiple density="compact" hide-details bg-color="var(--color-white)"
@@ -240,6 +246,21 @@ const resetFilters = () => {
             <v-chip v-if="index < 1"><span>{{ item.title }}</span></v-chip>
             <span v-if="index === 1" class="filter-select__more text-caption align-self-center" style="white-space: nowrap;">
               (+{{ wochentagFilter.length - 1 }})
+            </span>
+          </template>
+        </v-select>
+      </div>
+
+      <div v-if="stadtteile.length" class="filter-select">
+        <v-select label="Stadtteil"
+          open-text="Stadtteil-Filter öffnen" close-text="Stadtteil-Filter schließen"
+          variant="outlined" multiple density="compact" hide-details bg-color="var(--color-white)"
+          :items="stadtteile" v-model="stadtteilFilter"
+          @update:modelValue="dataStore.add_filter('Stadtteil', stadtteilFilter)">
+          <template v-slot:selection="{ item, index }">
+            <v-chip v-if="index < 1"><span>{{ item.title }}</span></v-chip>
+            <span v-if="index === 1" class="filter-select__more text-caption align-self-center" style="white-space: nowrap;">
+              (+{{ stadtteilFilter.length - 1 }})
             </span>
           </template>
         </v-select>
@@ -355,9 +376,10 @@ const resetFilters = () => {
 }
 
 .control-bar__search {
-  flex: 1 1 180px;
+  /* small base width so the search shrinks (instead of the row wrapping) when the reset button appears */
+  flex: 1 1 120px;
   min-width: 120px;
-  max-width: 360px;
+  max-width: 260px;
   height: 36px;
 }
 
@@ -451,12 +473,38 @@ const resetFilters = () => {
 
 .filter-select__more {
   color: var(--color-anthrazit);
+  flex-shrink: 0;
+  margin-left: 2px;
 }
 
+/* Fixed width: a long selected value is shortened with "…" instead of widening the field
+   (which would push the row onto a second line) */
 .filter-select {
-  flex: 0 1 auto;
-  min-width: 180px;
+  flex: 0 0 150px;
+  width: 150px;
   height: var(--control-btn-height);
+}
+
+/* "Unterkategorie" is the longest label; keep it unclipped */
+.filter-select--wide {
+  flex-basis: 180px;
+  width: 180px;
+}
+
+.filter-select :deep(.v-select__selection),
+.filter-select :deep(.v-chip) {
+  flex-shrink: 1;
+  min-width: 0;
+}
+
+.filter-select :deep(.v-select__selection:has(.filter-select__more)) {
+  flex-shrink: 0;
+}
+
+.filter-select :deep(.v-chip__content) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .filter-select :deep(.v-input),
