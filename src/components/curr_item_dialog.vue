@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { STADTTEIL_ONLINE } from "../utils/stadtteil.ts";
 import { siteConfig } from '../constants/siteConfig.ts';
 
 import { computed, onMounted, ref, watch } from "vue";
@@ -121,6 +122,25 @@ const openMailTo = (content: string) => {
   if (openInSameWindow) {
     window.location.href = mailtoLink; // "Gleiches" Fenster
   } else {
+  }
+};
+
+// Share the card link: system share menu where available (mostly phones), otherwise copy it
+const linkCopied = ref(false);
+const shareCard = async () => {
+  const url = window.location.href; // kept in sync with the opened card by Home.vue
+  if (navigator.share) {
+    try {
+      await navigator.share({ title: itemgroup.value?.Was, url });
+    } catch { /* closed by the user */ }
+    return;
+  }
+  try {
+    await navigator.clipboard.writeText(url);
+    linkCopied.value = true;
+    setTimeout(() => { linkCopied.value = false; }, 2000);
+  } catch {
+    window.prompt('Link zum Kopieren:', url);
   }
 };
 
@@ -316,7 +336,7 @@ const copyToClipboard = async() => {
         <v-row>
           <v-col cols="12" :md="showWerbegrafik ? 8 : 12">            
             <div class="mb-1 col-container"> <v-icon>mdi-account-question</v-icon> <div>{{ itemgroup.Wer }}</div></div>
-            <div v-if="itemgroup.Kategorie != 'online'" class="mb-1 col-container"> <v-icon>mdi-map-marker</v-icon> <div>{{ itemgroup.Wo }}</div></div>
+            <div v-if="itemgroup.Kategorie != 'online'" class="mb-1 col-container"> <v-icon>mdi-map-marker</v-icon> <div>{{ itemgroup.Wo }}<template v-if="itemgroup.Stadtteil && itemgroup.Stadtteil !== STADTTEIL_ONLINE"> · {{ itemgroup.Stadtteil }}</template></div></div>
             <div v-if="itemgroup.Kategorie != 'online'" v-for="timeslot in itemgroup.timeSlots" class="mb-1 col-container"> 
               <v-icon>mdi-calendar</v-icon>
               <div>
@@ -369,6 +389,10 @@ const copyToClipboard = async() => {
           </v-alert>
           
           <div class="edit-buttons">
+            <v-btn size="small" prepend-icon="mdi-share-variant" @click="shareCard">
+              {{ linkCopied ? 'Link kopiert!' : 'Teilen' }}
+            </v-btn>
+            <span class="visually-hidden" aria-live="polite">{{ linkCopied ? 'Link kopiert' : '' }}</span>
             <v-btn size="small" @click="toggleEdit">Bearbeiten</v-btn>   
             <v-btn size="small" @click="closeDialog">Schließen</v-btn>        
           </div>
@@ -835,6 +859,7 @@ input[type="checkbox"] {
   .edit-info-container {
     display: grid;
     justify-content: stretch;
+    row-gap: 12px;
   }
 }
 
@@ -851,9 +876,16 @@ input[type="checkbox"] {
 }
 
 .edit-buttons {
-  display: grid;
-  grid-template-columns: auto auto;
-  column-gap: 10px;
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 10px;
+}
+
+@media (max-width: 767px) {
+  .edit-buttons > .v-btn {
+    flex: 1 1 0;
+    min-width: 0;
+  }
 }
 
 .copyable-textarea-container {

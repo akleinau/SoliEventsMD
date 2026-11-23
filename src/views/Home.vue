@@ -60,7 +60,7 @@ const onBackdropMouseUp = (e: MouseEvent) => {
   backdropMouseStart.value = null;
 };
 
-// Card links (#/<category>/<title-slug>-<id>): open the card from the URL once the data is loaded
+// Card links (#/<category>/<title-slug>-<stadtteil-slug>-<id>): open the card from the URL once the data is loaded
 const route = useRoute();
 const router = useRouter();
 
